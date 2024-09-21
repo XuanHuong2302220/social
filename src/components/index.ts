@@ -1,5 +1,7 @@
-import Input from "./Input"
+import Input from "./input/Input"
+import Button from "./Button"
 
 export {
-    Input
+    Input,
+    Button
 }

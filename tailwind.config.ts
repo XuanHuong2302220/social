@@ -11,7 +11,15 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        colorInput: "#F2F2F2",
+        primaryColor: "#FC9B4E"
       },
+    },
+    screens: {
+      'phone': '200px',
+      'tablet': '640px',
+      'laptop': '1024px',
+      'desktop': '1280px',
     },
   },
   plugins: [daisyui],
