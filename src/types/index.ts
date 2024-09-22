@@ -14,12 +14,23 @@ export interface InputProps {
 }
 
 export interface ButtonProps {
-    text: string,
+    text: string | null,
     onClick?: () => void
     icon?: string,
     className?: string,
     classNameText?: string,
     width?: number,
     height?: number,
-    type?: 'button' | 'reset' | 'submit'
+    type?: 'button' | 'reset' | 'submit',
+    disabled?: boolean,
+    iconLoading?: boolean
+}
+
+export interface UserState {
+    username: string,
+    firstName: string,
+    lastName: string,
+    gender: string | null,
+    email: string,
+    avatar: string | null,
 }

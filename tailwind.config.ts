@@ -12,7 +12,7 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         colorInput: "#F2F2F2",
-        primaryColor: "#FC9B4E"
+        primaryColor: "#F9AD71"
       },
     },
     screens: {

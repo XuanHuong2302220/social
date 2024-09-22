@@ -16,11 +16,14 @@ import Link from 'next/link';
 interface FormValues {
   username: string;
   password: string;
+  confirmPassword: string;
+  email: string;
 }
 
 const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setconfirmPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
@@ -43,18 +46,18 @@ const Login = () => {
           <Logo />
           <div className='w-full h-full flex flex-col justify-center items-center gap-2'>
             <div className='flex flex-col w-full items-center'>
-              <span className='desktop:text-7xl laptop:text-5xl tablet:text-5xl phone:text-5xl font-bold text-black'>
-                Welcome
+              <span className='desktop:text-3xl laptop:text-2xl tablet:text-2xl phone:text-2xl font-bold text-black flex gap-1'>
+                Get Started With 
+                <span className='text-primaryColor'>SignUp</span>
               </span>
               <span className='text-sm text-black'>
-                We are glad to see you back with me
+                Sign up is easy and only takes a few minutes
               </span>
             </div>
             <Input
               className='w-3/4 h-10'
-              placeholder='username or email'
+              placeholder='username'
               type='text'
-              icon={UserIcon}
               width={20}
               height={20}
               {...register('username', { required: 'Username is required' })}
@@ -64,9 +67,23 @@ const Login = () => {
                     {errors.username?.message}
                   </p>
                 )}
+
+              <Input
+                className='w-3/4 h-10'
+                placeholder='email'
+                type='email'
+                width={20}
+                height={20}
+                {...register('email', { required: 'email is required' })}
+              />
+                {errors.email&& (
+                  <p className='text-red-600'>
+                    {errors.email?.message}
+                  </p>
+                )}
+
             <Input
               className='w-3/4 h-10 cursor-pointer'
-              icon={PasswordIcon}
               width={20}
               height={20}
               placeholder='password'
@@ -80,14 +97,31 @@ const Login = () => {
                     {errors.password?.message || error}
                   </p>
                 )}
+
+            <Input
+              className='w-3/4 h-10 cursor-pointer'
+              width={20}
+              height={20}
+              placeholder='confirm password'
+              type={confirmPassword ? 'text' : 'password'}
+              onClick={() => setconfirmPassword(!confirmPassword)}
+              iconComponent={confirmPassword ? <FaEyeSlash /> : <FaEye />}
+              {...register('confirmPassword', { required: 'Confirm Password is required' })}
+            />
+                {(errors.confirmPassword || error) && (
+                  <p className='text-red-600'>
+                    {errors.confirmPassword?.message || error}
+                  </p>
+                )}
             <Button
-              text={loading ? null : 'Login'}
+              text='NEXT'
               type="submit"
               classNameText='text-white font-bold'
               className='w-3/4 h-10 rounded-lg bg-black'
               disabled={loading}
-              iconLoading={loading}
             />
+            {loading && <span className="loading loading-dots loading-md"></span>}
+            
             <div className="flex items-center w-3/4">
               <div className="flex-grow border-t border-gray-300"></div>
               <span className="font-bold">
@@ -112,9 +146,9 @@ const Login = () => {
             
             <div>
               <span className='text-sm'>
-                Don't have an account?
-                <Link href={'/signup'} className='ml-1 text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
-                  Sign Up
+                Have an account?
+                <Link href={'/login'} className='ml-1 text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
+                  Log in
                 </Link>
               </span>
             </div>
