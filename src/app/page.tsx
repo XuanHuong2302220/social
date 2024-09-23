@@ -1,7 +1,12 @@
-export default function Home() {
+'use client'
+
+import React from 'react'
+import withAuth from '@/middleware/withAuth'
+
+const Home = () => {
   return (
-    <>
-    <button className="btn btn-primary">Hello daisyUI!</button>
-  </>
-  );
+    <div>Home</div>
+  )
 }
+
+export default withAuth(Home)

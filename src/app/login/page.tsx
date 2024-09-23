@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input, Button, Logo } from '@/components';
 import UserIcon from '@/assets/icons/user.svg';
 import PasswordIcon from '@/assets/icons/password.svg';
@@ -12,6 +12,9 @@ import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import useLoginApi from '@/api/loginApi';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { selectUser } from '@/redux/features/user/userSlice';
+import { useSelector } from 'react-redux';
 
 interface FormValues {
   username: string;
@@ -19,6 +22,19 @@ interface FormValues {
 }
 
 const Login = () => {
+
+  const user = useSelector(selectUser);
+
+  console.log(user);
+
+  const router = useRouter();
+
+  useEffect(()=> {
+    const token = localStorage.getItem('token');
+    if(token) {
+      router.push('/');
+    }
+  }, [router])
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,7 +44,6 @@ const Login = () => {
 
   const onSubmit = (data: FormValues) => {
     if (data) {
-      console.log(data);
       login(data.username, data.password);
     }
 };
@@ -81,7 +96,7 @@ const Login = () => {
                   </p>
                 )}
             <Button
-              text={loading ? null : 'Login'}
+              text={loading ? null : 'Next'}
               type="submit"
               classNameText='text-white font-bold'
               className='w-3/4 h-10 rounded-lg bg-black'

@@ -33,4 +33,5 @@ export interface UserState {
     gender: string | null,
     email: string,
     avatar: string | null,
+    dob?: string | null,
 }

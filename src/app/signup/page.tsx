@@ -1,17 +1,15 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input, Button, Logo } from '@/components';
-import UserIcon from '@/assets/icons/user.svg';
-import PasswordIcon from '@/assets/icons/password.svg';
-import GoogleIcon from '@/public/icons/google.svg';
-import FacebookIcon from '@/public/icons/facebook.svg';
+import { useRouter } from 'next/navigation';
 import background from '@/assets/images/background.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import useLoginApi from '@/api/loginApi';
 import Link from 'next/link';
+import signupApi from '@/api/signupApi';
 
 interface FormValues {
   username: string;
@@ -20,19 +18,33 @@ interface FormValues {
   email: string;
 }
 
-const Login = () => {
+const SignUp = () => {
+
+  const router = useRouter();
+
+  const {error, signup, loading, failed} = signupApi();
+
+  useEffect(()=> {
+    const token = localStorage.getItem('token');
+    if(token) {
+      router.push('/');
+    }
+  }, [router])
 
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setconfirmPassword] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
 
-  const {error, login, loading} = useLoginApi();
-
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async(data: FormValues) => {
     if (data) {
-      console.log(data);
-      login(data.username, data.password);
+      await signup(data.username, data.password, data.confirmPassword, data.email);
+      if (!failed) {
+        reset();
+        setTimeout(() => {
+          router.push('/login');
+        }, 5000)
+      }
     }
 };
 
@@ -63,7 +75,7 @@ const Login = () => {
               {...register('username', { required: 'Username is required' })}
             />
                 {errors.username&& (
-                  <p className='text-red-600'>
+                  <p className='text-red-600 text-xs'>
                     {errors.username?.message}
                   </p>
                 )}
@@ -77,7 +89,7 @@ const Login = () => {
                 {...register('email', { required: 'email is required' })}
               />
                 {errors.email&& (
-                  <p className='text-red-600'>
+                  <p className='text-red-600 text-xs'>
                     {errors.email?.message}
                   </p>
                 )}
@@ -93,7 +105,7 @@ const Login = () => {
               {...register('password', { required: 'Password is required' })}
             />
                 {(errors.password || error) && (
-                  <p className='text-red-600'>
+                  <p className='text-red-600 text-xs'>
                     {errors.password?.message || error}
                   </p>
                 )}
@@ -109,41 +121,18 @@ const Login = () => {
               {...register('confirmPassword', { required: 'Confirm Password is required' })}
             />
                 {(errors.confirmPassword || error) && (
-                  <p className='text-red-600'>
+                  <p className='text-red-600 text-xs'>
                     {errors.confirmPassword?.message || error}
                   </p>
                 )}
             <Button
-              text='NEXT'
+              text={loading ? null : 'Login'}
               type="submit"
               classNameText='text-white font-bold'
               className='w-3/4 h-10 rounded-lg bg-black'
               disabled={loading}
+              iconLoading={loading}
             />
-            {loading && <span className="loading loading-dots loading-md"></span>}
-            
-            <div className="flex items-center w-3/4">
-              <div className="flex-grow border-t border-gray-300"></div>
-              <span className="font-bold">
-                Login<span className="font-thin"> with Others</span>
-              </span>
-              <div className="flex-grow border-t border-gray-300"></div>
-            </div>
-            <Button
-              text='Login with Google'
-              classNameText='text-black'
-              className='w-3/4 h-10 bg-white hover:bg-gray-200'
-              icon={GoogleIcon}
-              width={20}
-            />
-            <Button
-              text='Login with Facebook'
-              classNameText='text-black'
-              className='w-3/4 h-10 bg-white hover:bg-gray-200'
-              icon={FacebookIcon}
-              height={20}
-            />
-            
             <div>
               <span className='text-sm'>
                 Have an account?
@@ -163,4 +152,4 @@ const Login = () => {
   );
 }
 
-export default Login;
+export default SignUp;

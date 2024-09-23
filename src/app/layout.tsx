@@ -1,3 +1,5 @@
+'use client'
+
 import "./globals.css";
 import StoreProvider from "./storeProvider";
 import { ToastContainer } from 'react-toastify';
@@ -8,6 +10,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body >

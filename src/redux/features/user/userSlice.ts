@@ -7,7 +7,8 @@ const initialState: UserState = {
     lastName: "",
     gender: null,
     email: "",
-    avatar: null
+    avatar: null,
+    dob: null,
 }
 
 export const userSlice = createSlice({
@@ -17,7 +18,11 @@ export const userSlice = createSlice({
         setUser: (state, action) => {
             state.username = action.payload.username
             state.firstName = action.payload.firstName
-            state.lastName = action.payload.lastName
+            state.lastName = action.payload.lastName,
+            state.email = action.payload.email,
+            state.avatar = action.payload.avatar
+            state.gender = action.payload.gender
+            state.dob = action.payload.dob
         }
     }
 })

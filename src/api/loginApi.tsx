@@ -29,10 +29,17 @@ const useLoginApi = () => {
             setLoading(true);
             const response = await axs.post('/auth/login', { username: username, password: password });
             console.log(response);
-            // const token = response.data.token; // Assuming your backend returns a JWT token
-            // axs.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Set token in default Axios headers
-            // localStorage.setItem('token', token); // Save it for future use
-            // console.log(response.data);
+            const token = await response.data.access_token
+            localStorage.setItem('token', token);
+            const user = await response.data.user
+            dispatch(setUser({
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                gender: user.gender,
+                email: user.email,
+                avatar: user.avatar
+            }))
 
         } catch (error: any) {
             toast.warning(error?.response?.data?.message || "Login failed", {
