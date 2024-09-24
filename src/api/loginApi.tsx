@@ -5,8 +5,10 @@ import axs from "@/utils/axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@/redux/hooks";
+import { useRouter } from "next/navigation";
 
 const useLoginApi = () => {
+    const router = useRouter()
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null); // Khởi tạo state cho error
@@ -28,7 +30,6 @@ const useLoginApi = () => {
         try {
             setLoading(true);
             const response = await axs.post('/auth/login', { username: username, password: password });
-            console.log(response);
             const token = await response.data.access_token
             localStorage.setItem('token', token);
             const user = await response.data.user
@@ -40,6 +41,8 @@ const useLoginApi = () => {
                 email: user.email,
                 avatar: user.avatar
             }))
+
+            router.push('/');
 
         } catch (error: any) {
             toast.warning(error?.response?.data?.message || "Login failed", {

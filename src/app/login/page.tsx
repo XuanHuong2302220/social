@@ -33,8 +33,9 @@ const Login = () => {
     const token = localStorage.getItem('token');
     if(token) {
       router.push('/');
+      console.log('token', token);
     }
-  }, [router])
+  }, [])
 
   const [showPassword, setShowPassword] = useState(false);
 

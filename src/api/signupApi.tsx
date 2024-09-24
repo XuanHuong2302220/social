@@ -17,7 +17,7 @@ const signupApi = () => {
     let failed;
 
     const handleErrors = (password: string, confirmPassword: string) => {
-        if (password.length < 6) {
+        if (password.length < 6 || confirmPassword.length < 6) {
             return 'Password must be at least 6 characters';
         }
         return null; // Trả về null nếu không có lỗi
@@ -34,6 +34,7 @@ const signupApi = () => {
             setLoading(true);
             const response = await axs.post('/auth/register', { username: username, password: password, email: email, confirmPassword: confirmPassword });   
             const data = await response.data
+            console.log(data)
             dispatch(setUser(data));
             toast.success(data.message, {
                 position: 'bottom-center',
