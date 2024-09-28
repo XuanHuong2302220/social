@@ -1,5 +1,3 @@
-import { FieldValues, UseFormRegister } from "react-hook-form";
-
 export interface InputProps {
     placeholder: string,
     type: string,
@@ -27,6 +25,7 @@ export interface ButtonProps {
 }
 
 export interface UserState {
+    id: string,
     username: string,
     firstName: string,
     lastName: string,

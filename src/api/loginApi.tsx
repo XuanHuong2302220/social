@@ -11,22 +11,9 @@ const useLoginApi = () => {
     const router = useRouter()
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null); // Khởi tạo state cho error
-
-    const handleErrors = (password: string) => {
-        if (password.length < 6) {
-            return 'Password must be at least 6 characters';
-        }
-        return null; // Trả về null nếu không có lỗi
-    };
 
     const login = async (username: string, password: string) => {
-        const errorMessage = handleErrors(password);
-        if (errorMessage) {
-            setError(errorMessage); // Gán lỗi nếu có
-            return;
-        }
-
+        
         try {
             setLoading(true);
             const response = await axs.post('/auth/login', { username: username, password: password });
@@ -54,7 +41,7 @@ const useLoginApi = () => {
         }
     };
 
-    return { error, login, loading }; // Trả về error, login và loading
+    return {login, loading };
 };
 
 export default useLoginApi;

@@ -14,7 +14,10 @@ import useLoginApi from '@/api/loginApi';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { selectUser } from '@/redux/features/user/userSlice';
-import { useSelector } from 'react-redux';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {auth} from "@/firebase/firebase";
+import { jwtDecode } from 'jwt-decode';
+import { useAppSelector } from '@/redux/hooks';
 
 interface FormValues {
   username: string;
@@ -23,7 +26,7 @@ interface FormValues {
 
 const Login = () => {
 
-  const user = useSelector(selectUser);
+  const user = useAppSelector(selectUser);
 
   console.log(user);
 
@@ -41,13 +44,56 @@ const Login = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
-  const {error, login, loading} = useLoginApi();
+  const {login, loading} = useLoginApi();
 
   const onSubmit = (data: FormValues) => {
     if (data) {
       login(data.username, data.password);
     }
-};
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      let idToken = await user.getIdToken();
+      const refreshToken = user.refreshToken;
+  
+      // Split displayName into first name and last name
+      const displayName = user.displayName || '';
+      const [firstName, lastName] = displayName.split(' ');
+
+      const decodedToken: { exp: number } = jwtDecode(idToken);
+
+      // Calculate the expiration time
+      const currentTime = Math.floor(Date.now() / 1000); // Thời gian hiện tại tính bằng giây
+      const expirationTimeInSeconds = decodedToken.exp - currentTime;
+      console.log({
+        email: user.email,
+        firstName: firstName || '',
+        lastName: lastName || '',
+        avatar: user.photoURL,
+        uid: user.uid,
+        accessToken: idToken,
+        refreshToken: refreshToken,
+        time: expirationTimeInSeconds,
+      }); // You can dispatch user data to Redux here
+      setInterval(async () => {
+        idToken = await user.getIdToken(true); // Làm mới token
+        const newDecodedToken: { exp: number } = jwtDecode(idToken);
+        const newExpirationTimeInSeconds = newDecodedToken.exp - Math.floor(Date.now() / 1000);
+        console.log('Token refreshed:', {
+          accessToken: idToken,
+          expiresIn: newExpirationTimeInSeconds,
+        });
+      }, 15 * 60 * 1000); // 15 phút
+      // router.push('/');
+    } catch (error) {
+      console.error("Google sign-in error: ", error);
+    }
+  };
+
 
   return (
     <div className='w-screen h-screen flex justify-center items-center text-black bg-white'>
@@ -89,11 +135,11 @@ const Login = () => {
               type={showPassword ? 'text' : 'password'}
               onClick={() => setShowPassword(!showPassword)}
               iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
-              {...register('password', { required: 'Password is required' })}
+              {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
             />
-                {(errors.password || error) && (
+                {(errors.password) && (
                   <p className='text-red-600'>
-                    {errors.password?.message || error}
+                    {errors.password?.message}
                   </p>
                 )}
             <Button
@@ -116,6 +162,7 @@ const Login = () => {
               classNameText='text-black'
               className='w-3/4 h-10 bg-white hover:bg-gray-200'
               icon={GoogleIcon}
+              onClick={loginWithGoogle}
               width={20}
             />
             <Button

@@ -22,11 +22,11 @@ const SignUp = () => {
 
   const router = useRouter();
 
-  const {error, signup, loading, failed} = signupApi();
+  const { signup, loading } = signupApi();
 
-  useEffect(()=> {
+  useEffect(() => {
     const token = localStorage.getItem('token');
-    if(token) {
+    if (token) {
       router.push('/');
     }
   }, [router])
@@ -34,19 +34,13 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setconfirmPassword] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
-  const onSubmit = async(data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     if (data) {
       await signup(data.username, data.password, data.confirmPassword, data.email);
-      if (!failed) {
-        reset();
-        setTimeout(() => {
-          router.push('/login');
-        }, 5000)
-      }
     }
-};
+  };
 
   return (
     <div className='w-screen h-screen flex justify-center items-center text-black bg-white'>
@@ -56,10 +50,10 @@ const SignUp = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <Logo />
-          <div className='w-full h-full flex flex-col justify-center items-center gap-2'>
-            <div className='flex flex-col w-full items-center'>
+          <div className='w-full h-full flex flex-col justify-center items-center gap-5'>
+            <div className='flex flex-col w-full items-center gap-2'>
               <span className='desktop:text-3xl laptop:text-2xl tablet:text-2xl phone:text-2xl font-bold text-black flex gap-1'>
-                Get Started With 
+                Get Started With
                 <span className='text-primaryColor'>SignUp</span>
               </span>
               <span className='text-sm text-black'>
@@ -74,25 +68,25 @@ const SignUp = () => {
               height={20}
               {...register('username', { required: 'Username is required' })}
             />
-                {errors.username&& (
-                  <p className='text-red-600 text-xs'>
-                    {errors.username?.message}
-                  </p>
-                )}
+            {errors.username && (
+              <p className='text-red-600 text-xs'>
+                {errors.username?.message}
+              </p>
+            )}
 
-              <Input
-                className='w-3/4 h-10'
-                placeholder='email'
-                type='email'
-                width={20}
-                height={20}
-                {...register('email', { required: 'email is required' })}
-              />
-                {errors.email&& (
-                  <p className='text-red-600 text-xs'>
-                    {errors.email?.message}
-                  </p>
-                )}
+            <Input
+              className='w-3/4 h-10'
+              placeholder='email'
+              type='email'
+              width={20}
+              height={20}
+              {...register('email', { required: 'email is required' })}
+            />
+            {errors.email && (
+              <p className='text-red-600 text-xs'>
+                {errors.email?.message}
+              </p>
+            )}
 
             <Input
               className='w-3/4 h-10 cursor-pointer'
@@ -102,13 +96,13 @@ const SignUp = () => {
               type={showPassword ? 'text' : 'password'}
               onClick={() => setShowPassword(!showPassword)}
               iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
-              {...register('password', { required: 'Password is required' })}
+              {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
             />
-                {(errors.password || error) && (
-                  <p className='text-red-600 text-xs'>
-                    {errors.password?.message || error}
-                  </p>
-                )}
+            {(errors.password) && (
+              <p className='text-red-600 text-xs'>
+                {errors.password?.message}
+              </p>
+            )}
 
             <Input
               className='w-3/4 h-10 cursor-pointer'
@@ -118,15 +112,15 @@ const SignUp = () => {
               type={confirmPassword ? 'text' : 'password'}
               onClick={() => setconfirmPassword(!confirmPassword)}
               iconComponent={confirmPassword ? <FaEyeSlash /> : <FaEye />}
-              {...register('confirmPassword', { required: 'Confirm Password is required' })}
+              {...register('confirmPassword', { required: 'Confirm Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
             />
-                {(errors.confirmPassword || error) && (
-                  <p className='text-red-600 text-xs'>
-                    {errors.confirmPassword?.message || error}
-                  </p>
-                )}
+            {(errors.confirmPassword) && (
+              <p className='text-red-600 text-xs'>
+                {errors.confirmPassword?.message}
+              </p>
+            )}
             <Button
-              text={loading ? null : 'Login'}
+              text={loading ? null : 'Sign Up'}
               type="submit"
               classNameText='text-white font-bold'
               className='w-3/4 h-10 rounded-lg bg-black'
@@ -143,7 +137,7 @@ const SignUp = () => {
             </div>
           </div>
         </form>
-        
+
         <div className='w-2/4 h-full desktop:flex 2xl:flex items-center justify-center tablet:hidden laptop:flex phone:hidden'>
           <Image layout='responsive' src={background} alt="background" />
         </div>
