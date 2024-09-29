@@ -14,9 +14,6 @@ import useLoginApi from '@/api/loginApi';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { selectUser } from '@/redux/features/user/userSlice';
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import {auth} from "@/firebase/firebase";
-import { jwtDecode } from 'jwt-decode';
 import { useAppSelector } from '@/redux/hooks';
 
 interface FormValues {
@@ -28,15 +25,12 @@ const Login = () => {
 
   const user = useAppSelector(selectUser);
 
-  console.log(user);
-
   const router = useRouter();
 
   useEffect(()=> {
     const token = localStorage.getItem('token');
     if(token) {
       router.push('/');
-      console.log('token', token);
     }
   }, [])
 
@@ -44,7 +38,7 @@ const Login = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
-  const {login, loading} = useLoginApi();
+  const {login, loading, loginWithGoogle} = useLoginApi();
 
   const onSubmit = (data: FormValues) => {
     if (data) {
@@ -52,47 +46,6 @@ const Login = () => {
     }
   };
 
-  const loginWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      let idToken = await user.getIdToken();
-      const refreshToken = user.refreshToken;
-  
-      // Split displayName into first name and last name
-      const displayName = user.displayName || '';
-      const [firstName, lastName] = displayName.split(' ');
-
-      const decodedToken: { exp: number } = jwtDecode(idToken);
-
-      // Calculate the expiration time
-      const currentTime = Math.floor(Date.now() / 1000); // Thời gian hiện tại tính bằng giây
-      const expirationTimeInSeconds = decodedToken.exp - currentTime;
-      console.log({
-        email: user.email,
-        firstName: firstName || '',
-        lastName: lastName || '',
-        avatar: user.photoURL,
-        uid: user.uid,
-        accessToken: idToken,
-        refreshToken: refreshToken,
-        time: expirationTimeInSeconds,
-      }); // You can dispatch user data to Redux here
-      setInterval(async () => {
-        idToken = await user.getIdToken(true); // Làm mới token
-        const newDecodedToken: { exp: number } = jwtDecode(idToken);
-        const newExpirationTimeInSeconds = newDecodedToken.exp - Math.floor(Date.now() / 1000);
-        console.log('Token refreshed:', {
-          accessToken: idToken,
-          expiresIn: newExpirationTimeInSeconds,
-        });
-      }, 15 * 60 * 1000); // 15 phút
-      // router.push('/');
-    } catch (error) {
-      console.error("Google sign-in error: ", error);
-    }
-  };
 
 
   return (
@@ -102,7 +55,9 @@ const Login = () => {
           className='desktop:w-2/4 laptop:w-2/4 tablet:w-full phone:w-full h-full'
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Logo />
+          <Link href={'/login'} className='cursor-pointer'>
+            <Logo />
+          </Link>
           <div className='w-full h-full flex flex-col justify-center items-center gap-2'>
             <div className='flex flex-col w-full items-center'>
               <span className='desktop:text-7xl laptop:text-5xl tablet:text-5xl phone:text-5xl font-bold text-black'>
@@ -142,6 +97,11 @@ const Login = () => {
                     {errors.password?.message}
                   </p>
                 )}
+
+                <Link href={'/forgotpassword'} 
+                  className=' w-3/4 text-right text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
+                  forgot password?
+                </Link>
             <Button
               text={loading ? null : 'Next'}
               type="submit"
@@ -165,14 +125,6 @@ const Login = () => {
               onClick={loginWithGoogle}
               width={20}
             />
-            <Button
-              text='Login with Facebook'
-              classNameText='text-black'
-              className='w-3/4 h-10 bg-white hover:bg-gray-200'
-              icon={FacebookIcon}
-              height={20}
-            />
-            
             <div>
               <span className='text-sm'>
                 Don't have an account?

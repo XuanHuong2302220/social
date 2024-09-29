@@ -30,7 +30,7 @@ export interface UserState {
     firstName: string,
     lastName: string,
     gender: string | null,
-    email: string,
+    email: string | null,
     avatar: string | null,
     dob?: string | null,
 }

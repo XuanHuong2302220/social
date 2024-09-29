@@ -1,5 +1,6 @@
 'use client'
 
+import refreshToken from '@/api/refreshToken'
 import { selectUser } from '@/redux/features/user/userSlice'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
@@ -10,18 +11,26 @@ const withAuth = (WappedComponent : React.FC) => {
         const router = useRouter();
         const user = useSelector(selectUser);
 
-        const {firstName, lastName, username} = user;
+        const {firstName, lastName, username, id} = user;
+        const token = localStorage.getItem('token');
 
         useEffect(()=> {
-            const token = localStorage.getItem('token');
+            
             if(!token) {
                 router.push('/login');
             }
             else if (token && !firstName && !lastName) {
-                // router.push(`/information/${username}`);
-                console.log('username', username)
+                refreshToken();
+                router.push(`/information/${username}`);
             }
-        },[router])
+            else if (token && !username){
+                refreshToken();
+                router.push(`/information/${id}`);
+            }
+            else if(token){
+                refreshToken();
+            }
+        },[firstName, lastName, username, router, token])
 
         return <WappedComponent {...prop} />
     }

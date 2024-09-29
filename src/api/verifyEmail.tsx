@@ -19,9 +19,11 @@ const verifyEmail = () => {
         try {
             setLoading(true);
             const response = await axs.get(`/auth/confirm-email/${id}`);
-            const token = await response.data.token;
-            localStorage.setItem('token', token);
-            router.push(`/information/${user.username}`);
+            const data = await response.data
+            if (data.token) {
+                localStorage.setItem('token', JSON.stringify(data.token));
+                router.push(`/information/${user.username}`);
+            }
         } catch (error : any) {
             toast.error(error?.response?.data?.message, {
                 position: 'bottom-center',

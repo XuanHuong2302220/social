@@ -20,7 +20,6 @@ const signupApi = () => {
             setLoading(true);
             const response = await axs.post('/auth/register', { username: username, password: password, email: email, confirmPassword: confirmPassword });   
             const data = await response.data
-            console.log(data.user)
             dispatch(setUser({
                 id: data.user.id,
                 username: data.user.username,
@@ -34,7 +33,9 @@ const signupApi = () => {
             toast.success(data.message, {
                 position: 'bottom-center',
             })
-            // route.push('/login')
+            setTimeout(()=> {
+                route.push('/login')
+            }, 3000)
         }
         catch (error: any) {
             toast.warning(error?.response?.data?.message || "Login failed", {
