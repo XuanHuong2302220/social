@@ -35,6 +35,10 @@ const useLoginApi = () => {
 
             const data = await response.data;
 
+            await axs.post('/auth/store-refresh-token', {
+                refreshToken: user.refreshToken
+            })
+
             dispatch(setUser({
                 firstName: data.firstName,
                 lastName: data.lastName,

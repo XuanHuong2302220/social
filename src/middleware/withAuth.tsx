@@ -1,6 +1,6 @@
 'use client'
 
-import refreshToken from '@/api/refreshToken'
+import refreshToken from '@/api/auth/refreshToken'
 import { selectUser } from '@/redux/features/user/userSlice'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'

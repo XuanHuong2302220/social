@@ -10,7 +10,7 @@ import background from '@/assets/images/background.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
-import useLoginApi from '@/api/loginApi';
+import useLoginApi from '@/api/auth/loginApi';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { selectUser } from '@/redux/features/user/userSlice';
