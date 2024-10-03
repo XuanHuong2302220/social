@@ -4,12 +4,13 @@ import Image from 'next/image'
 import styles from './input.module.css'
 const Input = forwardRef<HTMLInputElement, InputProps>(({
   placeholder,
-  type = 'text',
+  type,
   icon,
   width,
   height,
   className,
   iconComponent,
+  classInput,
   onClick,
   ...rest
 } : InputProps, ref) => {
@@ -20,7 +21,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         <input
           ref={ref}
           type={type}
-          className={`${styles.input} ${styles.plaintext} bg-colorInput w-full h-full text-black bg-inherit`}
+          className={`${styles.input} ${styles.plaintext} bg-colorInput w-full h-full text-black bg-inherit ${classInput}`}
           placeholder={placeholder}
           {...rest}
         />

@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import {auth} from "@/firebase/firebase";
+import { setToken } from "@/redux/features/auth/authSlice";
 
 const useLoginApi = () => {
     const router = useRouter()
@@ -20,6 +21,9 @@ const useLoginApi = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             let idToken = await user.getIdToken();
+            if(idToken){
+                idToken = idToken.replace(/['"]+/g, '')
+            }
         
             const displayName = user.displayName || '';
             const [firstName, lastName] = displayName.split(' ');
@@ -51,13 +55,13 @@ const useLoginApi = () => {
             }))
 
             idToken = await user.getIdToken(true);
-            localStorage.setItem('token', JSON.stringify(idToken));
-            if(data.username){
-                router.push('/');
-            }
-            else {
-                router.push(`/information/${data.id}`);
-            }
+            localStorage.setItem('token', idToken);
+            // if(data.username){
+            //     router.push('/');
+            // }
+            // else {
+            //     router.push(`/information/${data.id}`);
+            // }
         } catch (error: any) {
             toast.warning(error?.response?.data?.message || "Login failed", {
                 position: 'bottom-center',
@@ -84,6 +88,8 @@ const useLoginApi = () => {
                 id: user.id,
                 dob: user.dob,
             }))
+
+            dispatch(setToken(token))
 
             router.push('/');
 

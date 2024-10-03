@@ -1,14 +1,15 @@
 'use client'
 
+import { setToken } from "@/redux/features/auth/authSlice";
 import { selectUser } from "@/redux/features/user/userSlice";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axs from "@/utils/axios";
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { toast } from "react-toastify";
 
 const verifyEmail = () => {
-
+    const dispatch = useAppDispatch();
     const router = useRouter();
     const [loading, setLoading] = useState(false)
     const {id} = useParams();
@@ -22,6 +23,7 @@ const verifyEmail = () => {
             const data = await response.data
             if (data.token) {
                 localStorage.setItem('token', JSON.stringify(data.token));
+                dispatch(setToken(data.token));
                 router.push(`/information/${user.username}`);
             }
         } catch (error : any) {

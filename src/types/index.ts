@@ -8,7 +8,8 @@ export interface InputProps {
     right?: boolean,
     iconComponent?: any,
     onClick?: () => void,
-    ref?: React.Ref<HTMLInputElement>;
+    ref?: React.Ref<HTMLInputElement>,
+    classInput?: string
 }
 
 export interface ButtonProps {
@@ -25,12 +26,18 @@ export interface ButtonProps {
 }
 
 export interface UserState {
-    id: string,
-    username: string,
-    firstName: string,
-    lastName: string,
-    gender: string | null,
-    email: string | null,
-    avatar: string | null,
+    id?: string,
+    username?: string,
+    firstName?: string,
+    lastName?: string,
+    gender?: string | null,
+    email?: string | null,
+    avatar?: string | null,
     dob?: string | null,
+}
+
+export interface logoProps {
+    size?: string,
+    width?: number,
+    isLogo?: boolean,
 }

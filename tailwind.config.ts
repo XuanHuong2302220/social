@@ -13,7 +13,9 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         colorInput: "#F2F2F2",
-        primaryColor: "#F9AD71"
+        primaryColor: "#F9AD71",
+        navbar: "#191819",
+        search: '#2D2C2C'
       },
     },
     screens: {

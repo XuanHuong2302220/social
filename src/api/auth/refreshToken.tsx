@@ -3,8 +3,12 @@ import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 
 const refreshToken = async () => {
-    const token = localStorage.getItem('token') || '';
-    if(!token){
+    let token = localStorage.getItem('token') || '';
+  
+    if(token){
+        token = token.replace(/['"]+/g, '')
+    }
+    else{
         return;
     }
     const decodeToken: any = jwtDecode(token); 
@@ -14,13 +18,15 @@ const refreshToken = async () => {
 
     if(expirationTimeInSeconds < 300 ){
         try {
-            const response = await axs.post('/auth/refresh-token');
+            const response = await axs.post('/auth/refresh-token', {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
             const newToken = await response.data.access_token;
             localStorage.setItem('token', JSON.stringify(newToken));
         } catch (error: any) {
-            toast.warning(error?.response?.data?.message, {
-                position: 'bottom-center',
-            });
+            console.log(error);
         }
     }
 

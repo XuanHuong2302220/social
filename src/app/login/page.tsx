@@ -5,7 +5,6 @@ import { Input, Button, Logo } from '@/components';
 import UserIcon from '@/assets/icons/user.svg';
 import PasswordIcon from '@/assets/icons/password.svg';
 import GoogleIcon from '@/public/icons/google.svg';
-import FacebookIcon from '@/public/icons/facebook.svg';
 import background from '@/assets/images/background.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from 'next/image';
