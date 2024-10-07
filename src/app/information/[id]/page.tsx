@@ -10,6 +10,7 @@ import 'rsuite/dist/rsuite.min.css'; // Import CSS cho rsuite
 import { useParams, useRouter } from 'next/navigation';
 import updateUser from '@/api/auth/updateUser';
 import withAuth from '@/middleware/withAuth';
+import { useAppSelector } from '@/redux/hooks';
 
 interface FormValues {
   firstName: string;
@@ -20,7 +21,7 @@ interface FormValues {
 
 const information = () => {
   const { register, handleSubmit,control, formState: { errors } } = useForm<FormValues>();
-  const user = useSelector(selectUser);
+  const user = useAppSelector(selectUser);
   const router = useRouter();
   let token = localStorage.getItem('token') || '';
   
@@ -45,7 +46,7 @@ const information = () => {
     else {
        router.push('/not-found');
     }
-  }, [id, user.username, user.id, router])
+  }, [])
 
   const onSubmit = async(data: any) => {
       console.log(data)

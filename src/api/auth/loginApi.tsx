@@ -21,9 +21,6 @@ const useLoginApi = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             let idToken = await user.getIdToken();
-            if(idToken){
-                idToken = idToken.replace(/['"]+/g, '')
-            }
         
             const displayName = user.displayName || '';
             const [firstName, lastName] = displayName.split(' ');
@@ -37,11 +34,10 @@ const useLoginApi = () => {
                 id: user.uid,
             })
 
-            const data = await response.data;
+            localStorage.setItem('token', idToken);
+            dispatch(setToken(idToken))
 
-            await axs.post('/auth/store-refresh-token', {
-                refreshToken: user.refreshToken
-            })
+            const data = await response.data;
 
             dispatch(setUser({
                 firstName: data.firstName,
@@ -54,14 +50,13 @@ const useLoginApi = () => {
                 gender: data.gender
             }))
 
-            idToken = await user.getIdToken(true);
-            localStorage.setItem('token', idToken);
-            // if(data.username){
-            //     router.push('/');
-            // }
-            // else {
-            //     router.push(`/information/${data.id}`);
-            // }
+          
+            if(data.username){
+                router.push('/');
+            }
+            else {
+                router.push(`/information/${data.id}`);
+            }
         } catch (error: any) {
             toast.warning(error?.response?.data?.message || "Login failed", {
                 position: 'bottom-center',

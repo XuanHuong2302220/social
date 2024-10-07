@@ -2,17 +2,17 @@
 
 import refreshToken from '@/api/auth/refreshToken'
 import { selectUser } from '@/redux/features/user/userSlice'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
 
-const withAuth = (WappedComponent : React.FC) => {
+const withAuth = (WrappedComponent : React.FC) => {
     const ProtectedComponent = (prop: any) => {
+        const user = useAppSelector(selectUser);
         const router = useRouter();
-        const user = useSelector(selectUser);
-
         const {firstName, lastName, username, id} = user;
-        const token = localStorage.getItem('token');
+        const token = useAppSelector((state) => state.auth.token);
+        const dispatch = useAppDispatch();
 
         useEffect(()=> {
             
@@ -20,19 +20,19 @@ const withAuth = (WappedComponent : React.FC) => {
                 router.push('/login');
             }
             else if (token && !firstName && !lastName) {
-                refreshToken();
+                refreshToken(token, dispatch);
                 router.push(`/information/${username}`);
             }
             else if (token && !username){
-                refreshToken();
+                refreshToken(token, dispatch);
                 router.push(`/information/${id}`);
             }
             else if(token){
-                refreshToken();
+                refreshToken(token, dispatch);
             }
         },[firstName, lastName, username, router, token])
 
-        return <WappedComponent {...prop} />
+        return <WrappedComponent {...prop} />
     }
   return ProtectedComponent
 }

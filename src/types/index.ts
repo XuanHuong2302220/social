@@ -9,20 +9,24 @@ export interface InputProps {
     iconComponent?: any,
     onClick?: () => void,
     ref?: React.Ref<HTMLInputElement>,
-    classInput?: string
+    classInput?: string,
+    value?: string,
+    onChange?: (e: any) => void,
+    tabIndex?: number
 }
 
 export interface ButtonProps {
     text: string | null,
     onClick?: () => void
-    icon?: string,
+    icon?: any,
     className?: string,
     classNameText?: string,
     width?: number,
     height?: number,
     type?: 'button' | 'reset' | 'submit',
     disabled?: boolean,
-    iconLoading?: boolean
+    iconLoading?: boolean,
+    right?: boolean,
 }
 
 export interface UserState {
@@ -40,4 +44,21 @@ export interface logoProps {
     size?: string,
     width?: number,
     isLogo?: boolean,
+}
+
+export interface DropDownProps {
+    tabIndex?: number,
+    className?: string,
+    classNameContent?: string,
+    parents: any,
+    children?: any,
+    width?: string;
+  }
+
+export interface AvatarProps {
+    width: number,
+    src?: string,
+    alt: string,
+    height: number,
+    className?: string,
 }

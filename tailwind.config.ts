@@ -12,10 +12,11 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        colorInput: "#F2F2F2",
-        primaryColor: "#F9AD71",
-        navbar: "#191819",
-        search: '#2D2C2C'
+        colorInput: "var(--color-input)",
+        primaryColor: "var(--primary-color)",
+        navbar: "var(--navbar)",
+        search: "var(--search)",
+        whiteText: "var(--whiteText)",
       },
     },
     screens: {
@@ -24,6 +25,9 @@ const config: Config = {
       'laptop': '1024px',
       'desktop': '1280px',
     },
+    daisyui: {
+      
+    }
   },
   plugins: [daisyui],
 };

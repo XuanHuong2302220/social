@@ -9,7 +9,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Navbar } from "@/components";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setToken } from "@/redux/features/auth/authSlice";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 function AppContent({
   children,
@@ -18,17 +18,29 @@ function AppContent({
 }>) {
   const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.token);
+  const [check, setCheck] = useState(false);
+  const theme = useAppSelector((state) => state.theme.theme);
+  const router = useRouter();
+
+  useEffect(()=> {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme])
+
+  const pathName = usePathname();
+  const {id} = useParams();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken && !token) {
-      dispatch(setToken(storedToken));
+    if (!token) {
+      router.push('/login');
+    }
+    if(pathName === `/information/${id}`){
+      setCheck(true)
     }
   }, [dispatch, token]);
 
   return (
     <>
-      {token && <Navbar />}
+      {token && !check && <Navbar />}
       {children}
       <ToastContainer
         position="bottom-center"

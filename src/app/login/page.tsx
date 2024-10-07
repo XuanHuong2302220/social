@@ -22,8 +22,6 @@ interface FormValues {
 
 const Login = () => {
 
-  const user = useAppSelector(selectUser);
-
   const router = useRouter();
 
   useEffect(()=> {

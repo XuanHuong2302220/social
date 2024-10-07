@@ -1,4 +1,4 @@
-import React, {forwardRef } from 'react'
+import React, {forwardRef, memo } from 'react'
 import { InputProps } from '@/types'
 import Image from 'next/image'
 import styles from './input.module.css'
@@ -11,6 +11,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   className,
   iconComponent,
   classInput,
+  value,
   onClick,
   ...rest
 } : InputProps, ref) => {
@@ -21,8 +22,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         <input
           ref={ref}
           type={type}
-          className={`${styles.input} ${styles.plaintext} bg-colorInput w-full h-full text-black bg-inherit ${classInput}`}
+          className={`${styles.input} ${styles.plaintext} bg-colorInput w-full h-full text-black ${classInput}`}
           placeholder={placeholder}
+          value={value}
           {...rest}
         />
         {iconComponent && <div onClick={onClick}>{iconComponent}</div>}
@@ -30,4 +32,4 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   )
 })
 
-export default Input
+export default memo(Input)
