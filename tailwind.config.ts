@@ -16,7 +16,8 @@ const config: Config = {
         primaryColor: "var(--primary-color)",
         navbar: "var(--navbar)",
         search: "var(--search)",
-        whiteText: "var(--whiteText)",
+        textColor: "var(--text-color)",
+        backgroundImg: "var(--background-second)",
       },
     },
     screens: {

@@ -27,6 +27,7 @@ export interface ButtonProps {
     disabled?: boolean,
     iconLoading?: boolean,
     right?: boolean,
+    left?: boolean,
 }
 
 export interface UserState {
@@ -61,4 +62,5 @@ export interface AvatarProps {
     alt: string,
     height: number,
     className?: string,
+    onClick?: ()=> void
 }

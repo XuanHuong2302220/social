@@ -1,8 +1,6 @@
-import { setToken } from "@/redux/features/auth/authSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { clearToken, setToken } from "@/redux/features/auth/authSlice";
 import axs from "@/utils/axios";
 import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
 
 const refreshToken = async (token: any, dispatch: any) => {
 
@@ -20,7 +18,7 @@ const refreshToken = async (token: any, dispatch: any) => {
 
     if(expirationTimeInSeconds < 300 ){
         try {
-            const response = await axs.post('/auth/refresh-token', {}, {
+            const response = await axs.get('/auth/refresh-token', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -32,6 +30,8 @@ const refreshToken = async (token: any, dispatch: any) => {
 
         } catch (error: any) {
             console.log(error);
+            dispatch(clearToken());
+            localStorage.removeItem('token');
         }
     }
 

@@ -107,7 +107,7 @@ const Navbar = () => {
               children={showDropdownLogout &&
                 <ul >
                   <li><a>Item 1</a></li>
-                  <li><Button icon={<IoLogOut className='text-xl' />} right text='Log out' className='flex justify-start' onClick={handleLogout} /></li>
+                  <li><Button icon={<IoLogOut className='text-xl' />} left text='Log out' className='flex justify-start' onClick={handleLogout} /></li>
                 </ul>
               }
             />

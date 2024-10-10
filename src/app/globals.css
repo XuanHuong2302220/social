@@ -4,17 +4,18 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0d0d0d;
 }
 
 [data-theme='dark'] {
-  --background: #1a1a1a;
+  --background: #0d0d0d;
   --foreground: #ffffff;
   --color-input: #F2F2F2;
   --primary-color: #F9AD71;
   --navbar: #191819;
   --search: #2D2C2C;
-  --whiteText: #ffffff;
+  --text-color: #ffffff;
+  --background-second: #333436;
 }
 
 [data-theme='light'] {
@@ -23,7 +24,9 @@
   --color-input: #F2F2F2;
   --primary-color: #F9AD71;
   --navbar: #F2F2F2;  
-  --search: #D2D3D3;;
+  --search: #D2D3D3;
+  --text-color: #000000;
+  --background-second: #CCCBC9;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,6 +38,7 @@ body {
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+  background-color: var(--background);
 }
 
 @layer utilities {
@@ -43,10 +47,7 @@ body {
   }
 }
 
-/* .bg-navbar {
-  background-color: var(--navbar);
+.textarea:focus{
+    outline: none;
+    border: none
 }
-
-.bg-search {
-  background-color: var(--search);
-} */
