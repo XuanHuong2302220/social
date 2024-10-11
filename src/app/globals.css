@@ -16,6 +16,7 @@
   --search: #2D2C2C;
   --text-color: #ffffff;
   --background-second: #333436;
+  --background-icon: #3f4042;
 }
 
 [data-theme='light'] {
@@ -27,6 +28,7 @@
   --search: #D2D3D3;
   --text-color: #000000;
   --background-second: #CCCBC9;
+  --background-icon: #c0bfbd;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -48,6 +50,6 @@ body {
 }
 
 .textarea:focus{
-    outline: none;
-    border: none
+  outline: none;
+  border: none
 }

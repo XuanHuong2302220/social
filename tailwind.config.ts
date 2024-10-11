@@ -18,6 +18,7 @@ const config: Config = {
         search: "var(--search)",
         textColor: "var(--text-color)",
         backgroundImg: "var(--background-second)",
+        backgroundIcon: "var(--background-icon)",
       },
     },
     screens: {

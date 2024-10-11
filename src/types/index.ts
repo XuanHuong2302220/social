@@ -16,7 +16,7 @@ export interface InputProps {
 }
 
 export interface ButtonProps {
-    text: string | null,
+    text?: string | null,
     onClick?: () => void
     icon?: any,
     className?: string,
