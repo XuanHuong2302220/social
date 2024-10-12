@@ -1,13 +1,15 @@
 import React from 'react'
 import { DropDownProps } from '@/types/index'
 
-const DropDown = ({className, classNameContent, parents, children, tabIndex}: DropDownProps) => {
+const DropDown = ({className, classNameContent, parents, children, tabIndex, position}: DropDownProps) => {
+
   return (
-    <div className="dropdown" >
+    <div className={`dropdown dropdown-${position}`} >
         <div tabIndex={tabIndex} className={className}>{parents}</div>
-          {children && <ul tabIndex={tabIndex} className={`dropdown-content menu shadow ${classNameContent}`}>
+          {children && 
+          <div tabIndex={tabIndex} className={`dropdown-content shadow ${classNameContent}`}>
            {children}
-        </ul>}
+          </div>}
     </div>
     
   )

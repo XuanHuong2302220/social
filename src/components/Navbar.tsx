@@ -93,7 +93,7 @@ const Navbar = () => {
           <div ref={dropdownRef}>
             <DropDown
               className='text-whiteText w-[200px]'
-              classNameContent='bg-search w-[200px] rounded-b-lg'
+              classNameContent='bg-search w-[200px] rounded-b-lg menu'
               tabIndex={0}
               parents={
                 <Button

@@ -17,10 +17,11 @@ export interface InputProps {
 
 export interface ButtonProps {
     text?: string | null,
-    onClick?: () => void
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     icon?: any,
     className?: string,
     classNameText?: string,
+    ref?: React.Ref<HTMLButtonElement>,
     width?: number,
     height?: number,
     type?: 'button' | 'reset' | 'submit',
@@ -54,6 +55,7 @@ export interface DropDownProps {
     parents: any,
     children?: any,
     width?: string;
+    position?: string;
   }
 
 export interface AvatarProps {

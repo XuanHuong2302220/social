@@ -10,10 +10,10 @@ const useClickOutside = (ref: React.RefObject<HTMLElement>, handler: (event: Mou
             }
         }
 
-        document.addEventListener('mousedown', handlClickOutside)
+        document.addEventListener('click', handlClickOutside)
 
         return ()=> {
-            document.removeEventListener('mousedown', handlClickOutside)
+            document.removeEventListener('click', handlClickOutside)
         }
 
     }, [ref, handler])
