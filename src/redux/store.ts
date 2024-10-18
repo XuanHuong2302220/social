@@ -6,16 +6,19 @@ import { combineReducers } from 'redux';
 import userReducer from './features/user/userSlice';
 import authReducer from './features/auth/authSlice';
 import themeReducer from './features/theme/themeSlice';
+import postReducer from './features/post/postSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['post']
 };
 
 const rootReducer = combineReducers({
   user: userReducer,
   auth: authReducer,
-  theme: themeReducer
+  theme: themeReducer,
+  post: postReducer,
   // Các reducer khác nếu có
 });
 

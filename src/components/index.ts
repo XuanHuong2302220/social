@@ -6,6 +6,8 @@ import DropDown from "./DropDown"
 import NewPost from "./post/NewPost"
 import Avatar from "./Avatar"
 import ModalPost from "./post/ModalPost"
+import Modal from "./Modal"
+import Post from "./post/Post"
 
 export {
     Input,
@@ -15,5 +17,7 @@ export {
     DropDown,
     NewPost,
     Avatar,
-    ModalPost
+    ModalPost,
+    Modal,
+    Post
 }

@@ -66,3 +66,23 @@ export interface AvatarProps {
     className?: string,
     onClick?: ()=> void
 }
+
+export interface ModalProps {
+    children: any,
+    title: any,
+    onClose?: () => void,
+    isOpen?: boolean,
+    closeIcon?: boolean,
+    id: string,
+    className?: string
+}
+
+export interface PostState {
+    id: string | null,
+    description: string,
+    images: string[],
+    status: number,
+    tags: string[] | null,
+    likes: number,
+    comments: number,
+}

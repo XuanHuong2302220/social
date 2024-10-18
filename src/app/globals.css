@@ -75,3 +75,15 @@ body {
   outline: none;
   border: none
 }
+
+.public-DraftEditorPlaceholder-root{
+  /* display: none; */
+  position: absolute;
+  top: 30%;
+}
+
+.DraftEditor-editorContainer{
+  padding: 10px 0;
+  min-height: 50px;
+  position: relative;
+}

@@ -17,7 +17,7 @@ const NewPost = () => {
     }
   }
   return (
-    <div className='w-full h-[150px] bg-navbar p-4 rounded-xl' >
+    <div className='card shadow-xl w-full h-[150px] bg-navbar p-4 rounded-xl' >
         <div className='h-2/4 gap-3 flex justify-between items-center w-full'>
             <Link href={'/profile'}>
               <Avatar width={1} height={1} alt='avatar' className='w-[52px] h-[52px]'/>

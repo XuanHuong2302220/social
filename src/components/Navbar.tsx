@@ -37,6 +37,7 @@ const Navbar = () => {
   const handleClickTheme = (theme: string)=> {
     dispatch(setTheme(theme))
     console.log(theme)
+    setShowDropdownLogout(false)
     document.documentElement.setAttribute('data-theme', theme);
   }
 
