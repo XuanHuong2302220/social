@@ -8,6 +8,7 @@ import Avatar from "./Avatar"
 import ModalPost from "./post/ModalPost"
 import Modal from "./Modal"
 import Post from "./post/Post"
+import SkeletonPost from "./post/SkeletonPost"
 
 export {
     Input,
@@ -19,5 +20,6 @@ export {
     Avatar,
     ModalPost,
     Modal,
-    Post
+    Post,
+    SkeletonPost
 }

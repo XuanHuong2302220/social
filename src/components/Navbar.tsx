@@ -53,7 +53,7 @@ const Navbar = () => {
   const fullName = `${user.firstName} ${user.lastName}`
 
   return (
-    <div className={`w-full h-[65px] flex items-center bg-navbar px-7 justify-between fixed `}>
+    <div className={`w-full z-50 h-[65px] flex items-center bg-navbar px-7 justify-between fixed `}>
         <div className='flex w-1/3 gap-4 items-center h-full'>
           <Logo size='text-3xl' width={30} />
 

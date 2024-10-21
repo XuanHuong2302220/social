@@ -25,6 +25,11 @@ const SignUp = () => {
   const { signup, loading } = signupApi();
 
   useEffect(() => {
+    console.log('signup page')
+  }, [])
+
+
+  useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       router.push('/');

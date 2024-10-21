@@ -40,6 +40,7 @@ const ModalPost = () => {
   const [text, setText] = useState('')
   const [openEmoji, setOpenEmoji] = useState(false)
   const textareaRef = useRef<any>(null)
+  const [loadingImage, setLoadingImage] = useState(false)
   
   const onChange = (text: React.SetStateAction<string>) => setText(text);
 
@@ -102,7 +103,6 @@ const ModalPost = () => {
 
 
   const handleOpenModal = (index: number) => {
-    console.log(index)
     setIndexImg(index)
     openModalImage?.show()
     console.log(indexImg)
@@ -170,21 +170,26 @@ const ModalPost = () => {
   }
 
   const handleSubmit = async () => {
-    if (text.trim() || images.length > 0) {
+    if (text || images.length > 0) {
       try {
         const uploadedFiles = await Promise.all(
           files.map(async (file) => {
             const storageRef = ref(storage, `images/${file.name}`);
             try {
+              setLoadingImage(true)
               const url = await getDownloadURL(storageRef);
               return url;
             } catch (error) {
+              setLoadingImage(true)
               if ((error as any).code === 'storage/object-not-found') {
                 await uploadBytes(storageRef, file);
                 const url = await getDownloadURL(storageRef);
                 return url;
               }
               throw error;
+            }
+            finally {
+              setLoadingImage(false)
             }
           })
         );
@@ -219,7 +224,7 @@ const ModalPost = () => {
             <div>
                 <HighlightWithinTextarea
                   value={text}
-                  highlight={[{highlight: /#[\w]+/g, className: 'text-textColor bg-blue-500'}]}
+                  highlight={[{highlight: /#[\w]+/g, className: 'text-blue-500 bg-transparent'}]}
                   onChange= {onChange}
                   placeholder='What are you thinking?'
                 />
@@ -241,7 +246,7 @@ const ModalPost = () => {
                   >
                     {images?.map((image, index) => (
                       <SwiperSlide key={index}>
-                      <Image alt={image} src={image} layout="fill"  style={{ objectFit: 'contain' }} />
+                        <Image alt={image} src={image} layout="fill"  style={{ objectFit: 'contain' }} />
                     </SwiperSlide>
                     ) )}
             
@@ -337,12 +342,12 @@ const ModalPost = () => {
             </div>
           </div>
           <Button text={
-            loading ? null : 'Post'
+            loading || loadingImage ? null : 'Post'
           } 
           onClick={handleSubmit} 
-          disabled={loading || (text === '' && images.length === 0)}  
+          disabled={loading || loadingImage || (text === '' && images.length === 0)}  
           className='w-full bg-primaryColor text-textColor hover:bg-primaryColor hover:opacity-50 my-3' 
-          iconLoading={loading} 
+          iconLoading={loading || loadingImage} 
           />
 
           <div className={`absolute right-[5px] cursor-pointer ${images.length > 0 ? 'top-[25%]' : 'top-[30%] '}`}>

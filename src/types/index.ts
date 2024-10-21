@@ -80,6 +80,10 @@ export interface ModalProps {
 export interface PostState {
     id: string | null,
     description: string,
+    created_by: {
+        id: string,
+        fullName: string
+    },
     images: string[],
     status: number,
     tags: string[] | null,

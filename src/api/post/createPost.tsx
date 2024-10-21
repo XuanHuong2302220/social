@@ -30,17 +30,9 @@ const useCreatePost = () => {
 
             const post = await response.data
 
-            console.log(post)
+            console.log(post, 'post in create')
 
-            dispatch(addPost({
-                id: post.id,
-                description: post.description,
-                images: post.images,
-                likes: 0,
-                comments: 0,
-                status: post.status,
-                tags: post.tags,
-            }))
+            dispatch(addPost(post))
 
         } catch (error: any) {
             toast.error(error)

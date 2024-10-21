@@ -6,35 +6,35 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 
-const withAuth = (WrappedComponent : React.FC) => {
-    const ProtectedComponent = (prop: any) => {
+const withAuth = (WrappedComponent: React.FC) => {
+    const ProtectedComponent = (props: any) => {
         const user = useAppSelector(selectUser);
         const router = useRouter();
-        const {firstName, lastName, username, id} = user;
+        const { firstName, lastName, username, id } = user;
         const token = useAppSelector((state) => state.auth.token);
         const dispatch = useAppDispatch();
 
-        useEffect(()=> {
-            
-            if(!token) {
+        useEffect(() => {
+            if (!token) {
                 router.push('/login');
+            } else {
+                // Chỉ gọi refreshToken nếu cần thiết
+                if (!firstName && !lastName) {
+                    router.push(`/information/${username}`);
+                } else if (!username) {
+                    router.push(`/information/${id}`);
+                }
+                else {
+                    router.push('/');
+                    refreshToken(token, dispatch);
+                }
             }
-            else if (token && !firstName && !lastName) {
-                refreshToken(token, dispatch);
-                router.push(`/information/${username}`);
-            }
-            else if (token && !username){
-                refreshToken(token, dispatch);
-                router.push(`/information/${id}`);
-            }
-            else if(token){
-                refreshToken(token, dispatch);
-            }
-        },[firstName, lastName, username, router, token])
+        }, [token]); 
 
-        return <WrappedComponent {...prop} />
-    }
-  return ProtectedComponent
-}
+        return <WrappedComponent {...props} />;
+    };
 
-export default withAuth
+    return ProtectedComponent;
+};
+
+export default withAuth;

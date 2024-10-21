@@ -61,7 +61,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: var(--background);
 }
 
@@ -86,4 +86,8 @@ body {
   padding: 10px 0;
   min-height: 50px;
   position: relative;
+}
+
+.custom-prev, .custom-next {
+  display: block !important;
 }

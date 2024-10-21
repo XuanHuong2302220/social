@@ -20,12 +20,14 @@ interface FormValues {
   password: string;
 }
 
-const Login = () => {
+const Login = React.memo(() => {
 
   const router = useRouter();
+  const token = useAppSelector(state => state.auth.token);
+
+  console.log(token)
 
   useEffect(()=> {
-    const token = localStorage.getItem('token');
     if(token) {
       router.push('/');
     }
@@ -42,6 +44,10 @@ const Login = () => {
       login(data.username, data.password);
     }
   };
+
+  useEffect(()=> {
+    console.log('login page')
+  }, [])
 
 
 
@@ -139,6 +145,6 @@ const Login = () => {
       </div>
     </div>
   );
-}
+})
 
 export default Login;

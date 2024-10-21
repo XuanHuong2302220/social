@@ -1,22 +1,77 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import withAuth from '@/middleware/withAuth'
-import { ModalPost, NewPost, Post } from '@/components'
-import { useAppSelector } from '@/redux/hooks'
-import { selectPost } from '@/redux/features/post/postSlice'
+import { ModalPost, NewPost, Post, SkeletonPost} from '@/components'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { selectUser } from '@/redux/features/user/userSlice'
+import useGetAllPost from '@/api/post/getAllPost'
+import InfiniteScroll from 'react-infinite-scroll-component';
+import axs from '@/utils/axios'
+import { addPosts, setCurrentPage } from '@/redux/features/post/postSlice'
 
-const Home = () => {
+const Home = React.memo(() => {
 
-  const post = useAppSelector(selectPost)
+  const posts = useAppSelector((state) => state.post.posts);
+
+  const currentPage = useAppSelector((state) => state.post.currentPage);
+
+  const loading = useAppSelector((state) => state.post.loading);
+
+  const hasMore = useAppSelector((state) => state.post.hasMore);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const {getAllPost} = useGetAllPost()
+
+  const scroll = document.querySelector('.my-infinite-scroll') as HTMLElement;
+  useEffect(()=> {
+    if(scroll){
+      scroll.style.overflowY = 'hidden'
+    }
+  })
+
+  useEffect(() => {
+    const fetchInitialPosts = async () => {
+      try {
+        await getAllPost();
+      } catch (error) {
+        console.error('Lỗi khi lấy bài đăng ban đầu:', error);
+      }
+    };
+
+    fetchInitialPosts();
+  }, []);
+
+
+
+  const fetchNextPosts = useCallback(async () => {
+    try {
+      await getAllPost();
+    } catch (error) {
+      console.error('Lỗi khi lấy bài đăng tiếp theo:', error);
+    }
+  }, [loading, hasMore, getAllPost]);
 
   return (
-    <div className='h-screen p-[90px] w-screen flex justify-between '>
+    <div className='h-screen p-[90px] w-screen flex justify-between overflow-auto overflow-x-hidden' id="scrollableDiv" >
       <div className='w-1/4 bg-navbar'>profile</div>
-      <div className='flex-1 flex-col px-5'>
+      <div className='h-full w-2/4 flex flex-col gap-5 px-5'>
           <NewPost />
-          <Post />
+          <InfiniteScroll
+              dataLength={posts.length}
+              next={fetchNextPosts}
+              hasMore={hasMore}
+              loader={<SkeletonPost />}
+              endMessage={'No more posts'}
+              className='my-infinite-scroll w-full flex flex-col gap-5'
+              scrollableTarget='scrollableDiv'
+            >
+              {posts.map((post, index) => (
+                <Post key={post.id} post={post} />
+            ))}
+            </InfiniteScroll> 
+
       </div>
       <div className='w-1/4 bg-navbar'>friends</div>
       
@@ -25,6 +80,6 @@ const Home = () => {
 
     </div>
   )
-}
+})
 
 export default withAuth(Home)

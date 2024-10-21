@@ -7,36 +7,29 @@ import { store, persistor } from '@/redux/store';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react';
 import { Navbar } from "@/components";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
-function AppContent({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.token);
   const [check, setCheck] = useState(false);
   const theme = useAppSelector((state) => state.theme.theme);
   const router = useRouter();
 
-  useEffect(()=> {
+  useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-  }, [theme])
+  }, [theme]);
 
   const pathName = usePathname();
-  const {id} = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
-    if (!token) {
-      router.push('/login');
+    if (pathName === `/information/${id}`) {
+      setCheck(true);
     }
-    if(pathName === `/information/${id}`){
-      setCheck(true)
-    }
-  }, [dispatch, token]);
+  }, [pathName, id]);
 
   return (
     <>
@@ -47,16 +40,12 @@ function AppContent({
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
       />
     </>
   );
-}
+});
+
+export { AppContent };
 
 export default function RootLayout({ 
   children,
@@ -65,7 +54,7 @@ export default function RootLayout({
 }> ) {
   return (
     <html lang="en">
-      <body>
+      <body id="root">
         <Provider store={store}>
           <PersistGate loading={
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

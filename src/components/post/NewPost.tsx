@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {Avatar, Button} from '@/components'
 import { FaImages } from "react-icons/fa";
 import { BsPaperclip } from "react-icons/bs";
