@@ -1,12 +1,30 @@
 import { ModalProps } from '@/types'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
-const Modal = ({id, title, children, onClose, closeIcon, className}:ModalProps) => {
+const Modal = ({title, children, onClose, closeIcon, className}:ModalProps) => {
+
+  const modalRef = useRef<HTMLDialogElement>(null)
+
+  const handleCloseModal = () => {
+    const modal = modalRef.current;
+    if (modal) {
+      modal.close();
+      onClose && onClose();
+    }
+  }
+
+  useEffect(() => {
+    const modal = modalRef.current;
+    if (modal) {
+      modal.showModal();
+    }
+  }, []);
+
   return (
-    <dialog id={id} className="modal">
+    <dialog ref={modalRef} className="modal">
         <div className={`modal-box ${className}`}>
            {closeIcon &&  <form method="dialog">
-                <button onClick={onClose} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <button onClick={handleCloseModal} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             </form>}
             {title}
             {children}

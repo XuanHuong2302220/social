@@ -9,6 +9,7 @@ import ModalPost from "./post/ModalPost"
 import Modal from "./Modal"
 import Post from "./post/Post"
 import SkeletonPost from "./post/SkeletonPost"
+import Interact from "./Interact"
 
 export {
     Input,
@@ -21,5 +22,6 @@ export {
     ModalPost,
     Modal,
     Post,
-    SkeletonPost
+    SkeletonPost,
+    Interact
 }

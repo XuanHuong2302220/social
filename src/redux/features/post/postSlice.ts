@@ -34,6 +34,12 @@ const postSlice = createSlice({
             state.posts = [action.payload, ...state.posts];
             console.log(state.posts)
         },
+        editPost: (state, action: PayloadAction<PostState>) => {
+            const index = state.posts.findIndex(post => post.id === action.payload.id);
+            if (index !== -1) {
+                state.posts[index] = action.payload;
+            }
+        },
         setCurrentPage: (state, action) => {
             state.currentPage = action.payload;
         },
@@ -46,6 +52,6 @@ const postSlice = createSlice({
     }
 })
 
-export const {  setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost  } = postSlice.actions
+export const {  setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost, editPost  } = postSlice.actions
 export const selectPost = (state: RootState) => state.post
 export default postSlice.reducer

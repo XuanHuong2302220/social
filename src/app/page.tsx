@@ -14,13 +14,9 @@ const Home = React.memo(() => {
 
   const posts = useAppSelector((state) => state.post.posts);
 
-  const currentPage = useAppSelector((state) => state.post.currentPage);
-
   const loading = useAppSelector((state) => state.post.loading);
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const {getAllPost} = useGetAllPost()
 
@@ -75,9 +71,6 @@ const Home = React.memo(() => {
       </div>
       <div className='w-1/4 bg-navbar'>friends</div>
       
-      <ModalPost />
-
-
     </div>
   )
 })

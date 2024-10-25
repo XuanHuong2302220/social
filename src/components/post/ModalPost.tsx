@@ -18,15 +18,20 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { TbBoxMultiple } from "react-icons/tb";
 import { IoIosAdd } from "react-icons/io";
 import useClickOutside from '@/hooks/useClickOutside'
-import useOpenModal from '@/hooks/useOpenModal'
 import useCreatePost from '@/api/post/createPost'
 import { HighlightWithinTextarea } from 'react-highlight-within-textarea'
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { BsEmojiSmile } from "react-icons/bs";
+import { PostState } from '@/types'
+import updatePost from '@/api/post/updatePost'
 
-const ModalPost = () => {
+interface ModalPostProps {
+  post?: PostState;
+  onClose: () => void;
+}
+
+const ModalPost = ({ post, onClose }: ModalPostProps) => {
   const user = useAppSelector(selectUser)
-  const fullName = `${user.firstName} ${user.lastName}`
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [files, setFiles] = useState<File[]>([])  
   const [images, setImages] = useState<string[]>([])
@@ -39,12 +44,33 @@ const ModalPost = () => {
   const [indexImg, setIndexImg] = useState<number>(0)
   const [text, setText] = useState('')
   const [openEmoji, setOpenEmoji] = useState(false)
-  const textareaRef = useRef<any>(null)
   const [loadingImage, setLoadingImage] = useState(false)
+  const [fullName, setFullName] = useState<string>(`${user.firstName} ${user.lastName}`);
+  const modalRef = useRef<HTMLDialogElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openPost, setOpenPost] = useState(false); 
+
+  // set post when update
+  useEffect(() => {
+    if (post) {
+      setText(post.description);
+      setImages(post.images);
+      setFullName(post.created_by.fullName);
+    }
+  }, [post]);
+
+  // show modal post
+  useEffect(() => {
+    const modal = modalRef.current;
+    if (modal) {
+      modal.showModal();
+    }
+  }, []);
   
   const onChange = (text: React.SetStateAction<string>) => setText(text);
 
   const {loading, createPost} = useCreatePost();
+  const {loading: loadingUpdate, update} = updatePost();
 
   useClickOutside(dropdownRef, ()=> {
     setShowDropdown(false);
@@ -54,8 +80,9 @@ const ModalPost = () => {
     setOpenEmoji(false);
   })
 
+
+  // logic handle textarea
   useEffect(() => {
-    // Thay đổi style của placeholder khi component được render
     const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
     if (placeholderElement && placeholderElement instanceof HTMLElement && images.length > 0) {
       placeholderElement.style.position = 'absolute';
@@ -77,18 +104,15 @@ const ModalPost = () => {
     console.log(emojiObject.emoji);
   }
 
-  const closeModalPost = useOpenModal({id: 'modal_post'})
-  const closeModalNewPost = useOpenModal({id: 'my_modal'})
-
   const handleOpenDropdown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setShowDropdown(prev => !prev)
   }
 
-  const openModalImage = useOpenModal({id: 'modal_image'})
-  
+  // handle close modal post  
   const handleCloseModal = (leave : boolean) => {
     if(images.length > 0 || text){
-      closeModalPost?.show()
+      console.log('kkk')
+      setOpenPost(true)
     }
     
     if(leave || images.length === 0 && !text){
@@ -96,31 +120,53 @@ const ModalPost = () => {
       if(text){
         setText('')
       }
-      closeModalNewPost?.close();
-      closeModalPost?.close();
+      // handleClose()
+      setOpenPost(false)
+      onClose()
     }
   }
 
-
+  // handle open modal image
   const handleOpenModal = (index: number) => {
     setIndexImg(index)
-    openModalImage?.show()
-    console.log(indexImg)
+    setIsModalOpen(true)
+  }
+
+  // handle close modal image
+  const handleCloseModalImage = () => {
+    setIsModalOpen(false)
+    setShowDropdown(false)
+  }
+
+  // handle slide image
+  // useEffect(() => {
+  //   // Ensure Swiper updates navigation elements after they are rendered
+  //   const swiperElement = document.querySelector('.mySwiper') as HTMLElement & { swiper: any };
+  //   const swiper = swiperElement?.swiper;
+  //   if (swiper) {
+  //     swiper.on('slideChange', () => {
+  //       setIsBeginning(swiper.isBeginning);
+  //       setIsEnd(swiper.isEnd);
+  //     });
+  //     swiper.navigation.update();
+  //   }
+  // }, [images]);
+
+  const handleSlideChange = () => {
+    if (swiperRef.current) {
+      setIndexImg(swiperRef.current.activeIndex);
+      setIsBeginning(swiperRef.current.isBeginning)
+      setIsEnd(swiperRef.current.isEnd)
+    }
   }
 
   useEffect(() => {
-    // Ensure Swiper updates navigation elements after they are rendered
-    const swiperElement = document.querySelector('.mySwiper') as HTMLElement & { swiper: any };
-    const swiper = swiperElement?.swiper;
-    if (swiper) {
-      swiper.on('slideChange', () => {
-        setIsBeginning(swiper.isBeginning);
-        setIsEnd(swiper.isEnd);
-      });
-      swiper.navigation.update();
+    if (swiperRef.current && swiperRef.current.navigation) {
+      swiperRef.current.navigation.update();
     }
   }, [images]);
 
+  // handle get file image
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     console.log(file)
@@ -129,6 +175,7 @@ const ModalPost = () => {
         setFiles((prevFile) => [...prevFile, file])
         const url = URL.createObjectURL(file);
         setImages((prevImages) => [...prevImages, url])
+        console.log(images)
       } catch (error) {
         console.log(error)
       }
@@ -138,12 +185,8 @@ const ModalPost = () => {
       }
   }
 
-  useEffect(()=> {
-    if(textareaRef.current){
-      textareaRef.current.focus()
-    }
-  }, [])
 
+  // handle delete image
   const clearImage = (index: number) => {
     console.log(index)
     setImages((prevImages) => {
@@ -158,10 +201,12 @@ const ModalPost = () => {
       return newFile;
     })
     setIndexImg(0)
-    openModalImage?.close()
+    setIsModalOpen(false)
     setShowDropdown(false)
   }
 
+
+  // handle click image
   const handleImageClick = (index: number) => {
     setIndexImg(index)
     if(swiperRef.current){
@@ -169,6 +214,7 @@ const ModalPost = () => {
     }
   }
 
+  // handle submit 
   const handleSubmit = async () => {
     if (text || images.length > 0) {
       try {
@@ -193,16 +239,28 @@ const ModalPost = () => {
             }
           })
         );
-        await createPost({
-          description: text,
-          images: uploadedFiles,
-        });
+
+        if(post){
+          await update({
+            postId: Number(post.id),
+            description: text,
+            images: uploadedFiles,
+          });
+        }
+
+        else {
+          await createPost({
+            description: text,
+            images: uploadedFiles,
+          });
+        }
 
         setImages([]);
         setText('');
         setFiles([]);
         setIndexImg(0);
-        closeModalNewPost?.close();
+        onClose()
+        // handleClose();
       } catch (error) {
         console.error('Error uploading files:', error);
       }
@@ -211,13 +269,13 @@ const ModalPost = () => {
   
 
   return (
-    <dialog id="my_modal" className="modal">
+    <dialog ref={modalRef} className="modal">
         <div className="modal-box p-2 bg-navbar max-h-[700px] h-auto overflow-y-hidden" >
           <button onClick={()=>handleCloseModal(false)} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-          <h3 className="font-bold text-xl text-textColor text-center">Create Post</h3>
+          <h3 className="font-bold text-xl text-textColor text-center">{post ? 'Update Post' : 'Create Post'}</h3>
           <div className='divider'></div>
           <div className="flex h-full gap-2 items-center">
-              <Avatar className='w-[42px] h-[42px]' alt='avatar' width={1} height={1} />
+              <Avatar className='w-[42px] h-[42px]' src={post ? post.created_by.avatar ?? '' : user.avatar ?? ''} alt='avatar' width={1} height={1} />
               <span className='text-lg  text-textColor font-bold'>{fullName}</span>
             </div>
           <div className='overflow-y-auto max-h-[450px]'>
@@ -236,7 +294,9 @@ const ModalPost = () => {
                 <>
                   <Swiper
                     onSwiper={(swiper) => swiperRef.current = swiper}
+                    onSlideChange={handleSlideChange}
                     initialSlide={indexImg}
+                    // ref={swiperRef}
                     navigation={{
                       prevEl: '.custom-prev',
                       nextEl: '.custom-next',
@@ -283,17 +343,34 @@ const ModalPost = () => {
                           className='bg-search border-search rounded-full text-4xl p-0 w-[60px] h-[60px] min-h-[60px] hover:opacity-80'
                           onClick={handleOpenFile}
                         />
+                        {/* modal close image */}
+                        {isModalOpen && <Modal
+                          onClose={()=> setIsModalOpen(false)}
+                          title={
+                            <div className='flex flex-col py-2 justify-between items-center'>
+                              <h3 className='text-lg font-bold text-textColor'>Discard Photo</h3>
+                              <span className='text-sm'>This will remove the photo from your post.</span>
+                            </div>
+                          }
+                          className='w-2/3 '
+                          children={
+                            <div className='flex flex-col gap-2'>
+                              <Button onClick={()=> clearImage(indexImg)} text='Discard' className='w-full bg-transparent text-red-700' />
+                              <Button onClick={handleCloseModalImage} text='Cancel' className='w-full  text-textColor' />
+                            </div>
+                          }
+                        />}
                         </div>
                       }
                     />
                   </div>
                   </Swiper>
-                    <div className={`custom-prev absolute left-2 top-1/2 transform -translate-y-1/2 z-10 `}>
+                    {/* {images.length > 1 && <div className={`custom-prev absolute left-2 top-1/2 transform -translate-y-1/2 z-10 `}>
                       <Button  left icon={<IoChevronBackOutline />} className={`bg-backgroundIcon border-backgroundIcon rounded-full p-0 w-[30px] h-[30px] min-h-[30px] ${isBeginning ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`} />
-                    </div>
-                    <div className={`custom-next absolute right-2 top-1/2 transform -translate-y-1/2 z-10 `}>
+                    </div>}
+                    {images.length > 1 && <div className={`custom-next absolute right-2 top-1/2 transform -translate-y-1/2 z-10 `}>
                       <Button left icon={<IoChevronForwardSharp />} className={`bg-backgroundIcon border-backgroundIcon opacity-100 rounded-full p-0 w-[30px] h-[30px] min-h-[30px]  ${isEnd ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`} />
-                    </div>
+                    </div>} */}
                 </>
                 :
                   <div onClick={handleOpenFile} className='bg-backgroundImg cursor-pointer hover:opacity-40 flex flex-col justify-center items-center w-full h-full rounded-xl'>
@@ -304,26 +381,10 @@ const ModalPost = () => {
                 }
                </div>
               <input ref={inputFileRef} onChange={handleImportFile} type="file" className="hidden" />
-              {/* modal close image */}
-              <Modal
-                id='modal_image'
-                title={
-                  <div className='flex flex-col py-2 justify-between items-center'>
-                    <h3 className='text-lg font-bold text-textColor'>Discard Photo</h3>
-                    <span className='text-sm'>This will remove the photo from your post.</span>
-                  </div>
-                }
-                className='w-2/3 '
-                children={
-                  <div className='flex flex-col gap-2'>
-                    <Button onClick={()=> clearImage(indexImg)} text='Discard' className='w-full bg-transparent text-red-700' />
-                    <form method="dialog"><Button text='Cancel' className='w-full  text-textColor' /></form>
-                  </div>
-                }
-              />
+              
               {/* modal close post */}
-              <Modal
-                id='modal_post'
+              {openPost && <Modal
+                onClose={()=> setOpenPost(false)}
                 title={
                   <div className='flex flex-col py-2 justify-between items-center'>
                     <h3 className='text-lg font-bold text-textColor'>Leave?</h3>
@@ -334,20 +395,20 @@ const ModalPost = () => {
                 children={
                   <div className='flex flex-col gap-2'>
                     <Button onClick={()=>handleCloseModal(true)} text='Leave' className='w-full bg-transparent text-red-700' />
-                    <form method="dialog"><Button text='Cancel' className='w-full  text-textColor' /></form>
+                    <Button onClick={()=>setOpenPost(false)} text='Cancel' className='w-full  text-textColor' />
                   </div>
                 }
-              />
+              />}
 
             </div>
           </div>
           <Button text={
-            loading || loadingImage ? null : 'Post'
+            loading || loadingUpdate || loadingImage ? null : post ? 'Update' : 'Post'
           } 
           onClick={handleSubmit} 
-          disabled={loading || loadingImage || (text === '' && images.length === 0)}  
+          disabled={loading ||loadingUpdate|| loadingImage || (text === '' && images.length === 0)}  
           className='w-full bg-primaryColor text-textColor hover:bg-primaryColor hover:opacity-50 my-3' 
-          iconLoading={loading || loadingImage} 
+          iconLoading={loading ||loadingUpdate|| loadingImage} 
           />
 
           <div className={`absolute right-[5px] cursor-pointer ${images.length > 0 ? 'top-[25%]' : 'top-[30%] '}`}>

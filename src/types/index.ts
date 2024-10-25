@@ -18,6 +18,8 @@ export interface InputProps {
 export interface ButtonProps {
     text?: string | null,
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onMouseLeave?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     icon?: any,
     className?: string,
     classNameText?: string,
@@ -71,18 +73,17 @@ export interface ModalProps {
     children: any,
     title: any,
     onClose?: () => void,
-    isOpen?: boolean,
     closeIcon?: boolean,
-    id: string,
-    className?: string
+    className?: string,
 }
 
 export interface PostState {
-    id: string | null,
+    id: number | null,
     description: string,
     created_by: {
         id: string,
-        fullName: string
+        fullName: string,
+        avatar: string | null,
     },
     images: string[],
     status: number,

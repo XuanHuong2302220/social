@@ -49,8 +49,8 @@ const information = () => {
   }, [])
 
   const onSubmit = async(data: any) => {
-      console.log(data)
-      await update(data)
+    console.log(data)
+    await update(data)
   };
 
   return (
