@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
-import {Avatar, Button, DropDown, Interact, ModalPost} from '@/components'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {Avatar, Button, DropDown, Interact, Modal, ModalPost, ModalPostComment, SkeletonReaction, Tabs} from '@/components'
 import { BsThreeDots } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import Link from 'next/link';
 import { FaTrash } from "react-icons/fa";
-import { PostState } from '@/types';
+import { InteractProps, PostState, Reaction } from '@/types';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { IoChevronForwardSharp } from "react-icons/io5";
@@ -22,19 +22,28 @@ import hahaIcon from '@/assets/icons/happy.svg';
 import wowIcon from '@/assets/icons/wow.svg';
 import sadIcon from '@/assets/icons/sad.svg';
 import angryIcon from '@/assets/icons/angry.svg';
-
+import useHandleReaction from '@/api/post/handleReaction';
+import { useAppDispatch, useAppSelector} from "@/redux/hooks"
+import { decreaseLike, increaLike } from '@/redux/features/post/postSlice';
+import useGetReactions from '@/api/post/getAllReaction';
+import { reactions } from '@/utils/reactions';
+import useDeletePost from '@/api/post/deletePost';
 
 interface PostProps {
-  post: PostState
+  post: PostState,
+  disableButton?: boolean
+}
+interface ReactionProps {
+  type: InteractProps;
+  count: number;
 }
 
-interface InteractProps {
-  name: string;
-  icon: StaticImageData | null;
-  color: string;
+interface ContentReaction{
+  type: string;
+  content: Reaction[]
 }
 
-const Post: React.FC<PostProps> = ({ post }) => {
+const Post: React.FC<PostProps> = ({ post, disableButton }) => {
 
   const [isBeginning, setIsBeginning] = useState(true)
   const [isEnd, setIsEnd] = useState(false)
@@ -50,6 +59,35 @@ const Post: React.FC<PostProps> = ({ post }) => {
   })
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [showModalReact, setShowModalReact] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [headerReaction, setHeaderReaction] = useState<ReactionProps[]>([{
+    type: {
+      name: 'All',
+      icon: null,
+      color: ''
+    },
+    count: 0
+  }])
+  const [getListReaction, setListReaction] = useState<Reaction[]>([])
+  const [cloneListReaction, setCloneListReaction] = useState<Reaction[]>([])
+  const [openModalComment, setOpenModalComment] = useState(false)
+  const [postComment, setPostComment] = useState<PostState>(post)
+
+  const dispatch = useAppDispatch();
+
+  const {createReaction, undoReaction} = useHandleReaction()
+  const {loading, getAllReactions, listReaction, typeReaction} = useGetReactions()
+  const {loading: loadingDelete, deletePost} = useDeletePost()
+  
+const reactions = [
+    { color: 'text-blue-600' ,name: 'Like', icon: likeIcon },
+    { color: 'text-red-600' ,name: 'Love', icon: loveIcon },
+    { color: 'text-yellow-600' ,name: 'Haha', icon: hahaIcon },
+    { color: 'text-yellow-600' ,name: 'Wow', icon: wowIcon },
+    { color: 'text-yellow-600' ,name: 'Sad', icon: sadIcon },
+    { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
+]
 
   const handleOpenReaction = () => {
     if (leaveTimeoutRef.current) {
@@ -62,15 +100,21 @@ const Post: React.FC<PostProps> = ({ post }) => {
   };
 
   const handleClickDefault = () => {
-    if(showInteract.name === '') {
-      setShowInteract({ name: 'Like', icon: likeIcon, color: 'text-blue-600' })
-     setShowDropdown(false)
-
-    }
-    else {
-      setShowInteract({ name: '', icon: null, color: '' })
-     setShowDropdown(false)
-
+    if(post.id){
+      if(showInteract.name === '') {
+        setShowInteract({ name: 'Like', icon: likeIcon, color: 'text-blue-600' })
+        dispatch(increaLike({ postId: post.id }))
+        setShowDropdown(false)
+        if (post.id !== null) {
+          createReaction(post.id, 'Like');
+        }
+      }
+      else {
+        setShowInteract({ name: '', icon: null, color: '' })
+        dispatch(decreaseLike({ postId: post.id }))
+        setShowDropdown(false)
+        undoReaction(post.id);
+      }
     }
   }
 
@@ -103,49 +147,114 @@ const Post: React.FC<PostProps> = ({ post }) => {
     }
  }
 
-//  useEffect(() => {
-//   const handleMouseMove = (event: MouseEvent) => {
-//     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-//       setShowDropdown(false);
-//     }
-//   };
-
-
-//   document.addEventListener('mousemove', handleMouseMove);
-//   return () => {
-//     document.removeEventListener('mousemove', handleMouseMove);
-//   };
-// }, []);
-
  const handleEditPost = (post: PostState) => {
   setModalPost(post);
   setIsModalOpen(true);
 };
 
 const handleReaction = (name: string, icon: StaticImageData, color: string) => {
-  setShowInteract({ name, icon, color })
-  setShowDropdown(false)
-  console.log(name, icon, color)
+  if(post.id){
+    if(showInteract.name === '') {
+      setShowInteract({ name, icon, color })
+      console.log(color)
+      dispatch(increaLike({ postId: post.id }))
+      setShowDropdown(false)
+      createReaction(post.id, name);
+    }
+    else {
+      setShowInteract({ name, icon, color })
+      setShowDropdown(false)
+      createReaction(post.id, name);
+    }
+  }
 }
 
 const handleCloseModal = () => {
   setIsModalOpen(false);
 };
 
-// const handleOpenReaction = () => {
-//   dropdownRef.current = setTimeout(() => {
-//     setShowDropdown(true);
-//   }, 1000); // 1s delay
-// };
+useEffect(()=> {
+  if(post.id){
+    setHeaderReaction(prevState => [
+      ...prevState, 
+      ...typeReaction.flat().map(reaction => {
+        const matchedReaction = reactions.find(r => r.name === reaction.type);
+        if(matchedReaction)
+          return {
+            type: {
+              name: matchedReaction.name,
+              icon: matchedReaction.icon,
+              color: matchedReaction.color
+            },
+            count: reaction.count
+          };
+      }).filter((reaction): reaction is ReactionProps => reaction !== undefined)
+    ])
+  }
 
-const reactions = [
-  { color: 'text-blue-600' ,name: 'Like', icon: likeIcon },
-  { color: 'text-red-600' ,name: 'Love', icon: loveIcon },
-  { color: 'text-yellow-600' ,name: 'Haha', icon: hahaIcon },
-  { color: 'text-yellow-600' ,name: 'Wow', icon: wowIcon },
-  { color: 'text-yellow-600' ,name: 'Sad', icon: sadIcon },
-  { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
-]
+}, [typeReaction])
+
+const handleOpenModalReact = async()=> {
+  if(post.id){
+    setShowModalReact(true)
+    setActiveTab(0)
+    await getAllReactions(post.id)
+    
+  }
+}
+
+useEffect(()=> {
+  if(post.id){
+    setListReaction(listReaction)
+    setCloneListReaction(listReaction)
+  }
+}, [listReaction])
+
+const handleCloseModalReactions = () => {
+  setShowModalReact(false);
+  setHeaderReaction([{
+    type: {
+      name: 'All',
+      icon: null,
+      color: ''
+    },
+    count: 0
+  }])
+  setListReaction([])
+}
+
+useEffect(()=> {
+  if(post.reactionType) {
+      const matchedReaction = reactions.find(reaction => reaction.name === post.reactionType)
+      if(matchedReaction) {
+        setShowInteract({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
+      }
+  }
+}, [])
+
+const handleOpenModalComment = (post: PostState)=>{
+  setOpenModalComment(true)
+  setPostComment(post)
+}
+
+const handleSelectReaction =(index: number, type: string) => {
+  if(post.id ){
+    setActiveTab(index)
+    console.log(index)
+    if(index !== 0) {
+      setListReaction(()=>listReaction.filter(reaction => reaction.reaction_type === type))
+    }
+    else if(index === 0) {
+      setListReaction(cloneListReaction)
+    }
+  }
+}
+
+const handleDeletePost = (post: PostState) => {
+  if(post.id){
+    deletePost(post.id)
+  }
+}
 
   return (
     <div className='card w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 
@@ -167,7 +276,7 @@ const reactions = [
                   <div className='w-full flex flex-col'>
                       <Button left icon={<MdEdit className='text-2xl' />}  onClick={() => handleEditPost(post)} text='Edit Post' className='flex items-center bg-transparent border-transparent justify-start' />
                       <div className='divider m-0 bg-search'/>
-                      <Button left icon={<FaTrash className='text-lg' />} text='Delete Post' className='flex items-center bg-transparent border-transparent justify-start' />
+                      <Button left icon={!loadingDelete && <FaTrash className='text-lg' />} onClick={()=> handleDeletePost(post) } text={loadingDelete ? '' : 'Delete Post'} className={`flex items-center bg-transparent border-transparent ${loadingDelete ? 'justify-center' : 'justify-start '}`} iconLoading={loadingDelete} />
                 </div>
                 }
               />
@@ -210,6 +319,10 @@ const reactions = [
             </div> : null}
         </div>
         <div>
+            <div className='flex justify-between'>
+              {post.reaction_count > 0 && <span onClick={handleOpenModalReact} className='text-[14px] text-textColor hover:underline cursor-pointer'>{post.reaction_count} Reactions</span>}
+              {post.comment_count > 0 && <span className='text-[14px] text-textColor'>{post.comment_count} Comments</span>}
+            </div>
             <div className='divider m-0' />
             <div className='flex justify-around h-2/4'>
             
@@ -219,19 +332,17 @@ const reactions = [
                 >
                   <Button 
                     left
-                    // onMouseLeave={handleCloseReaction}
                     onClick={handleClickDefault}
-                    icon={showInteract.icon ? <Image src={showInteract.icon.src} alt={showInteract.name} width={25} height={25} /> : <AiOutlineLike className='text-2xl' />} text={showInteract.name || 'Like'}
+                    icon={showInteract.icon ? <Image src={showInteract.icon.src} alt={showInteract.name} width={25} height={25} /> : <AiOutlineLike className='text-2xl' />} 
+                    text={showInteract.name || 'Like'}
                     width={25}
                     height={25}
                     className='flex items-center gap-1 border-transparent bg-navbar hover:bg-search justify-center w-[200px] h-full'
-                    classNameText={`text-lg ${showInteract.color}`}
+                    classNameText={`${showInteract.color} text-lg `}
                   />
                   { showDropdown &&
                     <Interact 
                       reactions={reactions}
-                      // onMouseEnter={handleOpenReaction}
-                      // onMouseLeave={handleCloseReaction}
                       onClick={(reaction) => handleReaction(reaction.name, reaction.icon, reaction.color)}
                     />
                   } 
@@ -239,6 +350,7 @@ const reactions = [
                 <Button left icon={<FaRegComment className='text-xl' />}  text='Comment' 
                   className='flex items-center gap-1 border-transparent bg-navbar hover:bg-search justify-center w-[200px] h-full' 
                   classNameText='text-lg'
+                  onClick={disableButton ? ()=>{} : ()=>handleOpenModalComment(post)}
                 />
             </div>
         </div>
@@ -249,6 +361,53 @@ const reactions = [
             onClose={handleCloseModal}
           />
         )}
+
+        {showModalReact && (
+          <Modal
+            onClose={handleCloseModalReactions}
+            closeIcon
+            children={
+              
+              <div className='flex flex-col'>
+                <div role="tablist" className="tabs tabs-bordered flex ">
+                  {headerReaction.map((reaction, index)=> (
+                    <Button 
+                      key={index}
+                      left
+                      icon={reaction.type.icon && <Image src={reaction.type.icon.src} alt={reaction.type.name} width={25} height={25} /> }
+                      text={`${reaction.count > 0 ? reaction.count : reaction.type.name}`}
+                      className={`border-transparent rounded-none tab w-[100px] bg-transparent ${activeTab === index ? 'tab-active' : ''}`}
+                      onClick={()=>handleSelectReaction(index, reaction.type.name)}
+                      disabled={activeTab === index}
+                    />
+                  ))}
+                </div>
+                  { activeTab && 
+                     loading ? <SkeletonReaction /> :
+                     getListReaction.map((reaction, index) => (
+                          <div key={index} className='flex gap-2 items-center justify-between py-2'>
+                          <div className='flex gap-2 items-center'>
+                            <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
+                            <div className='flex flex-col'>
+                              <Link href={'/'} className='font-bold hover:underline text-textColor'>{reaction.user.fullName}</Link>
+                              {/* <span className='text-[12px]'>20 hours ago</span> */}
+                            </div>
+                          </div>
+                          <div className='flex gap-2 items-center'>
+                            <Image src={reactions.find(r => r.name === reaction.reaction_type)?.icon.src} alt={reaction.reaction_type} width={30} height={30} />
+                          </div>
+                        </div>
+                        ))}
+                </div>
+              
+            }
+          />
+        )}
+
+        {openModalComment && <ModalPostComment 
+            post={postComment}
+            closeFunc={()=> setOpenModalComment(false)}
+        />}
     </div>
   )
 }

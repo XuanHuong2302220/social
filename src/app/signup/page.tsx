@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import useLoginApi from '@/api/auth/loginApi';
 import Link from 'next/link';
 import signupApi from '@/api/auth/signupApi';
+import { useAppSelector } from '@/redux/hooks';
 
 interface FormValues {
   username: string;
@@ -23,14 +24,9 @@ const SignUp = () => {
   const router = useRouter();
 
   const { signup, loading } = signupApi();
+  const token = useAppSelector(state => state.auth.token);
 
   useEffect(() => {
-    console.log('signup page')
-  }, [])
-
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
     if (token) {
       router.push('/');
     }

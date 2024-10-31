@@ -91,3 +91,11 @@ body {
 .custom-prev, .custom-next {
   display: block !important;
 }
+
+.tab{
+  border-color: transparent !important;
+}
+
+.tab-active{
+  border-bottom-color: var(--primary-color) !important;
+}

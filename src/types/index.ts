@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export interface InputProps {
     placeholder: string,
     type: string,
@@ -70,8 +72,8 @@ export interface AvatarProps {
 }
 
 export interface ModalProps {
-    children: any,
-    title: any,
+    children?: any,
+    title?: any,
     onClose?: () => void,
     closeIcon?: boolean,
     className?: string,
@@ -88,6 +90,27 @@ export interface PostState {
     images: string[],
     status: number,
     tags: string[] | null,
-    likes: number,
-    comments: number,
+    reaction_count: number,
+    comment_count: number,
+    reactionType: string,
+}
+
+export interface TabProps {
+    tabs: [{title: string, content: any}]
+}
+export interface Reaction {
+    reaction_id: string,
+    reaction_type: string,
+    user: {
+        avatar: string | null,
+        fullName: string,
+        id: string,
+        username: string
+    }
+}
+
+export interface InteractProps {
+    name: string;
+    icon: StaticImageData | null;
+    color: string;
 }

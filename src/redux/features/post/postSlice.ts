@@ -40,18 +40,33 @@ const postSlice = createSlice({
                 state.posts[index] = action.payload;
             }
         },
+        increaLike: (state, action: PayloadAction<{postId: number}>) => {
+            const post = state.posts.find(post => post.id === action.payload.postId);
+            if(post) {
+                post.reaction_count += 1;
+            }
+        },
+        decreaseLike: (state, action: PayloadAction<{postId: number}>) => {
+            const post = state.posts.find(post => post.id === action.payload.postId);
+            if(post) {
+                post.reaction_count -= 1;
+            }
+        },
+        deletePost: (state, action: PayloadAction<{postId: number}>) => {
+            state.posts = state.posts.filter(post => post.id !== action.payload.postId);
+        },
         setCurrentPage: (state, action) => {
             state.currentPage = action.payload;
         },
         setHasMore: (state, action) => {
-        state.hasMore = action.payload;
+            state.hasMore = action.payload;
         },
         setLoading: (state, action) => {
-        state.loading = action.payload;
+            state.loading = action.payload;
         }, 
     }
 })
 
-export const {  setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost, editPost  } = postSlice.actions
+export const {  setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost, editPost, increaLike, decreaseLike, deletePost  } = postSlice.actions
 export const selectPost = (state: RootState) => state.post
 export default postSlice.reducer

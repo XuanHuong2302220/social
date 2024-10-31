@@ -1,10 +1,9 @@
 import React from 'react'
 import Image, { StaticImageData } from 'next/image'
 
-
 interface InteractProps {
     onClick: (reaction: {name: string, icon: StaticImageData, color: string}) => void,
-    reactions: Array<{name: string, icon: StaticImageData, color: string}>;
+    reactions: Array<{name: string, icon: StaticImageData, color: string}>,
     onMouseEnter?: () => void,
     onMouseLeave?: () => void
 }

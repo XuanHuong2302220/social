@@ -10,6 +10,9 @@ import Modal from "./Modal"
 import Post from "./post/Post"
 import SkeletonPost from "./post/SkeletonPost"
 import Interact from "./Interact"
+import Tabs from "./Tabs"
+import SkeletonReaction from "./SkeletonReaction"
+import ModalPostComment from "./post/ModalPostComment"
 
 export {
     Input,
@@ -23,5 +26,8 @@ export {
     Modal,
     Post,
     SkeletonPost,
-    Interact
+    Interact,
+    Tabs,
+    SkeletonReaction,
+    ModalPostComment
 }

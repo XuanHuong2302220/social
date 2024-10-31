@@ -22,14 +22,14 @@ interface FormValues {
 const information = () => {
   const { register, handleSubmit,control, formState: { errors } } = useForm<FormValues>();
   const user = useAppSelector(selectUser);
-  const router = useRouter();
-  let token = localStorage.getItem('token') || '';
-  
-  if(token){
-      token = token.replace(/['"]+/g, '')
-  }
+  const {lastName, firstName, username, id} = user;
+  const router = useRouter()
 
-  const {id} = useParams();
+  useEffect(()=> {
+    if(lastName && firstName && username && id){
+      router.push('/')
+    }
+  }, [])
 
   const calculateMinDate = () => {
     const today = new Date();
@@ -39,15 +39,6 @@ const information = () => {
 
   const {loading, update} = updateUser();
  
-  useEffect(()=> {
-    if(id === user.username || id === user.id){
-        return;
-    }
-    else {
-       router.push('/not-found');
-    }
-  }, [])
-
   const onSubmit = async(data: any) => {
     console.log(data)
     await update(data)
@@ -159,4 +150,4 @@ const information = () => {
   )
 }
 
-export default withAuth(information);
+export default information

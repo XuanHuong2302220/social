@@ -75,4 +75,4 @@ const Home = React.memo(() => {
   )
 })
 
-export default withAuth(Home)
+export default Home

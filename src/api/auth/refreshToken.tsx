@@ -14,7 +14,7 @@ const refreshToken = async (token: any, dispatch: any) => {
     const currentTime = Math.floor(Date.now() / 1000);
     const expirationTimeInSeconds = exp - currentTime;
 
-    // console.log(exp, currentTime, expirationTimeInSeconds);
+    console.log(exp, currentTime, expirationTimeInSeconds);
 
     if(expirationTimeInSeconds < 300 ){
         try {
@@ -25,7 +25,6 @@ const refreshToken = async (token: any, dispatch: any) => {
                 withCredentials: true
             });
             const newToken = await response.data.access_token;
-            localStorage.setItem('token', JSON.stringify(newToken));
             dispatch(setToken(newToken));
 
             console.log("Token refreshed");

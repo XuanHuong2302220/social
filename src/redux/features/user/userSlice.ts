@@ -20,11 +20,13 @@ export const userSlice = createSlice({
         setUser: (state, action: PayloadAction<Partial<UserState>>) => {
             return { ...state, ...action.payload };
         },
-        // Thêm các reducers khác nếu cần
+        cleaerUser: ()=> {
+            return { ...initialState }
+        }
     },
 })
 
-export const { setUser } = userSlice.actions
+export const { setUser, cleaerUser } = userSlice.actions
 
 export const selectUser = (state: RootState) => state.user
 

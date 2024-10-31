@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setTheme } from '@/redux/features/theme/themeSlice';
 import { GoTriangleDown } from "react-icons/go";
 import useClickOutside from '@/hooks/useClickOutside';
-import { selectUser } from '@/redux/features/user/userSlice';
+import { cleaerUser, selectUser } from '@/redux/features/user/userSlice';
 import { IoLogOut } from "react-icons/io5";
 import { clearToken } from '@/redux/features/auth/authSlice';
 import { useRouter } from 'next/navigation';
@@ -44,7 +44,6 @@ const Navbar = () => {
   const handleLogout =()=> {
     router.push('/login')
     dispatch(clearToken())
-    localStorage.removeItem('token')
   }
 
   useClickOutside(dropdownRef, ()=> setShowDropdownLogout(false))

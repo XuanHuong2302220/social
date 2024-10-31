@@ -23,9 +23,9 @@ const Modal = ({title, children, onClose, closeIcon, className}:ModalProps) => {
   return (
     <dialog ref={modalRef} className="modal">
         <div className={`modal-box ${className}`}>
-           {closeIcon &&  <form method="dialog">
+           {closeIcon && 
                 <button onClick={handleCloseModal} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-            </form>}
+            }
             {title}
             {children}
         </div>

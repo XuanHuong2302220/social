@@ -25,8 +25,6 @@ const Login = React.memo(() => {
   const router = useRouter();
   const token = useAppSelector(state => state.auth.token);
 
-  console.log(token)
-
   useEffect(()=> {
     if(token) {
       router.push('/');
@@ -44,12 +42,6 @@ const Login = React.memo(() => {
       login(data.username, data.password);
     }
   };
-
-  useEffect(()=> {
-    console.log('login page')
-  }, [])
-
-
 
   return (
     <div className='w-screen h-screen flex justify-center items-center text-black bg-white'>

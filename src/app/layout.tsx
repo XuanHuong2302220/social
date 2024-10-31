@@ -9,31 +9,47 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Navbar } from "@/components";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import refreshToken from "@/api/auth/refreshToken";
 
 const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
-  const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.auth.token);
-  const [check, setCheck] = useState(false);
   const theme = useAppSelector((state) => state.theme.theme);
-  const router = useRouter();
+  const token = useAppSelector((state) => state.auth.token);
+  const pathName = usePathname();
+  const router =  useRouter()
+  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  const pathName = usePathname();
-  const { id } = useParams();
-
+  const isExcludedPage = pathName === '/login' || pathName === '/signup';
   useEffect(() => {
-    if (pathName === `/information/${id}`) {
-      setCheck(true);
+    if (!token && !isExcludedPage) {
+      router.push('/login');
+    } else {
+      setLoading(false);
     }
-  }, [pathName, id]);
+  }, [token, pathName, router]);
+
+  useEffect(()=> {
+    if(token){
+      refreshToken(token, dispatch);
+    }
+  }, [token, dispatch])
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <>
-      {token && !check && <Navbar />}
+      {!isExcludedPage && token && <Navbar />}
       {children}
       <ToastContainer
         position="bottom-center"
@@ -56,11 +72,9 @@ export default function RootLayout({
     <html lang="en">
       <body id="root">
         <Provider store={store}>
-          <PersistGate loading={
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <PersistGate loading={<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
               <div className="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
-            </div>
-          } persistor={persistor}>
+            </div>} persistor={persistor}>
             <AppContent>
               {children}
             </AppContent>
