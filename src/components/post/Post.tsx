@@ -26,8 +26,8 @@ import useHandleReaction from '@/api/post/handleReaction';
 import { useAppDispatch, useAppSelector} from "@/redux/hooks"
 import { decreaseLike, increaLike } from '@/redux/features/post/postSlice';
 import useGetReactions from '@/api/post/getAllReaction';
-import { reactions } from '@/utils/reactions';
 import useDeletePost from '@/api/post/deletePost';
+import { calculateTimeDifference } from '@/utils/getTime';
 
 interface PostProps {
   post: PostState,
@@ -36,11 +36,6 @@ interface PostProps {
 interface ReactionProps {
   type: InteractProps;
   count: number;
-}
-
-interface ContentReaction{
-  type: string;
-  content: Reaction[]
 }
 
 const Post: React.FC<PostProps> = ({ post, disableButton }) => {
@@ -88,6 +83,8 @@ const reactions = [
     { color: 'text-yellow-600' ,name: 'Sad', icon: sadIcon },
     { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
 ]
+
+
 
   const handleOpenReaction = () => {
     if (leaveTimeoutRef.current) {
@@ -199,7 +196,6 @@ const handleOpenModalReact = async()=> {
     setShowModalReact(true)
     setActiveTab(0)
     await getAllReactions(post.id)
-    
   }
 }
 
@@ -262,7 +258,7 @@ const handleDeletePost = (post: PostState) => {
             <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
             <div className='flex flex-col'>
               <Link href={'/'} className='font-bold hover:underline text-textColor'>{post.created_by.fullName}</Link>
-              <span className='text-[12px]'>20 hours ago</span>
+              <span className='text-[12px]'>{post.created_ago}</span>
             </div>
 
             <div className='ml-auto z-50'>

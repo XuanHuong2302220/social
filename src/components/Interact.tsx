@@ -5,22 +5,23 @@ interface InteractProps {
     onClick: (reaction: {name: string, icon: StaticImageData, color: string}) => void,
     reactions: Array<{name: string, icon: StaticImageData, color: string}>,
     onMouseEnter?: () => void,
-    onMouseLeave?: () => void
+    onMouseLeave?: () => void,
+    isComment?: boolean
 }
 
-const Interact = ({onClick, reactions, onMouseEnter, onMouseLeave}: InteractProps) => {
+const Interact = ({onClick, reactions, onMouseEnter, onMouseLeave, isComment}: InteractProps) => {
 
   return (
-    <div className='absolute w-[340px] top-[-60px] h-auto gap-1  bg-search z-50 flex p-2 rounded-xl' onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div className={`absolute h-auto gap-1 bg-gray-800 z-50 flex p-2 rounded-xl`} style={{width : isComment ? '215px' : '340px', top: isComment ? '-50px' : '-60px'}} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         {reactions.map((reaction, index)=> (
             <Image 
-                onClick={() => onClick(reaction)} 
-                key={index} 
-                className='hover:scale-125 cursor-pointer' 
-                src={reaction.icon} 
-                width={50} 
-                height={50} 
-                alt={reaction.name} 
+              onClick={() => onClick(reaction)} 
+              key={index} 
+              className='hover:scale-125 cursor-pointer' 
+              src={reaction.icon} 
+              width={isComment ? 30 : 50} 
+              height={isComment ? 30 : 50} 
+              alt={reaction.name} 
             />
         ))}
         

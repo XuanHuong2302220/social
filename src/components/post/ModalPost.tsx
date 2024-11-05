@@ -101,7 +101,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
 
   const handleEmojiClick = (emojiObject: any) => {
     setText((prevText) => prevText + emojiObject.emoji);
-    console.log(emojiObject.emoji);
   }
 
   const handleOpenDropdown = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -87,8 +87,6 @@ const Navbar = () => {
 
           <FaMessage className='text-xl cursor-pointer'  />
 
-
-
           <IoNotifications className='text-xl cursor-pointer' />
           <div ref={dropdownRef}>
             <DropDown

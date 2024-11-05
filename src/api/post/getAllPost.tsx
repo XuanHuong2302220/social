@@ -20,7 +20,7 @@ const useGetAllPost = () => {
 
         dispatch(setLoading(true))
         try {
-            const response = await axs.get(`/post/get-all-post?page=${currentPage}&pageSize=5`, {
+            const response = await axs.get(`/post/get-all-post`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

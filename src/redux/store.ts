@@ -7,11 +7,12 @@ import userReducer from './features/user/userSlice';
 import authReducer from './features/auth/authSlice';
 import themeReducer from './features/theme/themeSlice';
 import postReducer from './features/post/postSlice';
+import commentReducer from './features/comment/commentSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['post']
+  blacklist: ['post', 'comment'],
 };
 
 const rootReducer = combineReducers({
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   theme: themeReducer,
   post: postReducer,
+  comment: commentReducer,
   // Các reducer khác nếu có
 });
 

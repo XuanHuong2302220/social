@@ -131,9 +131,9 @@ const SignUp = () => {
             <div>
               <span className='text-sm'>
                 Have an account?
-                <Link href={'/login'} className='ml-1 text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
+                <a href={'/login'} className='ml-1 text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
                   Log in
-                </Link>
+                </a>
               </span>
             </div>
           </div>

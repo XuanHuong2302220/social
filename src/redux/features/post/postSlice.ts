@@ -32,7 +32,6 @@ const postSlice = createSlice({
         },
         addPost: (state, action: PayloadAction<PostState>) => {
             state.posts = [action.payload, ...state.posts];
-            console.log(state.posts)
         },
         editPost: (state, action: PayloadAction<PostState>) => {
             const index = state.posts.findIndex(post => post.id === action.payload.id);

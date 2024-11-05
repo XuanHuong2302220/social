@@ -82,6 +82,7 @@ export interface ModalProps {
 export interface PostState {
     id: number | null,
     description: string,
+    created_ago: string,
     created_by: {
         id: string,
         fullName: string,
@@ -113,4 +114,19 @@ export interface InteractProps {
     name: string;
     icon: StaticImageData | null;
     color: string;
+}
+
+
+export interface Comment {
+    children: Array<Comment> | null,
+    content: string,
+    created_ago: string,
+    created_by: {
+        fullName: string,
+        avatar: string,
+        id: string
+    },
+    id: string,
+    image?: string | null,
+
 }
