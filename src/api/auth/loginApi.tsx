@@ -34,7 +34,6 @@ const useLoginApi = () => {
                 id: user.uid,
             })
 
-            localStorage.setItem('token', idToken);
             dispatch(setToken(idToken))
 
             const data = await response.data;
@@ -86,7 +85,13 @@ const useLoginApi = () => {
 
             dispatch(setToken(token))
 
-            router.push('/');
+            if(user.fullName && user.lastName){
+                router.push('/');
+            }
+
+            else {
+                router.push(`/information/${user.username}`);
+            }
 
         } catch (error: any) {
             toast.warning(error?.response?.data?.message || "Login failed", {

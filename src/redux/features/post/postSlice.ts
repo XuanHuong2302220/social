@@ -63,9 +63,15 @@ const postSlice = createSlice({
         setLoading: (state, action) => {
             state.loading = action.payload;
         }, 
+        setCountComment: (state, action : PayloadAction<{postId: number}>) => {
+            const post = state.posts.find(post => post.id === action.payload.postId);
+            if(post) {
+                post.comment_count += 1;
+            }
+        }
     }
 })
 
-export const {  setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost, editPost, increaLike, decreaseLike, deletePost  } = postSlice.actions
+export const {  setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost, editPost, increaLike, decreaseLike, deletePost, setCountComment } = postSlice.actions
 export const selectPost = (state: RootState) => state.post
 export default postSlice.reducer

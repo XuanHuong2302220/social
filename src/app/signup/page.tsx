@@ -11,6 +11,7 @@ import useLoginApi from '@/api/auth/loginApi';
 import Link from 'next/link';
 import signupApi from '@/api/auth/signupApi';
 import { useAppSelector } from '@/redux/hooks';
+import { selectUser } from '@/redux/features/user/userSlice';
 
 interface FormValues {
   username: string;
@@ -26,11 +27,16 @@ const SignUp = () => {
   const { signup, loading } = signupApi();
   const token = useAppSelector(state => state.auth.token);
 
-  useEffect(() => {
-    if (token) {
+  const user = useAppSelector(selectUser);
+
+  useEffect(()=> {
+    if(token && user.firstName && user.lastName){ 
       router.push('/');
     }
-  }, [router])
+    else if (token && !user.firstName && !user.lastName){
+      router.push(`/information/${user.username}`);
+    }
+  }, [token])
 
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setconfirmPassword] = useState(false);

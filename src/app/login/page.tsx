@@ -24,12 +24,17 @@ const Login = React.memo(() => {
 
   const router = useRouter();
   const token = useAppSelector(state => state.auth.token);
+  const user = useAppSelector(selectUser);
 
   useEffect(()=> {
-    if(token) {
+    if(token && user.firstName && user.lastName){ 
       router.push('/');
     }
-  }, [])
+    else if (token && !user.firstName && !user.lastName){
+      router.push(`/information/${user.username}`);
+    }
+  }, [token])
+  
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -93,10 +98,10 @@ const Login = React.memo(() => {
                   </p>
                 )}
 
-                <Link href={'/forgotpassword'} 
+                <a href={'/forgotpassword'} 
                   className=' w-3/4 text-right text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
                   forgot password?
-                </Link>
+                </a>
             <Button
               text={loading ? null : 'Next'}
               type="submit"

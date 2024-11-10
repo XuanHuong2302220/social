@@ -28,6 +28,7 @@ import { decreaseLike, increaLike } from '@/redux/features/post/postSlice';
 import useGetReactions from '@/api/post/getAllReaction';
 import useDeletePost from '@/api/post/deletePost';
 import { calculateTimeDifference } from '@/utils/getTime';
+import useGetAllComment from '@/api/comment/getAllComment';
 
 interface PostProps {
   post: PostState,
@@ -68,12 +69,14 @@ const Post: React.FC<PostProps> = ({ post, disableButton }) => {
   const [cloneListReaction, setCloneListReaction] = useState<Reaction[]>([])
   const [openModalComment, setOpenModalComment] = useState(false)
   const [postComment, setPostComment] = useState<PostState>(post)
+  const {loading: loadingComment, getAllComment} = useGetAllComment()
 
   const dispatch = useAppDispatch();
 
   const {createReaction, undoReaction} = useHandleReaction()
   const {loading, getAllReactions, listReaction, typeReaction} = useGetReactions()
   const {loading: loadingDelete, deletePost} = useDeletePost()
+  const comments = useAppSelector(state => state.comment.comments)
   
 const reactions = [
     { color: 'text-blue-600' ,name: 'Like', icon: likeIcon },
@@ -83,8 +86,6 @@ const reactions = [
     { color: 'text-yellow-600' ,name: 'Sad', icon: sadIcon },
     { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
 ]
-
-
 
   const handleOpenReaction = () => {
     if (leaveTimeoutRef.current) {
@@ -228,9 +229,12 @@ useEffect(()=> {
   }
 }, [])
 
-const handleOpenModalComment = (post: PostState)=>{
-  setOpenModalComment(true)
-  setPostComment(post)
+const handleOpenModalComment = async(post: PostState)=>{
+  if(post.id){
+    setOpenModalComment(true)
+    setPostComment(post)
+    await getAllComment(post.id)
+  }
 }
 
 const handleSelectReaction =(index: number, type: string) => {
@@ -279,7 +283,7 @@ const handleDeletePost = (post: PostState) => {
             </div>
             
         </div>
-        <div>{post.description && highlightText(post.description)}</div>
+        <div className='text-textColor'>{post.description && highlightText(post.description)}</div>
         <div className='h-full relative w-full'>
             <Swiper
               onSlideChange={handleSlideChange}
@@ -403,6 +407,8 @@ const handleDeletePost = (post: PostState) => {
         {openModalComment && <ModalPostComment 
             post={postComment}
             closeFunc={()=> setOpenModalComment(false)}
+            loadingComment={loadingComment}
+            comments={comments}
         />}
     </div>
   )

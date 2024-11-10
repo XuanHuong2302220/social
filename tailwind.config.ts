@@ -19,6 +19,7 @@ const config: Config = {
         textColor: "var(--text-color)",
         backgroundImg: "var(--background-second)",
         backgroundIcon: "var(--background-icon)",
+        backGround: "var(--background)"
       },
     },
     screens: {

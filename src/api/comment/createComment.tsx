@@ -1,6 +1,7 @@
 'use client'
 
-import { addComment } from "@/redux/features/comment/commentSlice"
+import { addComment} from "@/redux/features/comment/commentSlice"
+import { setCountComment } from "@/redux/features/post/postSlice"
 import { selectUser } from "@/redux/features/user/userSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
@@ -34,6 +35,7 @@ const useCreateComment = () => {
                 },
                 created_at: new Date().toISOString()
             }))
+            dispatch(setCountComment({postId}))
             
         } catch (error) {
             console.log(error)

@@ -1,47 +1,45 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import {Avatar, Button, Comment, Input, Modal, Post, SkeletonReaction} from '@/components'
-import { PostState } from '@/types'
-import Image from 'next/image'
-import { useAppSelector } from '@/redux/hooks'
-import { selectUser } from '@/redux/features/user/userSlice'
-import HighlightWithinTextarea from 'react-highlight-within-textarea'
-import { IoMdSend } from "react-icons/io";
-import EmojiPicker, { Theme } from 'emoji-picker-react'
-import { BsEmojiSmile } from "react-icons/bs";
-import useClickOutside from '@/hooks/useClickOutside'
+import {Button, ChatComment, Comment, Modal, Post, SkeletonReaction} from '@/components'
+import { Comment as CommentInter, PostState } from '@/types'
 import useCreateComment from '@/api/comment/createComment'
-import useGetAllComment from '@/api/comment/getAllComment'
 
 interface PostProps {
   post: PostState,
-  closeFunc: () => void
+  closeFunc: () => void,
+  loadingComment?: boolean,
+  comments? : CommentInter[]
 }
 
-const ModalPostComment= ({post, closeFunc}: PostProps) => {
+const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps) => {
 
-  const user = useAppSelector(selectUser)
-  const fullName = `${user.firstName} ${user.lastName}`
   const [text, setText] = useState<string>('')
   const [warningModal, setWarningModal] = useState<boolean>(false)
+  const [activeDropdownIndex, setActiveDropdownIndex] = useState<number>(-1)
   const [height, setHeight] = useState<number>(150)
-  const [openEmoji, setOpenEmoji] = useState(false)
-  const emojiRef = useRef<HTMLDivElement>(null)
-  const textareaRef = useRef<any>(null);
-  const comments = useAppSelector(state => state.comment.comments)
+  const [checkReply, setCheckReply] = useState(false)
 
   const {loading, createComment} = useCreateComment()
-  const {loading: loadingComment, getAllComment} = useGetAllComment()
+
+  const handleEmojiClick = (emojiObject: any) => {
+    setText((prevText) => prevText + emojiObject.emoji);
+  }
+
+  const handleShowDropdownEdit = (index: number) => {
+    setActiveDropdownIndex(index);
+  };
+
+  const handleCloseModal = () => {
+    console.log('close')
+      setWarningModal(false)
+      setText('')
+      closeFunc && closeFunc()
+  }
 
   useEffect(() => {
-    const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
-    if (placeholderElement && placeholderElement instanceof HTMLElement && !text) {
-      placeholderElement.style.position = 'absolute';
-      placeholderElement.style.top = '86%';
-    }
-
     const textElement = document.querySelector('#textcomment');
+    
     if (textElement && textElement instanceof HTMLElement) {
       if(text && textElement.clientHeight > (height - 50)){
         setHeight(height + 50)
@@ -52,35 +50,6 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
     }
 
   }, [text]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if(text.trim() !== ''){
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSendComment();
-        // console.log(text)
-      }
-    }
-
-    else {
-      console.log('empty')
-    }
-  };
-
-  useClickOutside(emojiRef, ()=> {
-    setOpenEmoji(false);
-  })
-
-  const handleEmojiClick = (emojiObject: any) => {
-    setText((prevText) => prevText + emojiObject.emoji);
-  }
-
-  const handleCloseModal = () => {
-    console.log('close')
-      setWarningModal(false)
-      setText('')
-      closeFunc && closeFunc()
-  }
 
   const onChange = (text: React.SetStateAction<string>) => {
     setText(text)
@@ -93,19 +62,13 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
     }
   }
 
-  useEffect(()=> {
-    if(post.id){
-      getAllComment(post.id)
-    }
-  }, [])
-
   return (
         <Modal 
           title={
             <div className='flex justify-center fixed items-center w-full flex-col  h-[70px]'>
               <div className='flex items-center justify-center w-full h-full'>
                 <span className='text-xl font-bold text-textColor'>{post.created_by.fullName}'s Post</span>
-                <button onClick={text ? ()=> setWarningModal(true) : handleCloseModal} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
+                <button onClick={text || activeDropdownIndex !== -1 || checkReply ? ()=> setWarningModal(true) : handleCloseModal} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
               </div>
               <div className='divider m-0' />
             </div>
@@ -119,53 +82,36 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
                 />
                 <div className='divider m-0 px-5' />
 
-                <div className='flex flex-col gap-3 px-5 pt-3'>
-                  {loadingComment ? <SkeletonReaction /> :comments.map((comment, index)=> (
-                    <Comment key={index} comment={comment} />
+               {<div className='flex flex-col gap-3 px-5 pt-3'>
+                  {loadingComment ? <SkeletonReaction /> : comments && comments.map((comment, index)=> (
+                    <Comment 
+                    key={index} 
+                    comment={comment} 
+                    index={index} 
+                    activeDropdownIndex={activeDropdownIndex} 
+                    handleShowDropdownEdit={handleShowDropdownEdit} 
+                    checkReply={checkReply}
+                    setCheckReply={setCheckReply}
+                    />
                   ))}
                 </div>
+                }
+                { !loadingComment && comments && comments.length < 1 ? <h2 className='w-full py-5 text-center font-bold'>No Comment Yet</h2> : null}
 
               </div>
-              <div className='bg-navbar py-3' style={{ height: `${(height)}px`}}>
-                <div className='divider m-0 ' />
 
-                <div className={`${loading && 'pointer-events-none opacity-25'} flex px-5 gap-2 items-start`}>
-                  <Avatar 
-                    width={10}
-                    height={10}
-                    className='w-10 h-10 '
-                    src={user.avatar ?? ''}
-                    alt={fullName}
-                  />
-                  <div id='textcomment' className='flex-1 w-[90%] bg-search px-3 rounded-2xl overflow-y-auto max-h-[400px]'>
-                  <div onKeyDown={handleKeyDown} ref={textareaRef}>
-                    <HighlightWithinTextarea
-                      value={text}
-                      highlight={[{ highlight: /#[\w]+/g, className: 'text-blue-500 bg-transparent' }]}
-                      onChange={onChange}
-                      placeholder='write a comment...'
-                    />
-                  </div>
-                      <div className='flex justify-end p-2 items-center'>
-                        <div className={`absolute left-[86%] cursor-pointer`}>
-                          <BsEmojiSmile onClick={()=> setOpenEmoji(!openEmoji)} />
-                        </div>
-                        <div ref={emojiRef}>
-                          <EmojiPicker
-                            open={openEmoji}
-                            style={{position: 'absolute'}}
-                            className='top-[265px] right-[76px] z-10'
-                            width={300}
-                            height={350}
-                            theme={Theme.DARK}
-                            onEmojiClick={(emojiObject) => handleEmojiClick(emojiObject)}
-                          />
-                        </div>
-                        {loading ? <span className="loading loading-spinner loading-md"></span> :<IoMdSend className='text-xl cursor-pointer' onClick={handleSendComment} />}
-                      </div>
-                  </div>
-                </div>
-                {warningModal && <Modal
+              <div className='divider m-0 ' />
+
+              <ChatComment 
+                  loading={loading}
+                  text={text}
+                  handleEmojiClick={handleEmojiClick}
+                  onChange={onChange}
+                  handleComment={handleSendComment}
+                  height={height}
+                />
+              
+              {warningModal && <Modal
                   onClose={()=> setWarningModal(false)}
                   title={
                     <div className='flex flex-col py-2 justify-between items-center'>
@@ -181,7 +127,6 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
                     </div>
                   }
               />}
-              </div>
             </div>
           }
           // onClose={()=> setWarningModal(true)}

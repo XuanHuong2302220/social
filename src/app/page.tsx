@@ -52,7 +52,7 @@ const Home = React.memo(() => {
 
   return (
     <Layout>
-       <div className='h-screen p-[90px] w-screen flex justify-between overflow-auto overflow-x-hidden' id="scrollableDiv" >
+       <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-auto overflow-x-hidden' id="scrollableDiv" >
           <div className='w-1/4 bg-navbar'>profile</div>
           <div className='h-full w-2/4 flex flex-col gap-5 px-5'>
               <NewPost />

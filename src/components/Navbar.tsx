@@ -6,7 +6,7 @@ import { MdOutlineSearch } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
 import { IoNotifications } from "react-icons/io5";
-import {Input, DropDown, Button} from '@/components'
+import {Input, DropDown, Button, Modal} from '@/components'
 import { IoSunny } from "react-icons/io5";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setTheme } from '@/redux/features/theme/themeSlice';
@@ -26,6 +26,7 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showDropdownLogout, setShowDropdownLogout] = useState(false);
   const router = useRouter();
+  const [loading, setLoading] = useState(false)
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if(search.current){
@@ -42,8 +43,10 @@ const Navbar = () => {
   }
 
   const handleLogout =()=> {
-    router.push('/login')
+    setLoading(true)
     dispatch(clearToken())
+    dispatch(cleaerUser())
+    router.push('/login')
   }
 
   useClickOutside(dropdownRef, ()=> setShowDropdownLogout(false))
@@ -111,6 +114,14 @@ const Navbar = () => {
             />
           </div>
         </div>
+
+      {loading && <Modal 
+          className='w-[200px] h-[200px] flex justify-center items-center'
+          children={
+              <span>Logging out...</span>
+          }
+        />}
+
     </div>
   )
 }

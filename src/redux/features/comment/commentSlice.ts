@@ -11,17 +11,22 @@ const commentSlice = createSlice({
     initialState: initialComment,
     reducers: {
         addComments : (state, action : PayloadAction<Comment[]>) => {
-            const newComments = action.payload.filter(newComment =>{
-                return !state.comments.some(existingComment => existingComment.id === newComment.id)
-            })
-
-            state.comments = [...state.comments, ...newComments]
+            state.comments = [...action.payload]
         },
         addComment : (state, action : PayloadAction<Comment>) => {
             state.comments = [action.payload, ...state.comments]
+        },
+        updateComment: (state, action : PayloadAction<Comment>) => {
+            const index = state.comments.findIndex(comment => comment.id === action.payload.id)
+            state.comments[index] = action.payload 
+            console.log(action.payload)
+        },
+        deleteComment : (state, action : PayloadAction<string>) => {
+            state.comments = state.comments.filter(comment => comment.id !== action.payload)
         }
+        
     }
 })
 
-export const {addComments, addComment} = commentSlice.actions
+export const {addComments,addComment, updateComment, deleteComment} = commentSlice.actions
 export default commentSlice.reducer

@@ -1,16 +1,17 @@
 'use client'
 
-import { Button, Input, Logo } from '@/components';
-import React, { useEffect } from 'react'
+import { Button, Input, Logo, Modal } from '@/components';
+import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form';
-import { selectUser } from '@/redux/features/user/userSlice';
+import { cleaerUser, selectUser } from '@/redux/features/user/userSlice';
 import { useSelector } from 'react-redux';
 import { DatePicker } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css'; // Import CSS cho rsuite
 import { useParams, useRouter } from 'next/navigation';
 import updateUser from '@/api/auth/updateUser';
 import withAuth from '@/middleware/withAuth';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { clearToken } from '@/redux/features/auth/authSlice';
 
 interface FormValues {
   firstName: string;
@@ -24,12 +25,22 @@ const information = () => {
   const user = useAppSelector(selectUser);
   const {lastName, firstName, username, id} = user;
   const router = useRouter()
+  const [loadingLogout, setLoadingLogout] = useState(false)
+  const dispatch = useAppDispatch()
 
   useEffect(()=> {
     if(lastName && firstName && username && id){
       router.push('/')
     }
   }, [])
+
+  
+  const handleLogout =()=> {
+    setLoadingLogout(true)
+    dispatch(clearToken())
+    dispatch(cleaerUser())
+    router.push('/login')
+  }
 
   const calculateMinDate = () => {
     const today = new Date();
@@ -135,16 +146,32 @@ const information = () => {
           <div>
           
           </div>
-        <div className='flex w-full justify-end mt-2'>
+        <div className='flex w-full justify-between mt-2'>
           <Button
-            text={loading ? null : 'Submit'}
+            text={loading ? null : 'Logout'}
             type="submit"
             classNameText='text-white font-bold'
             className='w-1/3 h-10 rounded-lg bg-black right'
             disabled={loading}
+            onClick={handleLogout}
+            iconLoading={loading}
+          />
+          <Button
+            text={loading ? null : 'Submit'}
+            type="submit"
+            classNameText='text-white font-bold'
+            className='w-1/3 h-10 rounded-lg bg-primaryColor border-primaryColor hover:bg-primaryColor hover:opacity-50 hover:border-primaryColor right'
+            disabled={loading}
             iconLoading={loading}
           />
         </div>
+
+        {loadingLogout && <Modal
+          className='w-[200px] h-[200px] flex justify-center items-center'
+          children={
+            <span className='text-white'>Logging out...</span>
+          }
+        />}
       </form>
     </div>
   )

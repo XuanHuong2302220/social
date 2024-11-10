@@ -17,6 +17,7 @@
   --text-color: #ffffff;
   --background-second: #333436;
   --background-icon: #3f4042;
+  --backGround: #000000;
 }
 
 [data-theme='light'] {
@@ -29,6 +30,7 @@
   --text-color: #000000;
   --background-second: #CCCBC9;
   --background-icon: #c0bfbd;
+  --backGround: #ffffff;
 }
 
 /* Custom global scrollbar styles */
