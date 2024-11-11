@@ -344,6 +344,7 @@ const handleDeletePost = (post: PostState) => {
                     <Interact 
                       reactions={reactions}
                       onClick={(reaction) => handleReaction(reaction.name, reaction.icon, reaction.color)}
+                      backgroundColor='bg-search'
                     />
                   } 
                 </div>

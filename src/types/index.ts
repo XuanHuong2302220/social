@@ -128,5 +128,7 @@ export interface Comment {
     },
     id: string,
     image?: string | null,
-
+    reactionCount: number,
+    reactionType: string,
+    commentCount: number
 }

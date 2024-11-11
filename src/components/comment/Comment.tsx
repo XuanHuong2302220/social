@@ -4,14 +4,17 @@ import React, { useEffect, useRef, useState } from 'react'
 import {Avatar, Button, ChatComment, DropDown, Interact} from '@/components'
 import { reactions } from '@/utils/reactions'
 import { Comment as CommentInter } from '@/types'
-import {calculateTimeDifference} from '@/utils/getTime'
 import { BsThreeDots } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
 import useClickOutside from '@/hooks/useClickOutside'
 import useUpdateComment from '@/api/comment/updateComment'
 import useDeleteComment from '@/api/comment/deleteComment'
-import { useAppSelector } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import useHandleReaction from '@/api/post/handleReaction'
+import likeIcon from '@/assets/icons/like.svg';
+import Image from 'next/image'
+import { decreaLikeComment, increaLikeComment } from '@/redux/features/comment/commentSlice'
 
 interface CommentProps {
   comment: CommentInter,
@@ -31,6 +34,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   const [showDropdown, setShowDropdown] = useState(false)
   const [showReaction, setShowReaction] = useState({
     color: 'text-textColor',
+    icon: null,
     name: 'Like',
   })
   const [showEdit, setShowEdit] = useState(false)
@@ -44,6 +48,8 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   const [height, setHeight] = useState<number>(100);
   const {updateComment, loading} = useUpdateComment()
   const {deleteComment, loading: loadingDelete} = useDeleteComment()
+  const {createReactionComment, undoReactionComment} = useHandleReaction()
+  const dispatch = useAppDispatch()
 
   const handleClickExit = () => {
     setEdit(false)
@@ -74,7 +80,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   }, [index, activeDropdownIndex]);
 
   const handleShowDropDownEdit = () => {
-    setShowDropdownEdit(true)
+    setShowDropdownEdit(!showDropdownEdit)
   }
 
   const handleOpenReaction = () => {
@@ -121,12 +127,6 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   };
 
   useEffect(() => {
-    // const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
-    // if (placeholderElement && placeholderElement instanceof HTMLElement && !text) {
-    //   placeholderElement.style.position = 'absolute';
-    //   placeholderElement.style.top = '86%';
-    // }
-
     const textElement = document.querySelector('#textcomment');
     if (textElement && textElement instanceof HTMLElement) {
       if(text && textElement.clientHeight > (height - 50)){
@@ -139,7 +139,16 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
 
   }, [text]);
 
-  const handleClickReaction = (name: string, color: string) => {
+  useEffect(()=> {
+    if(comment.reactionType) {
+        const matchedReaction = reactions.find(reaction => reaction.name === comment.reactionType)
+        if(matchedReaction) {
+          setShowReaction({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
+        }
+    }
+  }, [])
+
+  const handleClickReaction = async(name: string) => {
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
@@ -148,13 +157,13 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
       clearTimeout(leaveTimeoutRef.current);
       leaveTimeoutRef.current = null;
     }
-    setShowReaction({
-      name: name,
-      color: color
-    })
-    console.log(showDropdown)
+    dispatch(increaLikeComment({commentId: comment.id}))
+    const matchedReaction = reactions.find(reaction => reaction.name === name)
+    if(matchedReaction) {
+      setShowReaction({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
+    }
     setShowDropdown(false)
-
+    await createReactionComment(comment.id, name)
   }
 
   const handleOpenEdit = ()=> {
@@ -168,20 +177,26 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
       handleShowDropdownEdit && handleShowDropdownEdit(-1)
   }
 
-  const handleClickDefaultReaction = () => {
+  const handleClickDefaultReaction = async() => {
+    dispatch(decreaLikeComment({commentId: comment.id}))
     if(showReaction.color !== 'text-textColor'){
       setShowReaction({
         name: 'Like',
+        icon: null,
         color: 'text-textColor',
         })
       setShowDropdown(false)
+      await undoReactionComment(comment.id)
     }
     else {
+      dispatch(increaLikeComment({commentId: comment.id}))
       setShowReaction({
         name: 'Like',
+        icon: likeIcon,
         color: 'text-blue-600'
       })
       setShowDropdown(false)
+      await createReactionComment(comment.id, "Like")
     }
   }
 
@@ -230,7 +245,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
                     <span className='text-xs font-bold cursor-pointer hover:underline w-auto'>{comment.created_by.fullName}</span>
                     <span className='w-full'>{highlightText(comment.content)}</span>
                 </div>
-                <div className='flex px-3 gap-2 w-[200px]'>
+                <div className='flex px-3 gap-2 max-w-full'>
                     <span className='text-sm text-textColor'>{comment.created_ago}</span>
                     <div
                         ref={dropdownRef}
@@ -242,12 +257,22 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
                         { showDropdown &&
                         <Interact
                           reactions={reactions}
-                          onClick={(reaction)=> handleClickReaction(reaction.name, reaction.color)}
+                          onClick={(reaction)=> handleClickReaction(reaction.name)}
                           isComment
                         />
                         }
                     </div>
                     <span className='text-sm text-textColor cursor-pointer hover:underline' onClick={handleOpenReply}>reply</span>
+
+                    {comment.reactionCount > 0 && <div className='ml-auto flex gap-1 items-center cursor-pointer'>
+                      <span className='text-textColor text-xs'>{comment.reactionCount}</span>
+                      <Image 
+                        src={showReaction.icon ?? ''} 
+                        alt={showReaction.name} 
+                        width={15} 
+                        height={15} 
+                      />
+                    </div>}
                 </div>
             </div>
             {showEdit  && <div className='z-50 absolute top-0 right-0' ref={dropdownRefEdit}>

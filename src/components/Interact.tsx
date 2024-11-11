@@ -6,13 +6,19 @@ interface InteractProps {
     reactions: Array<{name: string, icon: StaticImageData, color: string}>,
     onMouseEnter?: () => void,
     onMouseLeave?: () => void,
-    isComment?: boolean
+    isComment?: boolean,
+    backgroundColor?: string
 }
 
-const Interact = ({onClick, reactions, onMouseEnter, onMouseLeave, isComment}: InteractProps) => {
+const Interact = ({onClick, reactions, onMouseEnter, onMouseLeave, isComment, backgroundColor}: InteractProps) => {
 
   return (
-    <div className={`absolute h-auto gap-1 bg-gray-800 z-50 flex p-2 rounded-xl`} style={{width : isComment ? '215px' : '340px', top: isComment ? '-50px' : '-60px'}} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div 
+      className={`absolute h-auto gap-1 ${backgroundColor ? backgroundColor : 'bg-gray-800'} z-50 flex p-2 rounded-xl`} 
+      style={{width : isComment ? '215px' : '340px', top: isComment ? '-50px' : '-60px'}} 
+      onMouseEnter={onMouseEnter} 
+      onMouseLeave={onMouseLeave}
+    >
         {reactions.map((reaction, index)=> (
             <Image 
               onClick={() => onClick(reaction)} 

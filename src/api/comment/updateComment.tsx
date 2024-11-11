@@ -24,7 +24,6 @@ const useUpdateComment = () => {
             })
 
             const data = await response.data
-            console.log(data)
             dispatch(newUpdateComment(data))
         } catch (error) {
             console.log(error)
