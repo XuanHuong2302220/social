@@ -19,6 +19,7 @@ const useGetReactions = ()=> {
     const [listReaction, setListReaction] = useState<Reaction[]>([])
 
     const getAllReactions = async (postId: number, type?: string) => {
+        console.log('render')
         setLoading(true)
         try {
             const response = await axs.get(`/reaction/get-reaction-of-post/${postId}?page=1&pageSize=10${type ? `&reactionTypes=${type}` : ''}`, {
@@ -32,6 +33,7 @@ const useGetReactions = ()=> {
                 setTypeReaction(typeUserReacted)
                 setListReaction(reactions)
                 console.log(reactions)
+                console.log(typeUserReacted)
             }
             else {
                 setListReaction(reactions)

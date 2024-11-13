@@ -13,12 +13,13 @@ const useCreateComment = () => {
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
 
-    const createComment = async (postId: number, content: string) => {
+    const createComment = async (postId: number, content: string, parentId?: string | undefined) => {
         setLoading(true)
         try {
             const response = await axs.post('/comment/create-comment', {
                 postId,
-                content
+                content,
+                parentId
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -26,15 +27,20 @@ const useCreateComment = () => {
             })
 
             const data = response.data
-            dispatch(addComment({
-                ...data,
-                created_by: {
-                    id: user.id,
-                    fullName: `${user.lastName} ${user.firstName}`,
-                    avatar: user.avatar
-                },
-                created_at: new Date().toISOString()
-            }))
+            if(parentId){
+                console.log(data)
+            }
+            else {
+                dispatch(addComment({
+                    ...data,
+                    created_by: {
+                        id: user.id,
+                        fullName: `${user.lastName} ${user.firstName}`,
+                        avatar: user.avatar
+                    },
+                    created_at: new Date().toISOString()
+                }))
+            }
             dispatch(setCountComment({postId}))
             
         } catch (error) {

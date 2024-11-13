@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {Avatar, Button, DropDown, Interact, Modal, ModalPost, ModalPostComment, SkeletonReaction, Tabs} from '@/components'
+import React, {useEffect, useRef, useState } from 'react'
+import {Avatar, Button, DropDown, Interact, Modal, ModalPost, ModalPostComment, TabReactions} from '@/components'
 import { BsThreeDots } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import Link from 'next/link';
@@ -237,7 +237,7 @@ const handleOpenModalComment = async(post: PostState)=>{
   }
 }
 
-const handleSelectReaction =(index: number, type: string) => {
+const handleSelectReaction = (index: number, type: string) => {
   if(post.id ){
     setActiveTab(index)
     console.log(index)
@@ -320,8 +320,12 @@ const handleDeletePost = (post: PostState) => {
         </div>
         <div>
             <div className='flex justify-between'>
-              {post.reaction_count > 0 && <span onClick={handleOpenModalReact} className='text-[14px] text-textColor hover:underline cursor-pointer'>{post.reaction_count} Reactions</span>}
-              {post.comment_count > 0 && <span className='text-[14px] text-textColor'>{post.comment_count} Comments</span>}
+              {post.reaction_count > 0 && 
+              <span onClick={handleOpenModalReact} className='text-sm flex items-center gap-1 text-textColor hover:underline cursor-pointer'>
+              <span>{post.reaction_count} </span>
+              <Image src={reactions.find(r => r.name === post.reactionType)?.icon.src} alt={post.reactionType} width={20} height={20} />
+              </span>}
+              {post.comment_count > 0 && <span className='text-sm text-textColor'>{post.comment_count} Comments</span>}
             </div>
             <div className='divider m-0' />
             <div className='flex justify-around h-2/4'>
@@ -368,39 +372,13 @@ const handleDeletePost = (post: PostState) => {
             onClose={handleCloseModalReactions}
             closeIcon
             children={
-              
-              <div className='flex flex-col'>
-                <div role="tablist" className="tabs tabs-bordered flex ">
-                  {headerReaction.map((reaction, index)=> (
-                    <Button 
-                      key={index}
-                      left
-                      icon={reaction.type.icon && <Image src={reaction.type.icon.src} alt={reaction.type.name} width={25} height={25} /> }
-                      text={`${reaction.count > 0 ? reaction.count : reaction.type.name}`}
-                      className={`border-transparent rounded-none tab w-[100px] bg-transparent ${activeTab === index ? 'tab-active' : ''}`}
-                      onClick={()=>handleSelectReaction(index, reaction.type.name)}
-                      disabled={activeTab === index}
-                    />
-                  ))}
-                </div>
-                  { activeTab && 
-                     loading ? <SkeletonReaction /> :
-                     getListReaction.map((reaction, index) => (
-                          <div key={index} className='flex gap-2 items-center justify-between py-2'>
-                          <div className='flex gap-2 items-center'>
-                            <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
-                            <div className='flex flex-col'>
-                              <Link href={'/'} className='font-bold hover:underline text-textColor'>{reaction.user.fullName}</Link>
-                              {/* <span className='text-[12px]'>20 hours ago</span> */}
-                            </div>
-                          </div>
-                          <div className='flex gap-2 items-center'>
-                            <Image src={reactions.find(r => r.name === reaction.reaction_type)?.icon.src} alt={reaction.reaction_type} width={30} height={30} />
-                          </div>
-                        </div>
-                        ))}
-                </div>
-              
+              <TabReactions
+                headerReaction={headerReaction}
+                activeTab={activeTab}
+                loading={loading}
+                getListReaction={getListReaction}
+                handleSelectReaction={handleSelectReaction}
+              />
             }
           />
         )}

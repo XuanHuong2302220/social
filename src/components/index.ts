@@ -15,6 +15,7 @@ import SkeletonReaction from "./SkeletonReaction"
 import ModalPostComment from "./post/ModalPostComment"
 import Comment from "./comment/Comment"
 import ChatComment from "./comment/ChatComment"
+import TabReactions from "./TabReactions"
 
 export {
     Input,
@@ -33,5 +34,6 @@ export {
     SkeletonReaction,
     ModalPostComment,
     Comment,
-    ChatComment
+    ChatComment,
+    TabReactions
 }

@@ -8,11 +8,12 @@ import authReducer from './features/auth/authSlice';
 import themeReducer from './features/theme/themeSlice';
 import postReducer from './features/post/postSlice';
 import commentReducer from './features/comment/commentSlice';
+import replyCommentReducer from './features/comment/replyCommentSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['post', 'comment'],
+  blacklist: ['post', 'comment', 'replyComment'],
 };
 
 const rootReducer = combineReducers({
@@ -21,7 +22,7 @@ const rootReducer = combineReducers({
   theme: themeReducer,
   post: postReducer,
   comment: commentReducer,
-  // Các reducer khác nếu có
+  replyComment: replyCommentReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

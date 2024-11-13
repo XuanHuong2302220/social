@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {Button, ChatComment, Comment, Modal, Post, SkeletonReaction} from '@/components'
 import { Comment as CommentInter, PostState } from '@/types'
 import useCreateComment from '@/api/comment/createComment'
@@ -85,14 +85,15 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
                {<div className='flex flex-col gap-3 px-5 pt-3'>
                   {loadingComment ? <SkeletonReaction /> : comments && comments.map((comment, index)=> (
                     <Comment 
-                    key={index} 
-                    comment={comment} 
-                    index={index} 
-                    activeDropdownIndex={activeDropdownIndex} 
-                    handleShowDropdownEdit={handleShowDropdownEdit} 
-                    checkReply={checkReply}
-                    setCheckReply={setCheckReply}
-                    />
+                      key={index} 
+                      comment={comment} 
+                      index={index} 
+                      activeDropdownIndex={activeDropdownIndex} 
+                      handleShowDropdownEdit={handleShowDropdownEdit} 
+                      checkReply={checkReply}
+                      setCheckReply={setCheckReply}
+                      postId={post.id ?? 0}
+                    />    
                   ))}
                 </div>
                 }

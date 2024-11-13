@@ -15,6 +15,7 @@ import useHandleReaction from '@/api/post/handleReaction'
 import likeIcon from '@/assets/icons/like.svg';
 import Image from 'next/image'
 import { decreaLikeComment, increaLikeComment } from '@/redux/features/comment/commentSlice'
+import useCreateComment from '@/api/comment/createComment'
 
 interface CommentProps {
   comment: CommentInter,
@@ -22,10 +23,11 @@ interface CommentProps {
   index?: number,
   handleShowDropdownEdit?: (index: number) => void,
   checkReply?: boolean
-  setCheckReply?: (isReply: boolean) => void
+  setCheckReply?: (isReply: boolean) => void,
+  postId: number
 }
 
-const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, checkReply, setCheckReply}: CommentProps) => {
+const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, checkReply, setCheckReply, postId}: CommentProps) => {
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,12 +46,14 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   const [edit, setEdit] = useState(false)
   const [text, setText] = useState<string>(comment.content)
   const [replyComment, setReplyComment] = useState('')
-  useClickOutside(dropdownRefEdit, ()=> setShowDropdownEdit(false))
   const [height, setHeight] = useState<number>(100);
   const {updateComment, loading} = useUpdateComment()
   const {deleteComment, loading: loadingDelete} = useDeleteComment()
   const {createReactionComment, undoReactionComment} = useHandleReaction()
+  const {createComment, loading: loadingReplyComment} = useCreateComment()
   const dispatch = useAppDispatch()
+  
+  useClickOutside(dropdownRefEdit, ()=> setShowDropdownEdit(false))
 
   const handleClickExit = () => {
     setEdit(false)
@@ -63,8 +67,13 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
     setReplyComment('')
   }
 
-  const onChange = (text: React.SetStateAction<string>) => {
-    setText(text)
+  const onChange = (text: React.SetStateAction<string>, type: string) => {
+    if(type === 'comment') {
+      setText(text)
+    }
+    else {
+      setReplyComment(text)
+    }
   }
 
   useEffect(()=> {
@@ -177,35 +186,43 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
       handleShowDropdownEdit && handleShowDropdownEdit(-1)
   }
 
+  const handleReplyComment = async() => {
+    await createComment(postId, replyComment, comment.id)
+    setReplyComment('')
+    setIsReply(false)
+    setCheckReply && setCheckReply(false)
+  }
+
   const handleClickDefaultReaction = async() => {
-    dispatch(decreaLikeComment({commentId: comment.id}))
     if(showReaction.color !== 'text-textColor'){
+      dispatch(decreaLikeComment({commentId: comment.id}))
       setShowReaction({
         name: 'Like',
         icon: null,
         color: 'text-textColor',
-        })
+      })
       setShowDropdown(false)
       await undoReactionComment(comment.id)
     }
     else {
       dispatch(increaLikeComment({commentId: comment.id}))
-      setShowReaction({
-        name: 'Like',
-        icon: likeIcon,
-        color: 'text-blue-600'
-      })
+      const matchedReaction = reactions.find(reaction => reaction.name === "Like")
+      if(matchedReaction) {
+        setShowReaction({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
+      }
       setShowDropdown(false)
+      console.log(showReaction)
       await createReactionComment(comment.id, "Like")
     }
   }
 
-  const handleEmojiClick = (emojiObject: any) => {
-    setText((prevText) => prevText + emojiObject.emoji);
-  }
-
-  const handleEmojiClickReply = (emojiObject: any) => {
-    setReplyComment((prevText) => prevText + emojiObject.emoji);
+  const handleEmojiClick = (emojiObject: any, type: string) => {
+    if(type === 'comment') {
+      setText((prevText) => prevText + emojiObject.emoji);
+    }
+    else{
+      setReplyComment((prevText) => prevText + emojiObject.emoji);
+    }
   }
 
   return (
@@ -214,8 +231,8 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
           <div id='chatComment' className='flex flex-col gap-2 items-start w-full'>
             <ChatComment
               text={text}
-              handleEmojiClick={handleEmojiClick}
-              onChange={onChange}
+              handleEmojiClick={(emojiObject)=>handleEmojiClick(emojiObject, 'comment')}
+              onChange={(text) => onChange(text, 'comment')}
               handleComment={handleUpdateComment}
               className='0'
               height={height}
@@ -297,13 +314,13 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
           {isReply && <div className='ml-[54px] z-50'>
             <ChatComment
               text={replyComment}
-              handleEmojiClick={handleEmojiClickReply}
-              onChange={(text: React.SetStateAction<string>)=>setReplyComment(text)}
-              handleComment={handleUpdateComment}
+              handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
+              onChange={(text) => onChange(text, 'replyComment')}
+              handleComment={handleReplyComment}
               className='0'
               height={height}
               edit
-              // loading={loading}
+              loading={loadingReplyComment}
               handleExit={handleCancelRepy}
             />
           </div>}
