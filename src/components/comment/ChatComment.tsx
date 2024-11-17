@@ -19,18 +19,21 @@ interface ChatCommentProps {
     handleComment: () => void,
     height: number,
     edit?: boolean,
-    handleExit?: () => void
+    handleExit?: () => void,
+    nameReply?: string[]
 }
 
-const ChatComment = ({loading,height, text, handleComment, onChange, handleEmojiClick,handleExit, className, edit}: ChatCommentProps) => {
+const ChatComment = ({loading,height, text, handleComment, onChange, handleEmojiClick,handleExit, className, edit, nameReply}: ChatCommentProps) => {
 
     const user = useAppSelector(selectUser)
     const [openEmoji, setOpenEmoji] = useState(false)
     const emojiRef = useRef<HTMLDivElement>(null)
 
     useClickOutside(emojiRef, ()=> {
-        setOpenEmoji(false);
+      setOpenEmoji(false);
     })
+
+    const fullNameRegex = new RegExp(`(${nameReply && nameReply.join('|')})`, 'g');
 
     useEffect(() => {
       const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
@@ -45,7 +48,6 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleComment();
-            // console.log(text)
           }
         }
       };
@@ -64,7 +66,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
             <div onKeyDown={handleKeyDown}>
               <HighlightWithinTextarea
                   value={text}
-                  highlight={[{ highlight: /#[\w]+/g, className: 'text-blue-500 bg-transparent' }]}
+                  highlight={[{ highlight: [/#[\w]+/g, fullNameRegex], className: 'text-blue-500 bg-transparent' }]}
                   onChange={onChange}
                   placeholder={!edit ? 'Write a comment...' : undefined}
               />

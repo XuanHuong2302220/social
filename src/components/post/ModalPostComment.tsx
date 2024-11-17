@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import {Button, ChatComment, Comment, Modal, Post, SkeletonReaction} from '@/components'
 import { Comment as CommentInter, PostState } from '@/types'
 import useCreateComment from '@/api/comment/createComment'
+import { useAppDispatch } from '@/redux/hooks'
+import { setCountComment } from '@/redux/features/post/postSlice'
 
 interface PostProps {
   post: PostState,
@@ -19,6 +21,7 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
   const [activeDropdownIndex, setActiveDropdownIndex] = useState<number>(-1)
   const [height, setHeight] = useState<number>(150)
   const [checkReply, setCheckReply] = useState(false)
+  const dispatch = useAppDispatch()
 
   const {loading, createComment} = useCreateComment()
 
@@ -85,7 +88,7 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
                {<div className='flex flex-col gap-3 px-5 pt-3'>
                   {loadingComment ? <SkeletonReaction /> : comments && comments.map((comment, index)=> (
                     <Comment 
-                      key={index} 
+                      key={comment.id} 
                       comment={comment} 
                       index={index} 
                       activeDropdownIndex={activeDropdownIndex} 
@@ -112,7 +115,7 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
                   height={height}
                 />
               
-              {warningModal && <Modal
+                {warningModal && <Modal
                   onClose={()=> setWarningModal(false)}
                   title={
                     <div className='flex flex-col py-2 justify-between items-center'>

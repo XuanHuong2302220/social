@@ -303,7 +303,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
                     modules={[Navigation]}
                     className="mySwiper h-full"
                   >
-                    {images?.map((image, index) => (
+                    {images && images?.map((image, index) => (
                       <SwiperSlide key={index}>
                         <Image alt={image} src={image} layout="fill"  style={{ objectFit: 'contain' }} />
                     </SwiperSlide>

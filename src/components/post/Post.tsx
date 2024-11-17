@@ -24,10 +24,9 @@ import sadIcon from '@/assets/icons/sad.svg';
 import angryIcon from '@/assets/icons/angry.svg';
 import useHandleReaction from '@/api/post/handleReaction';
 import { useAppDispatch, useAppSelector} from "@/redux/hooks"
-import { decreaseLike, increaLike } from '@/redux/features/post/postSlice';
+import { changeTypeReaction, decreaseLike, increaLike } from '@/redux/features/post/postSlice';
 import useGetReactions from '@/api/post/getAllReaction';
 import useDeletePost from '@/api/post/deletePost';
-import { calculateTimeDifference } from '@/utils/getTime';
 import useGetAllComment from '@/api/comment/getAllComment';
 
 interface PostProps {
@@ -39,6 +38,15 @@ interface ReactionProps {
   count: number;
 }
 
+const reactions = [
+  { color: 'text-blue-600' ,name: 'Like', icon: likeIcon },
+  { color: 'text-red-600' ,name: 'Love', icon: loveIcon },
+  { color: 'text-yellow-600' ,name: 'Haha', icon: hahaIcon },
+  { color: 'text-yellow-600' ,name: 'Wow', icon: wowIcon },
+  { color: 'text-yellow-600' ,name: 'Sad', icon: sadIcon },
+  { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
+]
+
 const Post: React.FC<PostProps> = ({ post, disableButton }) => {
 
   const [isBeginning, setIsBeginning] = useState(true)
@@ -49,26 +57,14 @@ const Post: React.FC<PostProps> = ({ post, disableButton }) => {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const [showDropdown, setShowDropdown] = useState(false)
   const [showInteract, setShowInteract] = useState<InteractProps>({
-    name: '',
-    icon: null,
-    color: ''
+    name: post.reactionType || '',
+    icon: post.reactionType ? reactions.find(r => r.name === post.reactionType)?.icon : null,
+    color: post.reactionType ? reactions.find(r => r.name === post.reactionType)?.color || '' : ''
   })
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [showModalReact, setShowModalReact] = useState(false);
-  const [activeTab, setActiveTab] = useState(0);
-  const [headerReaction, setHeaderReaction] = useState<ReactionProps[]>([{
-    type: {
-      name: 'All',
-      icon: null,
-      color: ''
-    },
-    count: 0
-  }])
-  const [getListReaction, setListReaction] = useState<Reaction[]>([])
-  const [cloneListReaction, setCloneListReaction] = useState<Reaction[]>([])
   const [openModalComment, setOpenModalComment] = useState(false)
-  const [postComment, setPostComment] = useState<PostState>(post)
   const {loading: loadingComment, getAllComment} = useGetAllComment()
 
   const dispatch = useAppDispatch();
@@ -77,15 +73,7 @@ const Post: React.FC<PostProps> = ({ post, disableButton }) => {
   const {loading, getAllReactions, listReaction, typeReaction} = useGetReactions()
   const {loading: loadingDelete, deletePost} = useDeletePost()
   const comments = useAppSelector(state => state.comment.comments)
-  
-const reactions = [
-    { color: 'text-blue-600' ,name: 'Like', icon: likeIcon },
-    { color: 'text-red-600' ,name: 'Love', icon: loveIcon },
-    { color: 'text-yellow-600' ,name: 'Haha', icon: hahaIcon },
-    { color: 'text-yellow-600' ,name: 'Wow', icon: wowIcon },
-    { color: 'text-yellow-600' ,name: 'Sad', icon: sadIcon },
-    { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
-]
+
 
   const handleOpenReaction = () => {
     if (leaveTimeoutRef.current) {
@@ -100,10 +88,12 @@ const reactions = [
   const handleClickDefault = () => {
     if(post.id){
       if(showInteract.name === '') {
+        console.log(post.id)
         setShowInteract({ name: 'Like', icon: likeIcon, color: 'text-blue-600' })
+        dispatch(changeTypeReaction({postId: post.id, type: 'Like'}))
         dispatch(increaLike({ postId: post.id }))
         setShowDropdown(false)
-        if (post.id !== null) {
+        if (post.id) {
           createReaction(post.id, 'Like');
         }
       }
@@ -154,13 +144,14 @@ const handleReaction = (name: string, icon: StaticImageData, color: string) => {
   if(post.id){
     if(showInteract.name === '') {
       setShowInteract({ name, icon, color })
-      console.log(color)
       dispatch(increaLike({ postId: post.id }))
+      dispatch(changeTypeReaction({postId: post.id, type: name}))
       setShowDropdown(false)
       createReaction(post.id, name);
     }
     else {
       setShowInteract({ name, icon, color })
+      dispatch(changeTypeReaction({postId: post.id, type: name}))
       setShowDropdown(false)
       createReaction(post.id, name);
     }
@@ -171,82 +162,17 @@ const handleCloseModal = () => {
   setIsModalOpen(false);
 };
 
-useEffect(()=> {
-  if(post.id){
-    setHeaderReaction(prevState => [
-      ...prevState, 
-      ...typeReaction.flat().map(reaction => {
-        const matchedReaction = reactions.find(r => r.name === reaction.type);
-        if(matchedReaction)
-          return {
-            type: {
-              name: matchedReaction.name,
-              icon: matchedReaction.icon,
-              color: matchedReaction.color
-            },
-            count: reaction.count
-          };
-      }).filter((reaction): reaction is ReactionProps => reaction !== undefined)
-    ])
-  }
-
-}, [typeReaction])
-
 const handleOpenModalReact = async()=> {
   if(post.id){
     setShowModalReact(true)
-    setActiveTab(0)
-    await getAllReactions(post.id)
+    await getAllReactions(post.id, 'post')
   }
 }
-
-useEffect(()=> {
-  if(post.id){
-    setListReaction(listReaction)
-    setCloneListReaction(listReaction)
-  }
-}, [listReaction])
-
-const handleCloseModalReactions = () => {
-  setShowModalReact(false);
-  setHeaderReaction([{
-    type: {
-      name: 'All',
-      icon: null,
-      color: ''
-    },
-    count: 0
-  }])
-  setListReaction([])
-}
-
-useEffect(()=> {
-  if(post.reactionType) {
-      const matchedReaction = reactions.find(reaction => reaction.name === post.reactionType)
-      if(matchedReaction) {
-        setShowInteract({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
-      }
-  }
-}, [])
 
 const handleOpenModalComment = async(post: PostState)=>{
   if(post.id){
     setOpenModalComment(true)
-    setPostComment(post)
     await getAllComment(post.id)
-  }
-}
-
-const handleSelectReaction = (index: number, type: string) => {
-  if(post.id ){
-    setActiveTab(index)
-    console.log(index)
-    if(index !== 0) {
-      setListReaction(()=>listReaction.filter(reaction => reaction.reaction_type === type))
-    }
-    else if(index === 0) {
-      setListReaction(cloneListReaction)
-    }
   }
 }
 
@@ -255,6 +181,16 @@ const handleDeletePost = (post: PostState) => {
     deletePost(post.id)
   }
 }
+
+useEffect(()=> {
+  if(post.reactionType){
+    setShowInteract({
+      name: post.reactionType,
+      icon: reactions.find(r => r.name === post.reactionType)?.icon,
+      color: reactions.find(r => r.name === post.reactionType)?.color || ''
+    })
+  }
+}, [post.reactionType])
 
   return (
     <div className='card w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 
@@ -321,10 +257,10 @@ const handleDeletePost = (post: PostState) => {
         <div>
             <div className='flex justify-between'>
               {post.reaction_count > 0 && 
-              <span onClick={handleOpenModalReact} className='text-sm flex items-center gap-1 text-textColor hover:underline cursor-pointer'>
-              <span>{post.reaction_count} </span>
-              <Image src={reactions.find(r => r.name === post.reactionType)?.icon.src} alt={post.reactionType} width={20} height={20} />
-              </span>}
+                <span onClick={handleOpenModalReact} className='text-sm flex items-center gap-1 text-textColor hover:underline cursor-pointer'>
+                <span>{post.reaction_count} </span>
+                  <Image src={reactions.find(r => r.name === post.reactionType)?.icon.src} alt={post.reactionType} width={20} height={20} />
+                </span>}
               {post.comment_count > 0 && <span className='text-sm text-textColor'>{post.comment_count} Comments</span>}
             </div>
             <div className='divider m-0' />
@@ -368,26 +304,20 @@ const handleDeletePost = (post: PostState) => {
         )}
 
         {showModalReact && (
-          <Modal
-            onClose={handleCloseModalReactions}
-            closeIcon
-            children={
-              <TabReactions
-                headerReaction={headerReaction}
-                activeTab={activeTab}
-                loading={loading}
-                getListReaction={getListReaction}
-                handleSelectReaction={handleSelectReaction}
-              />
-            }
+          <TabReactions
+            onClose={()=> setShowModalReact(false)}
+            typeReaction={typeReaction}
+            loading={loading}
+            listReaction={listReaction}
           />
         )}
 
-        {openModalComment && <ModalPostComment 
-            post={postComment}
-            closeFunc={()=> setOpenModalComment(false)}
-            loadingComment={loadingComment}
-            comments={comments}
+        {openModalComment && 
+        <ModalPostComment 
+          post={post}
+          closeFunc={()=> setOpenModalComment(false)}
+          loadingComment={loadingComment}
+          comments={comments}
         />}
     </div>
   )

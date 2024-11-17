@@ -1,6 +1,6 @@
 'use client'
 
-import { addComment} from "@/redux/features/comment/commentSlice"
+import { addComment, addReplyComment, increaCountComment} from "@/redux/features/comment/commentSlice"
 import { setCountComment } from "@/redux/features/post/postSlice"
 import { selectUser } from "@/redux/features/user/userSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
@@ -13,7 +13,7 @@ const useCreateComment = () => {
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
 
-    const createComment = async (postId: number, content: string, parentId?: string | undefined) => {
+    const createComment = async (postId: number, content: string, parentId?: string, commentId?: string) => {
         setLoading(true)
         try {
             const response = await axs.post('/comment/create-comment', {
@@ -27,8 +27,10 @@ const useCreateComment = () => {
             })
 
             const data = response.data
-            if(parentId){
-                console.log(data)
+            if(parentId && commentId){
+                dispatch(addReplyComment({parentId, commentId, replyComment: data}))
+                dispatch(increaCountComment({parentId}))
+                dispatch(setCountComment({postId}))
             }
             else {
                 dispatch(addComment({
@@ -40,8 +42,8 @@ const useCreateComment = () => {
                     },
                     created_at: new Date().toISOString()
                 }))
+                dispatch(setCountComment({postId}))
             }
-            dispatch(setCountComment({postId}))
             
         } catch (error) {
             console.log(error)

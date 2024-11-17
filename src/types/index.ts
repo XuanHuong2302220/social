@@ -118,7 +118,7 @@ export interface InteractProps {
 
 
 export interface Comment {
-    children: Array<Comment> | null,
+    children: Array<Comment>,
     content: string,
     created_ago: string,
     created_by: {
@@ -130,5 +130,6 @@ export interface Comment {
     image?: string | null,
     reactionCount: number,
     reactionType: string,
-    commentCount: number
+    parentId?: string,
+    commentCount: number,
 }

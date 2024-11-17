@@ -9,7 +9,7 @@ interface Post {
     loading: boolean;
 }
 
-const initialPostState : Post = {
+const initialPostState: Post = {
     posts: [],
     currentPage: 1,
     hasMore: true,
@@ -25,7 +25,7 @@ const postSlice = createSlice({
             state.posts = action.payload;
         },
         addPosts: (state, action: PayloadAction<PostState[]>) => {
-            const newPosts = action.payload.filter(newPost => 
+            const newPosts = action.payload.filter(newPost =>
                 !state.posts.some(existingPost => existingPost.id === newPost.id)
             );
             state.posts = [...state.posts, ...newPosts];
@@ -39,19 +39,19 @@ const postSlice = createSlice({
                 state.posts[index] = action.payload;
             }
         },
-        increaLike: (state, action: PayloadAction<{postId: number}>) => {
+        increaLike: (state, action: PayloadAction<{ postId: number }>) => {
             const post = state.posts.find(post => post.id === action.payload.postId);
-            if(post) {
+            if (post) {
                 post.reaction_count += 1;
             }
         },
-        decreaseLike: (state, action: PayloadAction<{postId: number}>) => {
+        decreaseLike: (state, action: PayloadAction<{ postId: number }>) => {
             const post = state.posts.find(post => post.id === action.payload.postId);
-            if(post) {
+            if (post) {
                 post.reaction_count -= 1;
             }
         },
-        deletePost: (state, action: PayloadAction<{postId: number}>) => {
+        deletePost: (state, action: PayloadAction<{ postId: number }>) => {
             state.posts = state.posts.filter(post => post.id !== action.payload.postId);
         },
         setCurrentPage: (state, action) => {
@@ -62,16 +62,30 @@ const postSlice = createSlice({
         },
         setLoading: (state, action) => {
             state.loading = action.payload;
-        }, 
-        setCountComment: (state, action : PayloadAction<{postId: number}>) => {
+        },
+        setCountComment: (state, action: PayloadAction<{ postId: number }>) => {
             const post = state.posts.find(post => post.id === action.payload.postId);
-            if(post) {
+            if (post) {
                 post.comment_count += 1;
+            }
+        },
+        decreaCountComment: (state, action: PayloadAction<{ postId: number }>) => {
+            const post = state.posts.find(post => post.id === action.payload.postId);
+            if (post) {
+                post.comment_count -= 1;
+            }
+        },
+        changeTypeReaction: (state, action: PayloadAction<{ postId: number, type: string }>) => {
+            console.log(action.payload);
+            const post = state.posts.find(post => post.id === action.payload.postId);
+            if (post) {
+                console.log(action.payload.type);
+                post.reactionType = action.payload.type;
             }
         }
     }
 })
 
-export const {  setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost, editPost, increaLike, decreaseLike, deletePost, setCountComment } = postSlice.actions
+export const { setPosts, addPosts, setCurrentPage, setHasMore, setLoading, addPost, editPost, increaLike, decreaseLike, deletePost, setCountComment, decreaCountComment, changeTypeReaction } = postSlice.actions
 export const selectPost = (state: RootState) => state.post
 export default postSlice.reducer

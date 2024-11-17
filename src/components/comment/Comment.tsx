@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import {Avatar, Button, ChatComment, DropDown, Interact} from '@/components'
+import {Avatar, Button, ChatComment, DropDown, Interact, TabReactions} from '@/components'
 import { reactions } from '@/utils/reactions'
 import { Comment as CommentInter } from '@/types'
 import { BsThreeDots } from "react-icons/bs";
@@ -12,10 +12,12 @@ import useUpdateComment from '@/api/comment/updateComment'
 import useDeleteComment from '@/api/comment/deleteComment'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import useHandleReaction from '@/api/post/handleReaction'
-import likeIcon from '@/assets/icons/like.svg';
 import Image from 'next/image'
 import { decreaLikeComment, increaLikeComment } from '@/redux/features/comment/commentSlice'
 import useCreateComment from '@/api/comment/createComment'
+import useGetReactions from '@/api/post/getAllReaction'
+import useGetAllComment from '@/api/comment/getAllComment'
+import { decreaCountComment } from '@/redux/features/post/postSlice'
 
 interface CommentProps {
   comment: CommentInter,
@@ -24,10 +26,11 @@ interface CommentProps {
   handleShowDropdownEdit?: (index: number) => void,
   checkReply?: boolean
   setCheckReply?: (isReply: boolean) => void,
-  postId: number
+  postId: number,
+  reply?: boolean
 }
 
-const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, checkReply, setCheckReply, postId}: CommentProps) => {
+const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, setCheckReply, postId, reply}: CommentProps) => {
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -35,9 +38,9 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   const user = useAppSelector(state => state.user)
   const [showDropdown, setShowDropdown] = useState(false)
   const [showReaction, setShowReaction] = useState({
-    color: 'text-textColor',
-    icon: null,
-    name: 'Like',
+    color: comment.reactionType ? reactions.find(reaction=> reaction.name === comment.reactionType)?.color : 'text-textColor',
+    icon: comment.reactionType ? reactions.find(reaction=> reaction.name === comment.reactionType)?.icon : null,
+    name: comment.reactionType ? reactions.find(reaction=> reaction.name === comment.reactionType)?.name : 'Like',
   })
   const [showEdit, setShowEdit] = useState(false)
   const [showDropdownEdit, setShowDropdownEdit] = useState(false)
@@ -51,6 +54,13 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   const {deleteComment, loading: loadingDelete} = useDeleteComment()
   const {createReactionComment, undoReactionComment} = useHandleReaction()
   const {createComment, loading: loadingReplyComment} = useCreateComment()
+  const [showReactionModal, setShowReactionModal] = useState(false)
+  const {loading: loadingReaction, getAllReactions, listReaction, typeReaction} = useGetReactions()
+  const {loading: loadingComment, setReplyComments, getAllComment} = useGetAllComment()
+  const [nameHightLight, setNameHightLight] = useState<string[]>([])
+  const [isCommentCount, setIsCommentCount] = useState(true)
+  const replyComments = comment.children ?? []
+   
   const dispatch = useAppDispatch()
   
   useClickOutside(dropdownRefEdit, ()=> setShowDropdownEdit(false))
@@ -74,6 +84,18 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
     else {
       setReplyComment(text)
     }
+  }
+
+  const handleOpenReactions = async() => {
+    if(comment.id){
+      setShowReactionModal(true)
+      await getAllReactions(undefined, 'comment', comment.id)
+    }
+  }
+
+  const handleOpenReplycomment = async() => {
+    await getAllComment(postId, comment.id)
+    setIsCommentCount(false)
   }
 
   useEffect(()=> {
@@ -113,13 +135,24 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   };  
   
   const handleDeleteComment = async() => {
-    await deleteComment(comment.id)
+    if(reply && comment.parentId){
+      console.log(comment.id, comment.parentId)
+      await deleteComment(comment.id, comment.parentId)
+    }
+    else {
+      await deleteComment(comment.id)
+    }
     setShowDropdownEdit(false)
     setShowEdit(false)
+    dispatch(decreaCountComment({postId}))
   }
 
-  const handleOpenReply =()=> {
+  const handleOpenReply = ()=> {
     setIsReply(true)
+    if(comment.created_by.id !== user.id){
+      setNameHightLight([comment.created_by.fullName])
+      setReplyComment(comment.created_by.fullName)
+    }
     setCheckReply && setCheckReply(true)
   }
 
@@ -135,6 +168,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
     ));
   };
 
+  //set height for chat comment
   useEffect(() => {
     const textElement = document.querySelector('#textcomment');
     if (textElement && textElement instanceof HTMLElement) {
@@ -148,14 +182,6 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
 
   }, [text]);
 
-  useEffect(()=> {
-    if(comment.reactionType) {
-        const matchedReaction = reactions.find(reaction => reaction.name === comment.reactionType)
-        if(matchedReaction) {
-          setShowReaction({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
-        }
-    }
-  }, [])
 
   const handleClickReaction = async(name: string) => {
     if (hoverTimeoutRef.current) {
@@ -166,7 +192,13 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
       clearTimeout(leaveTimeoutRef.current);
       leaveTimeoutRef.current = null;
     }
-    dispatch(increaLikeComment({commentId: comment.id}))
+     
+    if(reply && comment.parentId){
+      dispatch(increaLikeComment({commentId: comment.id, parentId: comment.parentId}))
+    }
+    else {
+      dispatch(increaLikeComment({commentId: comment.id}))
+    }
     const matchedReaction = reactions.find(reaction => reaction.name === name)
     if(matchedReaction) {
       setShowReaction({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
@@ -181,13 +213,23 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
   }
 
   const handleUpdateComment = async() => {
+    if(reply && comment.parentId){
+      await updateComment(comment.id, text, comment.parentId)
+    }
+    else {
       await updateComment(comment.id, text)
-      setEdit(false)
-      handleShowDropdownEdit && handleShowDropdownEdit(-1)
+    }
+    setEdit(false)
+    handleShowDropdownEdit && handleShowDropdownEdit(-1)
   }
 
   const handleReplyComment = async() => {
-    await createComment(postId, replyComment, comment.id)
+    if(comment.parentId){
+      await createComment(postId, replyComment, comment.parentId, comment.id)
+    }
+    else {
+      await createComment(postId, replyComment, comment.id,'no')
+    }
     setReplyComment('')
     setIsReply(false)
     setCheckReply && setCheckReply(false)
@@ -195,7 +237,12 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
 
   const handleClickDefaultReaction = async() => {
     if(showReaction.color !== 'text-textColor'){
-      dispatch(decreaLikeComment({commentId: comment.id}))
+      if(reply && comment.parentId){
+        dispatch(decreaLikeComment({commentId: comment.id, parentId: comment.parentId}))
+      }
+      else {
+        dispatch(decreaLikeComment({commentId: comment.id}))
+      }
       setShowReaction({
         name: 'Like',
         icon: null,
@@ -205,13 +252,17 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
       await undoReactionComment(comment.id)
     }
     else {
-      dispatch(increaLikeComment({commentId: comment.id}))
+      if(reply && comment.parentId){
+        dispatch(increaLikeComment({commentId: comment.id, parentId: comment.parentId}))
+      }
+      else {
+        dispatch(increaLikeComment({commentId: comment.id}))
+      }
       const matchedReaction = reactions.find(reaction => reaction.name === "Like")
       if(matchedReaction) {
         setShowReaction({ name: matchedReaction.name, icon: matchedReaction.icon, color: matchedReaction.color })
       }
       setShowDropdown(false)
-      console.log(showReaction)
       await createReactionComment(comment.id, "Like")
     }
   }
@@ -242,7 +293,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
             />
           </div> : 
         <div
-            className='w-full flex gap-2 items-start relative'
+            className='w-full flex gap-2 items-start relative pb-1'
             onMouseEnter={user.id === comment.created_by.id ? ()=> setShowEdit(true) : undefined}
             onMouseLeave={()=>{
             setShowEdit(false)
@@ -250,11 +301,11 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
           }}
         >
             <Avatar
-                width={40}
-                height={40}
-                alt='avatar'
-                src={comment.created_by.avatar ?? ''}
-                className='w-[40px] h-[40px]'
+              width={40}
+              height={40}
+              alt='avatar'
+              src={comment.created_by.avatar ?? ''}
+              className='w-[40px] h-[40px]'
             />
         
             <div className='flex flex-col gap-2 text-wrap break-words max-w-[80%]'>
@@ -281,11 +332,11 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
                     </div>
                     <span className='text-sm text-textColor cursor-pointer hover:underline' onClick={handleOpenReply}>reply</span>
 
-                    {comment.reactionCount > 0 && <div className='ml-auto flex gap-1 items-center cursor-pointer'>
-                      <span className='text-textColor text-xs'>{comment.reactionCount}</span>
+                    {comment.reactionCount > 0 && showReaction.icon && <div onClick={handleOpenReactions} className='ml-auto flex gap-1 items-center cursor-pointer hover:underline'>
+                      <span className='text-textColor text-sm'>{comment.reactionCount}</span>
                       <Image 
-                        src={showReaction.icon ?? ''} 
-                        alt={showReaction.name} 
+                        src={showReaction.icon} 
+                        alt={showReaction.name ?? ''} 
                         width={15} 
                         height={15} 
                       />
@@ -311,7 +362,17 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
           </div>}
         </div>
         }
-          {isReply && <div className='ml-[54px] z-50'>
+
+        {showReactionModal && 
+          <TabReactions 
+            listReaction={listReaction}
+            typeReaction={typeReaction}
+            onClose={()=> setShowReactionModal(false)}
+            loading={loadingReaction}
+          />
+        }
+
+          {isReply && !comment.parentId ? <div className='ml-[54px] z-50'>
             <ChatComment
               text={replyComment}
               handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
@@ -319,11 +380,43 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, ch
               handleComment={handleReplyComment}
               className='0'
               height={height}
+              nameReply={nameHightLight}
               edit
               loading={loadingReplyComment}
               handleExit={handleCancelRepy}
             />
-          </div>}
+          </div> : isReply && comment.parentId &&
+            <ChatComment
+              text={replyComment}
+              handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
+              onChange={(text) => onChange(text, 'replyComment')}
+              handleComment={handleReplyComment}
+              className='0'
+              height={height}
+              nameReply={nameHightLight}
+              edit
+              loading={loadingReplyComment}
+              handleExit={handleCancelRepy}
+            />
+          }
+
+          <div className={`ml-[54px] z-50 items-center gap-1 ${replyComments.length > 0 && 'pt-3 '} ${loadingComment && 'flex gap-1'}`}>
+            {comment.commentCount > 0 && 
+                <div className='text-textColor'>
+                  {isCommentCount && <span className='text-sm cursor-pointer' onClick={handleOpenReplycomment}>See all {comment.commentCount} replies</span>}
+                </div>
+            }
+            {loadingComment ? <span className="loading loading-spinner loading-md"></span> : 
+              replyComments.map((replyComment, index) => (
+                <Comment 
+                  key={replyComment.id}
+                  comment={replyComment}
+                  reply
+                  postId={postId}
+                />
+              ))
+            }
+          </div>
       </div>
   )
 }

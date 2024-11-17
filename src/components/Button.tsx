@@ -8,7 +8,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({text, icon, onClick,
         {left && icon}
        {text && <span className={`${classNameText}`}>{text}</span>}
         {right && icon}
-        {iconLoading && <span className="loading loading-dots loading-md"></span>}
+        {iconLoading && <span className="loading loading-spinner loading-md"></span>}
     </button>
   )
 })

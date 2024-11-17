@@ -20,15 +20,15 @@ const Interact = ({onClick, reactions, onMouseEnter, onMouseLeave, isComment, ba
       onMouseLeave={onMouseLeave}
     >
         {reactions.map((reaction, index)=> (
-            <Image 
-              onClick={() => onClick(reaction)} 
-              key={index} 
-              className='hover:scale-125 cursor-pointer' 
-              src={reaction.icon} 
-              width={isComment ? 30 : 50} 
-              height={isComment ? 30 : 50} 
-              alt={reaction.name} 
-            />
+          <Image 
+            onClick={() => onClick(reaction)} 
+            key={index} 
+            className='hover:scale-125 cursor-pointer' 
+            src={reaction.icon} 
+            width={isComment ? 30 : 50} 
+            height={isComment ? 30 : 50} 
+            alt={reaction.name} 
+          />
         ))}
         
     </div>
