@@ -16,9 +16,9 @@ const useGetAllPost = () => {
         if(!hasMore) {
             console.log('Không còn dữ liệu để tải thêm');
             return
-        }
-
+        }   
         dispatch(setLoading(true))
+
         try {
             const response = await axs.get(`/post/get-all-post`, {
                 headers: {
@@ -39,9 +39,22 @@ const useGetAllPost = () => {
                 dispatch(setHasMore(false))
             }
 
-        } catch (error : any) {
-            console.log(error.response?.data)
-        }
+        } catch (error: any) {
+            // Ghi lại thông tin chi tiết về lỗi
+            console.error("Error fetching posts:", error);
+            if (error.response) {
+              // Lỗi từ phía máy chủ
+              console.error("Server responded with status:", error.response.status);
+              console.error("Response data:", error.response.data);
+            } else if (error.request) {
+              // Lỗi từ phía yêu cầu
+              console.error("No response received:", error.request);
+            } else {
+              // Lỗi khác
+              console.error("Error setting up request:", error.message);
+            }
+            throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+          }
         finally {
             dispatch(setLoading(false))
         }

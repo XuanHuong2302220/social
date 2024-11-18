@@ -13,9 +13,9 @@ const Layout: React.FC<LayoutProps> = ({ children}) => {
     const dispatch = useAppDispatch();
 
     useEffect(()=> {
-        if(token){
-          refreshToken(token, dispatch);
-        }
+      if(token){
+        refreshToken(token, dispatch);
+      }
     }, [token, dispatch])
 
   return (

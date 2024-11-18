@@ -28,6 +28,7 @@ import { changeTypeReaction, decreaseLike, increaLike } from '@/redux/features/p
 import useGetReactions from '@/api/post/getAllReaction';
 import useDeletePost from '@/api/post/deletePost';
 import useGetAllComment from '@/api/comment/getAllComment';
+import { selectUser } from '@/redux/features/user/userSlice';
 
 interface PostProps {
   post: PostState,
@@ -73,6 +74,7 @@ const Post: React.FC<PostProps> = ({ post, disableButton }) => {
   const {loading, getAllReactions, listReaction, typeReaction} = useGetReactions()
   const {loading: loadingDelete, deletePost} = useDeletePost()
   const comments = useAppSelector(state => state.comment.comments)
+  const user = useAppSelector(selectUser)
 
 
   const handleOpenReaction = () => {
@@ -84,6 +86,8 @@ const Post: React.FC<PostProps> = ({ post, disableButton }) => {
       setShowDropdown(true);
     }, 500); // 1s delay
   };
+
+  console.log(user)
 
   const handleClickDefault = () => {
     if(post.id){
@@ -100,6 +104,7 @@ const Post: React.FC<PostProps> = ({ post, disableButton }) => {
       else {
         setShowInteract({ name: '', icon: null, color: '' })
         dispatch(decreaseLike({ postId: post.id }))
+        dispatch(changeTypeReaction({postId: post.id, type: ''}))
         setShowDropdown(false)
         undoReaction(post.id);
       }
@@ -198,7 +203,7 @@ useEffect(()=> {
             <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
             <div className='flex flex-col'>
               <Link href={'/'} className='font-bold hover:underline text-textColor'>{post.created_by.fullName}</Link>
-              <span className='text-[12px]'>{post.created_ago}</span>
+              <span className='text-[12px] text-textColor'>{post.created_ago}</span>
             </div>
 
             <div className='ml-auto z-50'>
@@ -261,7 +266,7 @@ useEffect(()=> {
                 <span>{post.reaction_count} </span>
                   <Image src={reactions.find(r => r.name === post.reactionType)?.icon.src} alt={post.reactionType} width={20} height={20} />
                 </span>}
-              {post.comment_count > 0 && <span className='text-sm text-textColor'>{post.comment_count} Comments</span>}
+              {post.comment_count > 0 && <span className={`text-sm text-textColor ${post.reaction_count === 0 && 'ml-auto'}`}>{post.comment_count} Comments</span>}
             </div>
             <div className='divider m-0' />
             <div className='flex justify-around h-2/4'>

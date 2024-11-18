@@ -37,7 +37,7 @@ const useCreateComment = () => {
                     ...data,
                     created_by: {
                         id: user.id,
-                        fullName: `${user.lastName} ${user.firstName}`,
+                        fullName: `${user.firstName} ${user.lastName}`,
                         avatar: user.avatar
                     },
                     created_at: new Date().toISOString()

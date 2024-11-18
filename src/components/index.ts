@@ -16,6 +16,7 @@ import ModalPostComment from "./post/ModalPostComment"
 import Comment from "./comment/Comment"
 import ChatComment from "./comment/ChatComment"
 import TabReactions from "./TabReactions"
+import MiniProfile from "./MiniProfile"
 
 export {
     Input,
@@ -35,5 +36,6 @@ export {
     ModalPostComment,
     Comment,
     ChatComment,
-    TabReactions
+    TabReactions,
+    MiniProfile
 }

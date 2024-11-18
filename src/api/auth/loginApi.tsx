@@ -69,10 +69,12 @@ const useLoginApi = () => {
         try {
             setLoading(true);
             const response = await axs.post('/auth/login', { username: username, password: password });
-            const token = await response.data.token
-            localStorage.setItem('token', JSON.stringify(token));
+            const token = await response.data.token.token
             const user = await response.data.user
+            console.log(user, token)
+            dispatch(setToken(token))
             dispatch(setUser({
+                ...user,
                 username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -82,8 +84,6 @@ const useLoginApi = () => {
                 id: user.id,
                 dob: user.dob,
             }))
-
-            dispatch(setToken(token))
 
             if(user.fullName && user.lastName){
                 router.push('/');

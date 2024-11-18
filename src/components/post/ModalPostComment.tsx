@@ -34,7 +34,6 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
   };
 
   const handleCloseModal = () => {
-    console.log('close')
       setWarningModal(false)
       setText('')
       closeFunc && closeFunc()

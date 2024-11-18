@@ -22,11 +22,18 @@ const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
   const token = useAppSelector(state => state.auth.token);
   const user = useAppSelector(selectUser);
   const router = useRouter();
+
+  const pathName = usePathname();
   
   useEffect(()=> {
     if(token && !user.firstName && !user.lastName){
       router.push(`/information/${user.username}`)
     }
+
+    if(token && pathName === '/login' || pathName === '/signup' || pathName === '/forgotpassword'){
+      router.push('/')
+    }
+   
   }, [token, user])
 
   return (

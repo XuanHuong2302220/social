@@ -5,19 +5,18 @@ import {Avatar, Button, ModalPost} from '@/components'
 import { FaImages } from "react-icons/fa";
 import { BsPaperclip } from "react-icons/bs";
 import { AiTwotoneAudio } from "react-icons/ai";
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const NewPost = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <div className='card shadow-xl w-full h-[150px] bg-navbar p-4 rounded-xl' >
+    <div className='w-full h-[150px] bg-navbar p-4 rounded-xl'>
         <div className='h-2/4 gap-3 flex justify-between items-center w-full'>
             <Link href={'/profile'}>
               <Avatar width={1} height={1} alt='avatar' className='w-[52px] h-[52px]'/>
             </Link>
-            <div className='w-full p-4 flex h-full items-center bg-search rounded-full cursor-pointer hover:opacity-50' onClick={()=>setIsModalOpen(true)}>What's on your mind?</div>
+            <div className='w-full p-4 flex h-full items-center text-textColor bg-search rounded-full cursor-pointer hover:opacity-50' onClick={()=>setIsModalOpen(true)}>What's on your mind?</div>
         </div>
         <div className='divider mx-0 my-1'></div>
         <div className='h-1/3 w-full justify-between flex items-center'>

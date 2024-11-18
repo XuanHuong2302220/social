@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Input, Button, Logo } from '@/components';
+import { Input, Button, Logo, Modal } from '@/components';
 import UserIcon from '@/assets/icons/user.svg';
 import PasswordIcon from '@/assets/icons/password.svg';
 import GoogleIcon from '@/public/icons/google.svg';
@@ -11,8 +11,6 @@ import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import useLoginApi from '@/api/auth/loginApi';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { selectUser } from '@/redux/features/user/userSlice';
 import { useAppSelector } from '@/redux/hooks';
 
 interface FormValues {
@@ -21,20 +19,6 @@ interface FormValues {
 }
 
 const Login = React.memo(() => {
-
-  const router = useRouter();
-  const token = useAppSelector(state => state.auth.token);
-  const user = useAppSelector(selectUser);
-
-  useEffect(()=> {
-    if(token && user.firstName && user.lastName){ 
-      router.push('/');
-    }
-    else if (token && !user.firstName && !user.lastName){
-      router.push(`/information/${user.username}`);
-    }
-  }, [token])
-  
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -47,6 +31,14 @@ const Login = React.memo(() => {
       login(data.username, data.password);
     }
   };
+
+  const token = useAppSelector(state => state.auth.token);
+
+  if(token){
+    return  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
+  </div>
+  }
 
   return (
     <div className='w-screen h-screen flex justify-center items-center text-black bg-white'>
@@ -139,6 +131,7 @@ const Login = React.memo(() => {
         <div className='w-2/4 h-full desktop:flex 2xl:flex items-center justify-center tablet:hidden laptop:flex phone:hidden'>
           <Image layout='responsive' src={background} alt="background" />
         </div>
+
       </div>
     </div>
   );

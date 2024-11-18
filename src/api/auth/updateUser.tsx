@@ -1,22 +1,18 @@
 'use client'
 
 import { setUser } from "@/redux/features/user/userSlice";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { UserState } from "@/types";
 import axs from "@/utils/axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { toast } from "react-toastify";
 
-
 const updateUser = () => {
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    let token = localStorage.getItem('token') || '';
-    if(token){
-       token = token.replace(/['"]+/g, '')
-    }
+    const token = useAppSelector(state => state.auth.token);
 
    const update = async(user: UserState) => {
     setLoading(true)

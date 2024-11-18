@@ -1,14 +1,10 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import withAuth from '@/middleware/withAuth'
-import { ModalPost, NewPost, Post, SkeletonPost} from '@/components'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { selectUser } from '@/redux/features/user/userSlice'
+import React, { useCallback, useEffect} from 'react'
+import {Avatar, MiniProfile, NewPost, Post, SkeletonPost} from '@/components'
+import { useAppSelector } from '@/redux/hooks'
 import useGetAllPost from '@/api/post/getAllPost'
 import InfiniteScroll from 'react-infinite-scroll-component';
-import axs from '@/utils/axios'
-import { addPosts, setCurrentPage } from '@/redux/features/post/postSlice'
 import Layout from '@/components/DefaultLayout'
 
 const Home = React.memo(() => {
@@ -18,6 +14,7 @@ const Home = React.memo(() => {
   const loading = useAppSelector((state) => state.post.loading);
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
+
 
   const {getAllPost} = useGetAllPost()
 
@@ -40,8 +37,6 @@ const Home = React.memo(() => {
     fetchInitialPosts();
   }, []);
 
-
-
   const fetchNextPosts = useCallback(async () => {
     try {
       await getAllPost();
@@ -53,7 +48,9 @@ const Home = React.memo(() => {
   return (
     <Layout>
        <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-auto overflow-x-hidden' id="scrollableDiv" >
-          <div className='w-1/4 bg-navbar'>profile</div>
+          <div className='w-1/4 bg-navbar h-fit p-4 rounded-xl'>
+              <MiniProfile />
+          </div>
           <div className='h-full w-2/4 flex flex-col gap-5 px-5'>
               <NewPost />
               <InfiniteScroll

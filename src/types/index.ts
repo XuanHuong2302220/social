@@ -44,12 +44,16 @@ export interface UserState {
     email?: string | null,
     avatar?: string | null,
     dob?: string | null,
+    postCount: number,
+    followers: number
+    followings: number
 }
 
 export interface logoProps {
     size?: string,
     width?: number,
     isLogo?: boolean,
+    onClick?: () => void
 }
 
 export interface DropDownProps {

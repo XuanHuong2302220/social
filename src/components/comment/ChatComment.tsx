@@ -39,7 +39,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
       const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
       if (placeholderElement && placeholderElement instanceof HTMLElement && !text) {
         placeholderElement.style.position = 'absolute';
-        placeholderElement.style.top = '85%';
+        placeholderElement.style.top = '84%';
       }
     }, [text]);
 

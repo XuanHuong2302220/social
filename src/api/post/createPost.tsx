@@ -32,7 +32,10 @@ const useCreatePost = () => {
 
             console.log(post, 'post in create')
 
-            dispatch(addPost(post))
+            dispatch(addPost({
+                ...post,
+                created_ago: 'Just now'
+            }))
 
         } catch (error: any) {
             toast.error(error)

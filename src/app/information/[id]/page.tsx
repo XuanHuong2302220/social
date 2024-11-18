@@ -4,12 +4,10 @@ import { Button, Input, Logo, Modal } from '@/components';
 import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form';
 import { cleaerUser, selectUser } from '@/redux/features/user/userSlice';
-import { useSelector } from 'react-redux';
 import { DatePicker } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css'; // Import CSS cho rsuite
 import { useParams, useRouter } from 'next/navigation';
 import updateUser from '@/api/auth/updateUser';
-import withAuth from '@/middleware/withAuth';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearToken } from '@/redux/features/auth/authSlice';
 
@@ -21,26 +19,40 @@ interface FormValues {
 }
 
 const information = () => {
-  const { register, handleSubmit,control, formState: { errors } } = useForm<FormValues>();
+  const { register, handleSubmit,control,setValue, formState: { errors } } = useForm<FormValues>();
   const user = useAppSelector(selectUser);
   const {lastName, firstName, username, id} = user;
   const router = useRouter()
   const [loadingLogout, setLoadingLogout] = useState(false)
+  const {slug} = useParams()
   const dispatch = useAppDispatch()
+  const [isSlugValid, setIsSlugValid] = useState(false)
 
-  useEffect(()=> {
-    if(lastName && firstName && username && id){
-      router.push('/')
-    }
-  }, [])
-
-  
   const handleLogout =()=> {
     setLoadingLogout(true)
     dispatch(clearToken())
     dispatch(cleaerUser())
     router.push('/login')
   }
+
+  useEffect(()=> {
+    if(firstName && lastName){
+      setValue('firstName', firstName)
+      setValue('lastName', lastName)
+      setValue('dob', user.dob ?? '')
+      setValue('gender', user.gender as 'female' | 'male')
+    }
+  }, [])
+
+  useEffect(()=> {
+    if(slug !== username){
+      router.push('/')
+      setIsSlugValid(true)
+    }
+    else {
+      setIsSlugValid(false)
+    }
+  }, [])
 
   const calculateMinDate = () => {
     const today = new Date();
@@ -51,15 +63,29 @@ const information = () => {
   const {loading, update} = updateUser();
  
   const onSubmit = async(data: any) => {
-    console.log(data)
     await update(data)
+    router.push('/')
   };
+
+  const handleClickLogo = () => {
+    if(firstName && lastName){
+      router.push('/')
+    }
+  }
+
+  if(isSlugValid){
+    return <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
+  </div>
+  }
 
   return (
     <div className='bg-gray-100 w-screen h-screen flex justify-center items-center'>
       <form onSubmit={handleSubmit(onSubmit)} className='w-2/4  bg-white rounded-lg shadow-lg p-8 flex flex-col gap-2'>
           <div className='w-full pb-4 flex justify-center' >
-            <Logo />
+            <Logo 
+              onClick={handleClickLogo}
+            />
           </div>
           <div className='w-full flex gap-2'>
             <div className='flex flex-col w-1/2'>
@@ -148,13 +174,12 @@ const information = () => {
           </div>
         <div className='flex w-full justify-between mt-2'>
           <Button
-            text={loading ? null : 'Logout'}
+            text='Logout'
             type="submit"
             classNameText='text-white font-bold'
             className='w-1/3 h-10 rounded-lg bg-black right'
             disabled={loading}
             onClick={handleLogout}
-            iconLoading={loading}
           />
           <Button
             text={loading ? null : 'Submit'}

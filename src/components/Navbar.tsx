@@ -84,13 +84,13 @@ const Navbar = () => {
         <div className='flex gap-8 items-center text-whiteText h-full'>
 
           {theme === 'dark' ? 
-            <FaMoon className='text-xl cursor-pointer' onClick={()=> handleClickTheme('light')} /> : 
-            <IoSunny className='text-xl cursor-pointer' onClick={()=> handleClickTheme('dark')} /> 
+            <FaMoon className='text-xl cursor-pointer text-textColor' onClick={()=> handleClickTheme('light')} /> : 
+            <IoSunny className='text-xl cursor-pointer text-textColor' onClick={()=> handleClickTheme('dark')} /> 
           }
 
-          <FaMessage className='text-xl cursor-pointer'  />
+          <FaMessage className='text-xl cursor-pointer text-textColor'  />
 
-          <IoNotifications className='text-xl cursor-pointer' />
+          <IoNotifications className='text-xl cursor-pointer text-textColor' />
           <div ref={dropdownRef}>
             <DropDown
               className='text-whiteText w-[200px]'
@@ -116,9 +116,9 @@ const Navbar = () => {
         </div>
 
       {loading && <Modal 
-          className='w-[200px] h-[200px] flex justify-center items-center'
+          className='w-[200px] h-fit flex justify-center items-center bg-navbar'
           children={
-              <span>Logging out...</span>
+              <span className='font-bold text-textColor text-lg'>Logging out...</span>
           }
         />}
 
