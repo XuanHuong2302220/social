@@ -6,7 +6,7 @@ import { MdOutlineSearch } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
 import { IoNotifications } from "react-icons/io5";
-import {Input, DropDown, Button, Modal} from '@/components'
+import {Input, DropDown, Button, Modal, Avatar} from '@/components'
 import { IoSunny } from "react-icons/io5";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setTheme } from '@/redux/features/theme/themeSlice';
@@ -45,8 +45,11 @@ const Navbar = () => {
   const handleLogout =()=> {
     setLoading(true)
     dispatch(clearToken())
-    dispatch(cleaerUser())
     router.push('/login')
+  }
+
+  const handleRedirect = ()=> {
+    window.window.location.href = `/${user.username}`
   }
 
   useClickOutside(dropdownRef, ()=> setShowDropdownLogout(false))
@@ -55,20 +58,22 @@ const Navbar = () => {
   const fullName = `${user.firstName} ${user.lastName}`
 
   return (
-    <div className={`w-full z-50 h-[65px] flex items-center bg-navbar px-7 justify-between fixed `}>
+    <div className={`w-full z-50 h-[65px] flex flex-wrap items-center bg-navbar px-7 justify-between fixed border-b border-b-background`}>
         <div className='flex w-1/3 gap-4 items-center h-full'>
-          <Logo size='text-3xl' width={30} />
+          <a href="/">
+            <Logo size='text-3xl' width={30} />
+          </a>
 
           <DropDown 
-            className='text-whiteText' 
-            classNameContent='bg-search w-[250px]' 
+            className='text-textColor' 
+            classNameContent='bg-search w-[250px] p-2 rounded-b-lg' 
             tabIndex={0}
             parents={
               <Input
               placeholder='Search...'
-              className='h-8 bg-search w-[250px]'
+              className='h-8 bg-search w-[250px] text-textColor'
               type='text'
-              classInput='text-whiteText'
+              classInput='text-textColor'
               iconComponent={showDropdown ? null : <MdOutlineSearch />}
               ref={search}
               onChange={handleSearch}
@@ -76,7 +81,20 @@ const Navbar = () => {
             } 
             children={
               showDropdown && 
-                <li><a>Item 1</a></li>
+                <div className='flex flex-col gap-2'>
+                  <div className='flex items-center p-2 cursor-pointer gap-2 rounded-lg hover:bg-navbar'>
+                    <Avatar src='' alt='search' width={1} height={1} className='w-8 h-8' />
+                    <span className='text-textColor'>User Search</span>
+                  </div>
+                  <div className='flex items-center p-2 cursor-pointer gap-2 rounded-lg hover:bg-navbar'>
+                    <Avatar src='' alt='search' width={1} height={1} className='w-8 h-8' />
+                    <span className='text-textColor'>User Search</span>
+                  </div>
+                  <div className='flex items-center p-2 cursor-pointer gap-2 rounded-lg hover:bg-navbar'>
+                    <Avatar src='' alt='search' width={1} height={1} className='w-8 h-8' />
+                    <span className='text-textColor'>User Search</span>
+                  </div>
+                </div>
             }
           />
 
@@ -106,10 +124,25 @@ const Navbar = () => {
                 />
               }
               children={showDropdownLogout &&
-                <ul >
-                  <li><a>Item 1</a></li>
-                  <li><Button icon={<IoLogOut className='text-xl' />} left text='Log out' className='flex justify-start' onClick={handleLogout} /></li>
-                </ul>
+                  <div className='flex flex-col gap-2'>
+                    <div onClick={handleRedirect} className='flex items-center gap-2 hover:bg-slate-500 cursor-pointer bg-navbar p-2 rounded-lg'>
+                      <Avatar 
+                        src={user.avatar ?? ''}
+                        className='w-8 h-8 rounded-full'
+                        alt={user.avatar ?? ''}
+                        width={1}
+                        height={1}
+                      />
+                      <span className='font-bold text-textColor text-sm'>{fullName}</span>
+                    </div>
+                    <Button 
+                      icon={<IoLogOut className='text-lg' />} 
+                      left 
+                      text='Log out'
+                      className='flex justify-start bg-navbar text-textColor' 
+                      onClick={handleLogout} 
+                    />
+                  </div>
               }
             />
           </div>
@@ -118,7 +151,7 @@ const Navbar = () => {
       {loading && <Modal 
           className='w-[200px] h-fit flex justify-center items-center bg-navbar'
           children={
-              <span className='font-bold text-textColor text-lg'>Logging out...</span>
+            <span className='font-bold text-textColor text-lg'>Logging out...</span>
           }
         />}
 

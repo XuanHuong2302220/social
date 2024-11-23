@@ -32,7 +32,8 @@ import { selectUser } from '@/redux/features/user/userSlice';
 
 interface PostProps {
   post: PostState,
-  disableButton?: boolean
+  disableButton?: boolean,
+  width?: number
 }
 interface ReactionProps {
   type: InteractProps;
@@ -48,7 +49,7 @@ const reactions = [
   { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
 ]
 
-const Post: React.FC<PostProps> = ({ post, disableButton }) => {
+const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
 
   const [isBeginning, setIsBeginning] = useState(true)
   const [isEnd, setIsEnd] = useState(false)
@@ -86,8 +87,6 @@ const Post: React.FC<PostProps> = ({ post, disableButton }) => {
       setShowDropdown(true);
     }, 500); // 1s delay
   };
-
-  console.log(user)
 
   const handleClickDefault = () => {
     if(post.id){
@@ -198,11 +197,13 @@ useEffect(()=> {
 }, [post.reactionType])
 
   return (
-    <div className='card w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 
+    <div className='rounded-xl w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 
         <div className='flex w-full gap-2 items-center'>
-            <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
+            <a href={`/${post.created_by.username}`}>
+              <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
+            </a>
             <div className='flex flex-col'>
-              <Link href={'/'} className='font-bold hover:underline text-textColor'>{post.created_by.fullName}</Link>
+              <a href={`/${post.created_by.username}`} className='font-bold hover:underline text-textColor'>{post.created_by.fullName}</a>
               <span className='text-[12px] text-textColor'>{post.created_ago}</span>
             </div>
 
@@ -241,7 +242,7 @@ useEffect(()=> {
                     <Image 
                       alt={image} 
                       src={image} 
-                      width={590}
+                      width={width ?? 590}
                       layout="intrinsic"
                       height={0}
                       style={{ objectFit: 'cover' }} 
@@ -264,14 +265,13 @@ useEffect(()=> {
               {post.reaction_count > 0 && 
                 <span onClick={handleOpenModalReact} className='text-sm flex items-center gap-1 text-textColor hover:underline cursor-pointer'>
                 <span>{post.reaction_count} </span>
-                  <Image src={reactions.find(r => r.name === post.reactionType)?.icon.src} alt={post.reactionType} width={20} height={20} />
+                  <Image src={reactions.find((r)=> r.name === post.reactionType)?.icon ?? ''} alt={post.reactionType} width={20} height={20} />
                 </span>}
               {post.comment_count > 0 && <span className={`text-sm text-textColor ${post.reaction_count === 0 && 'ml-auto'}`}>{post.comment_count} Comments</span>}
             </div>
             <div className='divider m-0' />
-            <div className='flex justify-around h-2/4'>
-            
-                <div ref={dropdownRef} className='relative' 
+            <div className='flex justify-around h-2/4 w-full'>
+                <div ref={dropdownRef} className='relative clear-start w-1/2' 
                     onMouseEnter={handleOpenReaction}
                     onMouseLeave={handleCloseReaction}
                 >
@@ -282,7 +282,7 @@ useEffect(()=> {
                     text={showInteract.name || 'Like'}
                     width={25}
                     height={25}
-                    className='flex items-center gap-1 border-transparent bg-navbar hover:bg-search justify-center w-[200px] h-full'
+                    className='flex items-center gap-1 border-transparent bg-navbar hover:bg-search justify-center w-full h-full'
                     classNameText={`${showInteract.color} text-lg `}
                   />
                   { showDropdown &&
@@ -294,7 +294,7 @@ useEffect(()=> {
                   } 
                 </div>
                 <Button left icon={<FaRegComment className='text-xl' />}  text='Comment' 
-                  className='flex items-center gap-1 border-transparent bg-navbar hover:bg-search justify-center w-[200px] h-full' 
+                  className='flex items-center gap-1 border-transparent bg-navbar hover:bg-search justify-center w-1/2 h-full' 
                   classNameText='text-lg'
                   onClick={disableButton ? ()=>{} : ()=>handleOpenModalComment(post)}
                 />

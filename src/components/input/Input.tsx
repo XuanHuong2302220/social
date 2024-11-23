@@ -17,12 +17,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
 } : InputProps, ref) => {
 
   return (
-    <label className={`input flex items-center gap-2 bg-colorInput ${className}`}>
+    <label className={`input flex items-center gap-2 bg-search ${className}`}>
         {icon && <Image src={icon} alt={icon} width={width} height={height} />}
         <input
           ref={ref}
           type={type}
-          className={`${styles.input} ${styles.plaintext} bg-colorInput w-full h-full text-black ${classInput}`}
+          className={`${styles.input} ${styles.plaintext} bg-search w-full h-full text-textColor ${classInput}`}
           placeholder={placeholder}
           value={value}
           {...rest}

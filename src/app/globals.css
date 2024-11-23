@@ -12,7 +12,7 @@
   --foreground: #ffffff;
   --color-input: #F2F2F2;
   --primary-color: #F9AD71;
-  --navbar: #191819;
+  --navbar: #3f3e3e;
   --search: #2D2C2C;
   --text-color: #ffffff;
   --background-second: #333436;
@@ -33,31 +33,6 @@
   --backGround: #ffffff;
 }
 
-/* Custom global scrollbar styles */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-
-
-@media (prefers-color-scheme: dark) {
- 
-}
 
 body {
   margin: 0;

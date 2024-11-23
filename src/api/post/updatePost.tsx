@@ -31,8 +31,8 @@ const updatePost = () =>{
         })
 
         const post = await response.data.post
+        console.log(post)
         dispatch(editPost(post))
-       
        } catch (error) {
               console.log(error)
        }

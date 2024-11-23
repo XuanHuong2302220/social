@@ -13,8 +13,6 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { IoChevronForwardSharp } from "react-icons/io5";
-import { IoChevronBackOutline } from "react-icons/io5";
 import { TbBoxMultiple } from "react-icons/tb";
 import { IoIosAdd } from "react-icons/io";
 import useClickOutside from '@/hooks/useClickOutside'
@@ -35,6 +33,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [files, setFiles] = useState<File[]>([])  
   const [images, setImages] = useState<string[]>([])
+  const [updateImages, setUpdateImages] = useState<string[]>([])
   const [isBeginning, setIsBeginning] = useState(true)
   const [isEnd, setIsEnd] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false);
@@ -56,6 +55,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
       setText(post.description);
       setImages(post.images);
       setFullName(post.created_by.fullName);
+      setUpdateImages(post.images);
     }
   }, [post]);
 
@@ -137,20 +137,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
     setShowDropdown(false)
   }
 
-  // handle slide image
-  // useEffect(() => {
-  //   // Ensure Swiper updates navigation elements after they are rendered
-  //   const swiperElement = document.querySelector('.mySwiper') as HTMLElement & { swiper: any };
-  //   const swiper = swiperElement?.swiper;
-  //   if (swiper) {
-  //     swiper.on('slideChange', () => {
-  //       setIsBeginning(swiper.isBeginning);
-  //       setIsEnd(swiper.isEnd);
-  //     });
-  //     swiper.navigation.update();
-  //   }
-  // }, [images]);
-
   const handleSlideChange = () => {
     if (swiperRef.current) {
       setIndexImg(swiperRef.current.activeIndex);
@@ -173,8 +159,8 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
       try {
         setFiles((prevFile) => [...prevFile, file])
         const url = URL.createObjectURL(file);
+        console.log(url)
         setImages((prevImages) => [...prevImages, url])
-        console.log(images)
       } catch (error) {
         console.log(error)
       }
@@ -223,15 +209,16 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
             try {
               setLoadingImage(true)
               const url = await getDownloadURL(storageRef);
+              setUpdateImages((prevImages) => [...prevImages, url]);
               return url;
             } catch (error) {
               setLoadingImage(true)
               if ((error as any).code === 'storage/object-not-found') {
                 await uploadBytes(storageRef, file);
                 const url = await getDownloadURL(storageRef);
+                setUpdateImages((prevImages) => [...prevImages, url]);
                 return url;
               }
-              throw error;
             }
             finally {
               setLoadingImage(false)
@@ -243,14 +230,14 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
           await update({
             postId: Number(post.id),
             description: text,
-            images: uploadedFiles,
+            images: [...uploadedFiles, ...updateImages],
           });
         }
 
         else {
           await createPost({
             description: text,
-            images: uploadedFiles,
+            images: uploadedFiles
           });
         }
 
@@ -259,7 +246,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
         setFiles([]);
         setIndexImg(0);
         onClose()
-        // handleClose();
       } catch (error) {
         console.error('Error uploading files:', error);
       }
@@ -285,8 +271,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
                   onChange= {onChange}
                   placeholder='What are you thinking?'
                 />
-           
-              {/* <textarea value={text} onChange={handleTextareChange} className={`textarea px-1 py-4 bg-navbar text-sm w-full h-auto resize-none placeholder:text-sm ${checkHastag ? 'text-blue-300' : 'text-textColor'}`} placeholder="What are you thinking?"></textarea> */}
               <div className={`w-full ${images.length > 0 ? 'h-[300px]' : 'h-[200px]'} relative p-3 rounded-xl border-solid border-gray-300 border-[1px]`}>
             
                 {images.length > 0 ?
@@ -314,7 +298,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
                       parents={
                         <Button
                           icon={<TbBoxMultiple />}
-                          // ref={buttonRef}
                           onClick={handleOpenDropdown}
                           left
                           className="pointer-events-auto bg-backgroundIcon border-backgroundIcon opacity-100 hover:opacity-80 rounded-full p-0 w-[30px] h-[30px] min-h-[30px]"
@@ -364,12 +347,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
                     />
                   </div>
                   </Swiper>
-                    {/* {images.length > 1 && <div className={`custom-prev absolute left-2 top-1/2 transform -translate-y-1/2 z-10 `}>
-                      <Button  left icon={<IoChevronBackOutline />} className={`bg-backgroundIcon border-backgroundIcon rounded-full p-0 w-[30px] h-[30px] min-h-[30px] ${isBeginning ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`} />
-                    </div>}
-                    {images.length > 1 && <div className={`custom-next absolute right-2 top-1/2 transform -translate-y-1/2 z-10 `}>
-                      <Button left icon={<IoChevronForwardSharp />} className={`bg-backgroundIcon border-backgroundIcon opacity-100 rounded-full p-0 w-[30px] h-[30px] min-h-[30px]  ${isEnd ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`} />
-                    </div>} */}
                 </>
                 :
                   <div onClick={handleOpenFile} className='bg-backgroundImg cursor-pointer hover:opacity-40 flex flex-col justify-center items-center w-full h-full rounded-xl'>

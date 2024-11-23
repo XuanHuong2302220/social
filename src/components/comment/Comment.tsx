@@ -56,8 +56,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   const {createComment, loading: loadingReplyComment} = useCreateComment()
   const [showReactionModal, setShowReactionModal] = useState(false)
   const {loading: loadingReaction, getAllReactions, listReaction, typeReaction} = useGetReactions()
-  const {loading: loadingComment, setReplyComments, getAllComment} = useGetAllComment()
-  const [nameHightLight, setNameHightLight] = useState<string[]>([])
+  const {loading: loadingComment, getAllComment} = useGetAllComment()
   const [isCommentCount, setIsCommentCount] = useState(true)
   const replyComments = comment.children ?? []
    
@@ -149,10 +148,6 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
 
   const handleOpenReply = ()=> {
     setIsReply(true)
-    if(comment.created_by.id !== user.id){
-      setNameHightLight([comment.created_by.fullName])
-      setReplyComment(comment.created_by.fullName)
-    }
     setCheckReply && setCheckReply(true)
   }
 
@@ -225,6 +220,9 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
 
   const handleReplyComment = async() => {
     if(comment.parentId){
+      if(comment.commentCount < 2){
+        setIsCommentCount(false)
+      }
       await createComment(postId, replyComment, comment.parentId, comment.id)
     }
     else {
@@ -380,7 +378,6 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
               handleComment={handleReplyComment}
               className='0'
               height={height}
-              nameReply={nameHightLight}
               edit
               loading={loadingReplyComment}
               handleExit={handleCancelRepy}
@@ -393,7 +390,6 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
               handleComment={handleReplyComment}
               className='0'
               height={height}
-              nameReply={nameHightLight}
               edit
               loading={loadingReplyComment}
               handleExit={handleCancelRepy}

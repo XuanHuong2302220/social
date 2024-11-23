@@ -2,10 +2,12 @@
 
 import React, { useCallback, useEffect} from 'react'
 import {Avatar, MiniProfile, NewPost, Post, SkeletonPost} from '@/components'
-import { useAppSelector } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import useGetAllPost from '@/api/post/getAllPost'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Layout from '@/components/DefaultLayout'
+import { selectUser } from '@/redux/features/user/userSlice'
+import { setPosts } from '@/redux/features/post/postSlice'
 
 const Home = React.memo(() => {
 
@@ -15,10 +17,15 @@ const Home = React.memo(() => {
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
 
+  const user = useAppSelector(selectUser)
+
+  const dispatch = useAppDispatch()
+
+  console.log(user, 'user')
 
   const {getAllPost} = useGetAllPost()
 
-  const scroll = document.querySelector('.my-infinite-scroll') as HTMLElement;
+  const scroll = document.querySelector('.my-infinite-scroll-home') as HTMLElement;
   useEffect(()=> {
     if(scroll){
       scroll.style.overflowY = 'hidden'
@@ -26,15 +33,8 @@ const Home = React.memo(() => {
   })
 
   useEffect(() => {
-    const fetchInitialPosts = async () => {
-      try {
-        await getAllPost();
-      } catch (error) {
-        console.error('Lỗi khi lấy bài đăng ban đầu:', error);
-      }
-    };
-
-    fetchInitialPosts();
+    dispatch(setPosts([]));
+    getAllPost();
   }, []);
 
   const fetchNextPosts = useCallback(async () => {
@@ -47,29 +47,34 @@ const Home = React.memo(() => {
 
   return (
     <Layout>
-       <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-auto overflow-x-hidden' id="scrollableDiv" >
+       <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden' id="scrollableDiv" >
           <div className='w-1/4 bg-navbar h-fit p-4 rounded-xl'>
-              <MiniProfile />
+              <MiniProfile 
+                user={user}
+              />
           </div>
-          <div className='h-full w-2/4 flex flex-col gap-5 px-5'>
+          <div className='h-full w-2/4 flex flex-col gap-5 px-5' >
               <NewPost />
-              <InfiniteScroll
-                  dataLength={posts.length}
-                  next={fetchNextPosts}
-                  hasMore={hasMore}
-                  loader={<SkeletonPost />}
-                  endMessage={'No more posts'}
-                  className='my-infinite-scroll w-full flex flex-col gap-5'
-                  scrollableTarget='scrollableDiv'
-                >
-                  {posts.map((post, index) => (
-                    <Post key={post.id} post={post} />
-                ))}
-                </InfiniteScroll> 
+              {<InfiniteScroll
+                dataLength={posts.length}
+                next={fetchNextPosts}
+                hasMore={hasMore}
+                loader={<SkeletonPost />}
+                endMessage={!hasMore && <div className='w-full text-center font-bold text-xl my-2'>You read all post </div>}
+                className='my-infinite-scroll-home w-full flex flex-col gap-5'
+                scrollableTarget='scrollableDiv'
+              >
+                {posts.map((post) => (
+                  <Post key={post.id} post={post} />
+              ))}
+              </InfiniteScroll>}
+              {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let's create your first post</div>}
 
           </div>
           <div className='w-1/4 bg-navbar'>friends</div>
           
+          <div>
+          </div>
         </div>
     </Layout>
   )

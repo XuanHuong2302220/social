@@ -30,10 +30,10 @@ const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
       router.push(`/information/${user.username}`)
     }
 
-    if(token && pathName === '/login' || pathName === '/signup' || pathName === '/forgotpassword'){
+    if((token && pathName === '/login') ||(token && pathName === '/signup') || (token && pathName === '/forgotpassword')){
       router.push('/')
     }
-   
+
   }, [token, user])
 
   return (

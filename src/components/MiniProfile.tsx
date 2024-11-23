@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { RiUserSettingsLine } from "react-icons/ri";
 import {Avatar, Button, Modal} from '@/components'
 import { useAppSelector } from '@/redux/hooks'
@@ -8,22 +8,21 @@ import { selectUser } from '@/redux/features/user/userSlice'
 import { MdCake } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
-import { useRouter } from 'next/navigation';
+import { UserState } from '@/types';
+import useGetFollow from '@/api/follow/getFollow';
 
+interface MiniProfileProps {
+    hide?: boolean,
+    user: UserState,
+}
 
-const MiniProfile = () => {
+const MiniProfile = ({hide, user}: MiniProfileProps) => {
 
-  const user = useAppSelector(selectUser);
   const fullName = `${user.firstName} ${user.lastName}`
-  const router = useRouter();
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-    const year = String(date.getFullYear()) // Lấy 2 chữ số cuối của năm
-    return `${day}/${month}/${year}`;
-  };
+  const {loading, getFollow, follows} = useGetFollow()
+
+  const [openFollow, setOpenFollow] = useState<string>('')
 
   const profile = [
     {
@@ -43,7 +42,7 @@ const MiniProfile = () => {
   const information = [
     {
         title: <MdCake />,
-        value: user.dob && formatDate(user.dob)
+        value: user.dob
     },
     {
         title: <FaUser />,
@@ -57,16 +56,37 @@ const MiniProfile = () => {
     }
   ]
 
+  const handleOpenModal= async(type: string) => {
+    if(type === 'Followers') {
+        setOpenFollow('Followers')
+        if(user.id){
+            await getFollow('followers', user.id)
+        }
+    }
+    else if(type === 'Followings') {
+        setOpenFollow('Followings')
+        if(user.id){
+            await getFollow('followings', user.id)
+        }
+    }
+  }
+
+  const handleCloseModal = ()=> {
+    setOpenFollow('')
+  }
+
   return (
     <div className='card w-full'>
-        <div className='flex gap-3 items-center'>
-            <Avatar
-                width={10}
-                height={10}
-                alt={user.avatar ?? ''}
-                className='w-[52px] h-[52px]'
-                src={user.avatar ?? ''}
-            />
+        {!hide && <div className='flex gap-3 items-center'>
+            <a href={`/${user.username}`} className='flex items-center'>
+                <Avatar
+                    width={10}
+                    height={10}
+                    alt={user.avatar ?? ''}
+                    className='w-[52px] h-[52px]'
+                    src={user.avatar ?? ''}
+                />
+            </a>
             <div className='flex flex-col'>
                 <span className='text-md text-textColor font-bold'>{fullName}</span>
                 <span className='text-sm text-textColor'>@{user.username}</span>
@@ -78,13 +98,13 @@ const MiniProfile = () => {
                     left
                 />
             </a>
-        </div>
+        </div>}
 
-        <div className='divider w-full mx-0 my-2' />
+        {!hide && <div className='divider w-full mx-0 my-2' />}
 
         <div className='flex w-full justify-around'>
             {profile.map((item, index)=> (
-                <div key={index} className='flex flex-col items-center cursor-pointer'>
+                <div key={index} className='flex flex-col items-center cursor-pointer' onClick={()=>handleOpenModal(item.title)}>
                     <span className='text-md text-textColor'>{item.value}</span>
                     <span className='text-sm font-bold text-primaryColor'>{item.title}</span>
                 </div>
@@ -101,6 +121,25 @@ const MiniProfile = () => {
                 </div>
             ))}
         </div>
+
+        {openFollow !== '' && <Modal 
+            title={<div className='w-full text-textColor text-center font-bold text-xl py-2'>{openFollow}</div>}
+            onClose={handleCloseModal}
+            closeIcon
+            className='bg-navbar'
+            children={
+                follows && follows.map((follow)=> (
+                    <div className='flex gap-2 items-center' key={follow.id}>
+                    <a href={`/${follow.userName}`}> <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/></a>
+                    <div className='flex flex-col cursor-pointer'>
+                        <a href={`/${follow.userName}`} className='font-bold hover:underline text-textColor'>{follow.fullName}</a>
+                        <span className='text-textColor text-sm'>{follow.isFollowing}</span>
+                    </div>
+
+                </div>
+                ))
+            }
+        />}
 
     </div>
   )

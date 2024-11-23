@@ -10,7 +10,7 @@ const DropDown = ({className, classNameContent, parents, children, tabIndex, pos
           {children && 
           <div tabIndex={tabIndex} className={`dropdown-content shadow ${classNameContent}`}>
            {children}
-          </div>}
+        </div>}
     </div>
     
   )

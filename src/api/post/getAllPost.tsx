@@ -3,7 +3,7 @@
 import { addPosts, setCurrentPage, setHasMore, setLoading, setPosts } from "@/redux/features/post/postSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
-import { useCallback, useContext, useState } from "react"
+import { useCallback} from "react"
 
 const useGetAllPost = () => {
     const token = useAppSelector((state) => state.auth.token)
@@ -11,24 +11,20 @@ const useGetAllPost = () => {
     const currentPage = useAppSelector((state) => state.post.currentPage)
     const hasMore = useAppSelector((state) => state.post.hasMore)
 
-    const getAllPost = useCallback(async () => {
+    const getAllPost = useCallback(async (userId?: string) => {
 
-        if(!hasMore) {
-            console.log('Không còn dữ liệu để tải thêm');
-            return
-        }   
         dispatch(setLoading(true))
 
         try {
-            const response = await axs.get(`/post/get-all-post`, {
+            const response = await axs.get(`/post/get-all-post?page=${currentPage}&pageSize=10${userId ? '&userid=' + userId : '' }`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
 
             const {data, meta} = await response.data
-            console.log(response.data)
             const flattenedData = data.flat();
+            console.log(data, 'data')
 
             dispatch(addPosts(flattenedData));
             if (meta.hasNextPage) {
@@ -40,20 +36,7 @@ const useGetAllPost = () => {
             }
 
         } catch (error: any) {
-            // Ghi lại thông tin chi tiết về lỗi
             console.error("Error fetching posts:", error);
-            if (error.response) {
-              // Lỗi từ phía máy chủ
-              console.error("Server responded with status:", error.response.status);
-              console.error("Response data:", error.response.data);
-            } else if (error.request) {
-              // Lỗi từ phía yêu cầu
-              console.error("No response received:", error.request);
-            } else {
-              // Lỗi khác
-              console.error("Error setting up request:", error.message);
-            }
-            throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
           }
         finally {
             dispatch(setLoading(false))

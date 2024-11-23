@@ -44,9 +44,10 @@ export interface UserState {
     email?: string | null,
     avatar?: string | null,
     dob?: string | null,
-    postCount: number,
-    followers: number
-    followings: number
+    postCount?: number,
+    followers?: number
+    followings?: number,
+    isFollow?: string,
 }
 
 export interface logoProps {
@@ -91,6 +92,7 @@ export interface PostState {
         id: string,
         fullName: string,
         avatar: string | null,
+        username: string
     },
     images: string[],
     status: number,

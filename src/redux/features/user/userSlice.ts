@@ -9,6 +9,9 @@ const initialState: UserState = {
     lastName: "",
     gender: null,
     email: "",
+    postCount: 0,
+    followers: 0,
+    followings: 0,
     avatar: null,
     dob: null,
 }
@@ -22,11 +25,14 @@ export const userSlice = createSlice({
         },
         cleaerUser: ()=> {
             return { ...initialState }
+        },
+        setAttributes: (state, action: PayloadAction<UserState>) => {
+            return { ...state, ...action.payload }
         }
     },
 })
 
-export const { setUser, cleaerUser } = userSlice.actions
+export const { setUser, cleaerUser,setAttributes } = userSlice.actions
 
 export const selectUser = (state: RootState) => state.user
 

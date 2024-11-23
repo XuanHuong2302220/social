@@ -17,6 +17,9 @@ import Comment from "./comment/Comment"
 import ChatComment from "./comment/ChatComment"
 import TabReactions from "./TabReactions"
 import MiniProfile from "./MiniProfile"
+import UserChat from "./messages/UserChat"
+import Conversations from "./messages/Conversations"
+import Message from "./messages/Message"
 
 export {
     Input,
@@ -37,5 +40,8 @@ export {
     Comment,
     ChatComment,
     TabReactions,
-    MiniProfile
+    MiniProfile,
+    UserChat,
+    Conversations,
+    Message
 }

@@ -117,7 +117,6 @@ const TabReactions = ({typeReaction, listReaction, loading, onClose}: TabsProps)
                 <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
                 <div className='flex flex-col'>
                   <Link href={'/'} className='font-bold hover:underline text-textColor'>{reaction.user.fullName}</Link>
-                  {/* <span className='text-[12px]'>20 hours ago</span> */}
                 </div>
               </div>
               <div className='flex gap-2 items-center'>
