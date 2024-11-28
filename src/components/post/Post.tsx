@@ -28,7 +28,7 @@ import { changeTypeReaction, decreaseLike, increaLike } from '@/redux/features/p
 import useGetReactions from '@/api/post/getAllReaction';
 import useDeletePost from '@/api/post/deletePost';
 import useGetAllComment from '@/api/comment/getAllComment';
-import { selectUser } from '@/redux/features/user/userSlice';
+import { selectUser, setAttributes } from '@/redux/features/user/userSlice';
 
 interface PostProps {
   post: PostState,
@@ -183,6 +183,10 @@ const handleOpenModalComment = async(post: PostState)=>{
 const handleDeletePost = (post: PostState) => {
   if(post.id){
     deletePost(post.id)
+    dispatch(setAttributes({
+      ...user,
+      postCount: user.postCount && user.postCount  - 1
+    }))
   }
 }
 
@@ -200,14 +204,14 @@ useEffect(()=> {
     <div className='rounded-xl w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 
         <div className='flex w-full gap-2 items-center'>
             <a href={`/${post.created_by.username}`}>
-              <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
+              <Avatar width={1} height={1} alt='avatar' src={post.created_by.avatar??''} className='w-[42px] h-[42px]'/>
             </a>
             <div className='flex flex-col'>
               <a href={`/${post.created_by.username}`} className='font-bold hover:underline text-textColor'>{post.created_by.fullName}</a>
               <span className='text-[12px] text-textColor'>{post.created_ago}</span>
             </div>
 
-            <div className='ml-auto z-50'>
+            {user.id === post.created_by.id && <div className='ml-auto z-50'>
               <DropDown
                 parents={<Button
                   left icon={<BsThreeDots className='text-2xl' />}
@@ -222,7 +226,7 @@ useEffect(()=> {
                 </div>
                 }
               />
-            </div>
+            </div>}
             
         </div>
         <div className='text-textColor'>{post.description && highlightText(post.description)}</div>

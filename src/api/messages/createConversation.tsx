@@ -1,39 +1,41 @@
 'use client'
 
-import { selectUser, setAttributes } from "@/redux/features/user/userSlice"
+import { addConversation } from "@/redux/features/messages/messageSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
 import { useState } from "react"
 
 
-const useUpdateAvatar = () => {
+const useCreateConversation = () => {
 
     const [loading, setLoading] = useState(false)
     const token = useAppSelector(state => state.auth.token)
     const dispatch = useAppDispatch()
-    const user = useAppSelector(selectUser)
     
-    const updateAvatar = async (file: string) => {
+    const createConversation = async (receiverId: string) => {
         setLoading(true)
         try {
-            const response = await axs.post('/user/update-avatar', { avatar: file }, {
+            const response = await axs.post('/message/create-conversation', {
+                receiverId: receiverId
+            }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            if(response){
-                dispatch(setAttributes({
-                    ...user,
-                    avatar: file
-                }))
-            }
+
+            const data = await response.data
+
+            console.log(data)
+
+            dispatch(addConversation(data))
+            
         } catch (error) {
             console.log(error)
         }finally{
             setLoading(false)
         }
     }
-    return { updateAvatar, loading }
+    return { createConversation, loading }
 }
 
-export default useUpdateAvatar
+export default useCreateConversation

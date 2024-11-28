@@ -23,10 +23,9 @@ const useGetAllPost = () => {
             })
 
             const {data, meta} = await response.data
-            const flattenedData = data.flat();
             console.log(data, 'data')
 
-            dispatch(addPosts(flattenedData));
+            dispatch(addPosts(data));
             if (meta.hasNextPage) {
                 dispatch(setHasMore(meta.hasNextPage))
                 dispatch(setCurrentPage(currentPage + 1));

@@ -54,9 +54,8 @@ body {
 }
 
 .public-DraftEditorPlaceholder-root{
-  /* display: none; */
   position: absolute;
-  top: 30%;
+  top: 25%;
 }
 
 .DraftEditor-editorContainer{

@@ -1,6 +1,7 @@
 'use client'
 
 import { addPost } from "@/redux/features/post/postSlice"
+import { selectUser, setAttributes } from "@/redux/features/user/userSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
 import { useState } from "react"
@@ -14,6 +15,7 @@ interface CreatePostRequest {
 const useCreatePost = () => {
     const [loading, setLoading] = useState(false)
     const token = useAppSelector(state => state.auth.token)
+    const user = useAppSelector(selectUser)
     const dispatch = useAppDispatch();
 
     const createPost = async (data: CreatePostRequest) => {
@@ -30,7 +32,10 @@ const useCreatePost = () => {
 
             const post = await response.data
 
-            console.log(post, 'post in create')
+            dispatch(setAttributes({
+                ...user,
+                postCount: user.postCount && user.postCount + 1
+            }))
 
             dispatch(addPost({
                 ...post,

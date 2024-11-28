@@ -84,7 +84,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   // logic handle textarea
   useEffect(() => {
     const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
-    if (placeholderElement && placeholderElement instanceof HTMLElement && images.length > 0) {
+    if (placeholderElement && placeholderElement instanceof HTMLElement && (images.length > 0) && text === '') {
       placeholderElement.style.position = 'absolute';
       placeholderElement.style.top = '25%';
     }
@@ -256,7 +256,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   return (
     <dialog ref={modalRef} className="modal">
         <div className="modal-box p-2 bg-navbar max-h-[700px] h-auto overflow-y-hidden" >
-          <button onClick={()=>handleCloseModal(false)} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+          <button onClick={()=>handleCloseModal(false)} className="btn btn-sm btn-circle text-textColor btn-ghost absolute right-2 top-2">✕</button>
           <h3 className="font-bold text-xl text-textColor text-center">{post ? 'Update Post' : 'Create Post'}</h3>
           <div className='divider'></div>
           <div className="flex h-full gap-2 items-center">
@@ -264,7 +264,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
               <span className='text-lg  text-textColor font-bold'>{fullName}</span>
             </div>
           <div className='overflow-y-auto max-h-[450px]'>
-            <div>
+            <div className='text-textColor'>
                 <HighlightWithinTextarea
                   value={text}
                   highlight={[{highlight: /#[\w]+/g, className: 'text-blue-500 bg-transparent'}]}
@@ -382,7 +382,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
             loading || loadingUpdate || loadingImage ? null : post ? 'Update' : 'Post'
           } 
           onClick={handleSubmit} 
-          disabled={loading ||loadingUpdate|| loadingImage || (text === '' && images.length === 0)}  
+          disabled={loading ||loadingUpdate|| loadingImage || ( images.length === 0)}  
           className='w-full bg-primaryColor text-textColor hover:bg-primaryColor hover:opacity-50 my-3' 
           iconLoading={loading ||loadingUpdate|| loadingImage} 
           />

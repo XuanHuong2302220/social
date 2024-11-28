@@ -20,7 +20,7 @@ const NewPost = () => {
     <div className='w-full h-[150px] bg-navbar p-4 rounded-xl'>
         <div className='h-2/4 gap-3 flex justify-between items-center w-full'>
             <a href={`/${username}`}>
-              <Avatar width={1} height={1} alt='avatar' className='w-[52px] h-[52px]'/>
+              <Avatar width={1} height={1} alt='avatar' src={user.avatar ? user.avatar : undefined} className='w-[52px] h-[52px]'/>
             </a>
             <div className='w-full p-4 flex h-full items-center text-textColor bg-search rounded-full cursor-pointer hover:opacity-50' onClick={()=>setIsModalOpen(true)}>What's on your mind?</div>
         </div>

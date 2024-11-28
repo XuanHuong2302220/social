@@ -135,7 +135,6 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   
   const handleDeleteComment = async() => {
     if(reply && comment.parentId){
-      console.log(comment.id, comment.parentId)
       await deleteComment(comment.id, comment.parentId)
     }
     else {
@@ -226,6 +225,9 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
       await createComment(postId, replyComment, comment.parentId, comment.id)
     }
     else {
+      if(comment.commentCount < 2){
+        setIsCommentCount(false)
+      }
       await createComment(postId, replyComment, comment.id,'no')
     }
     setReplyComment('')

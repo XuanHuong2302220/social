@@ -8,6 +8,7 @@ import authReducer from './features/auth/authSlice';
 import themeReducer from './features/theme/themeSlice';
 import postReducer from './features/post/postSlice';
 import commentReducer from './features/comment/commentSlice';
+import messageReducer from './features/messages/messageSlice';
 
 const persistConfig = {
   key: 'root',
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   theme: themeReducer,
   post: postReducer,
   comment: commentReducer,
+  message: messageReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

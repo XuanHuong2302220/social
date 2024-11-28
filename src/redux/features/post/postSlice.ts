@@ -29,6 +29,8 @@ const postSlice = createSlice({
                 !state.posts.some(existingPost => existingPost.id === newPost.id)
             );
             state.posts = [...state.posts, ...newPosts];
+            // state.posts = [...action.payload, ...state.posts];
+
         },
         addPost: (state, action: PayloadAction<PostState>) => {
             state.posts = [action.payload, ...state.posts];

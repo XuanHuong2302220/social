@@ -14,7 +14,8 @@ export interface InputProps {
     classInput?: string,
     value?: string,
     onChange?: (e: any) => void,
-    tabIndex?: number
+    tabIndex?: number,
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
 }
 
 export interface ButtonProps {
@@ -35,6 +36,13 @@ export interface ButtonProps {
     left?: boolean,
 }
 
+export interface UserProps {
+    id: string,
+    fullName: string,
+    avatar: string | null,
+    username: string
+}
+
 export interface UserState {
     id?: string,
     username?: string,
@@ -42,7 +50,7 @@ export interface UserState {
     lastName?: string,
     gender?: string | null,
     email?: string | null,
-    avatar?: string | null,
+    avatar: string | null,
     dob?: string | null,
     postCount?: number,
     followers?: number
@@ -138,4 +146,21 @@ export interface Comment {
     reactionType: string,
     parentId?: string,
     commentCount: number,
+}
+
+export interface Message {
+    id: string,
+    content: string,
+    created_ago: string,
+    sender: UserProps,
+    receiver: UserProps,
+    idConversation: string
+}
+
+export interface Conversation {
+    id: string,
+    sender: UserProps,
+    receiver: UserProps,
+    lastMessage?: Message,
+    messages: Message[],
 }

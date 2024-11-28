@@ -13,11 +13,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   classInput,
   value,
   onClick,
+  onKeyDown,
   ...rest
 } : InputProps, ref) => {
 
   return (
-    <label className={`input flex items-center gap-2 bg-search ${className}`}>
+    <label className={`input flex items-center gap-2 ${className}`}>
         {icon && <Image src={icon} alt={icon} width={width} height={height} />}
         <input
           ref={ref}
@@ -25,6 +26,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           className={`${styles.input} ${styles.plaintext} bg-search w-full h-full text-textColor ${classInput}`}
           placeholder={placeholder}
           value={value}
+          onKeyDown={onKeyDown}
           {...rest}
         />
         {iconComponent && <div onClick={onClick}>{iconComponent}</div>}

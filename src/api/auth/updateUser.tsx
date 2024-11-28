@@ -1,6 +1,6 @@
 'use client'
 
-import { setUser } from "@/redux/features/user/userSlice";
+import { selectUser, setAttributes, setUser } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { UserState } from "@/types";
 import axs from "@/utils/axios";
@@ -13,6 +13,7 @@ const updateUser = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const token = useAppSelector(state => state.auth.token);
+    const userState = useAppSelector(selectUser)
 
    const update = async(user: UserState) => {
     setLoading(true)
@@ -28,19 +29,20 @@ const updateUser = () => {
                 },
             }
         )
-            const data = await response.data;
+            const {data, message} = await response.data;
 
             if(data){
-                dispatch(setUser({
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    dob: user.dob,
-                    gender: user.gender
+                dispatch(setAttributes({
+                    ...userState,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    dob: data.dob,
+                    gender: data.gender
                 }))
             }
 
-            toast.success(data.message)
-            router.push('/')
+            toast.success(message)
+            // router.push('/')
         } catch (error:any) {
             toast.error(error.response.data.message)
         }

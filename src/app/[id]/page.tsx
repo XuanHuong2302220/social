@@ -13,8 +13,11 @@ import { UserState } from '@/types'
 import useCreateFollow from '@/api/follow/createFollow'
 import { setPosts } from '@/redux/features/post/postSlice'
 import useClickOutside from '@/hooks/useClickOutside'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { storage } from '@/firebase/firebase'
+import useUpdateAvatar from '@/api/user/updateAvatar'
+import useCreateConversation from '@/api/messages/createConversation'
+import useGetAllConversation from '@/api/messages/getAllConversation'
 
 const Profile = () => {
 
@@ -38,11 +41,15 @@ const Profile = () => {
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
 
+  const {loading: loadingSaveImage, updateAvatar} = useUpdateAvatar()
+
   const [openDropDown, setOpenDropDown] = useState(false)
 
   const {getAllPost} = useGetAllPost()
 
   const {loading: loadingFollow, createFollow} = useCreateFollow()
+
+  const {createConversation} = useCreateConversation()
 
   const scroll = document.querySelector('.my-infinite-scroll') as HTMLElement;
   useEffect(()=> {
@@ -83,6 +90,14 @@ const Profile = () => {
     setOpenChangeAvatar(true)
   }
 
+  const handleMessage = async() => {
+    if(userProfile){
+      if(userProfile.id){
+        await createConversation(userProfile.id)
+      }
+    }
+  }
+
   const handleChangAvatar = async(e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if(file){
@@ -90,6 +105,18 @@ const Profile = () => {
       if(url){
         setAvatar(file)
       }
+    }
+  }
+
+  const handleDeleteAvatar = async()=> {
+    try {
+      setUserProfile({
+        ...userProfile,
+        avatar: ''
+      })
+      await updateAvatar('none')
+    } catch (error) {
+      console.error('Lỗi khi xóa ảnh đại diện:', error);
     }
   }
 
@@ -102,10 +129,7 @@ const Profile = () => {
           ...userProfile,
           avatar: url
         })
-        dispatch(setAttributes({
-          ...user,
-          avatar: url
-        }))
+        await updateAvatar(url)
         setOpenChangeAvatar(false)
       } catch (error) {
         setLoadingImage(true)
@@ -116,10 +140,7 @@ const Profile = () => {
             ...userProfile,
             avatar: url
           })
-          dispatch(setAttributes({
-            ...user,
-            avatar: url
-          }))
+          await updateAvatar(url)
           setOpenChangeAvatar(false)
         }
       }
@@ -194,7 +215,7 @@ const Profile = () => {
 
   return (
     <Layout>
-      {userProfile && <div className='h-screen pt-[90px] px-52 w-screen flex flex-col gap-6 bg-backGround overflow-y-auto overflow-x-hidden' id="scrollableDivProfile" >
+      {userProfile && <div className='h-screen pt-[90px] px-52 w-screen flex flex-col gap-6 bg-backGround overflow-y-scroll overflow-x-hidden' id="scrollableDivProfile" >
           <div className='w-full flex flex-col h-[400px] rounded-3xl'>
               <div className='w-full h-2/3 bg-search relative' />
               <div className='w-full h-1/3 bg-navbar flex p-6'>
@@ -214,8 +235,8 @@ const Profile = () => {
                       />}
                       children={
                         openDropDown && <div className='flex flex-col gap-2'>
-                          <Button text='Change Avatar' onClick={handleOpenFileInput} className='bg-navbar' />
-                          <Button text='Delete Avatar' className='bg-navbar' />
+                          <Button text='Change Avatar' onClick={handleOpenFileInput} disabled={loadingSaveImage} className='bg-navbar' />
+                          {userProfile?.avatar !== '' && <Button text='Delete Avatar' iconLoading={loadingSaveImage} disabled={loadingSaveImage} onClick={handleDeleteAvatar} className='bg-navbar' />}
                         </div>
                       }
                     />
@@ -248,7 +269,7 @@ const Profile = () => {
                   <Button 
                     text={main ? 'Add Post' : 'Message'}
                     className='text-primaryColor w-1/3 bg-textColor border-primaryColor hover:bg-textColor hover:text-backGround hover:opacity-60'
-                    onClick={handleOpenPostorMessage}
+                    onClick={main ? handleOpenPostorMessage : handleMessage}
                   />
                   {isModalOpen && 
                   <ModalPost
@@ -269,7 +290,7 @@ const Profile = () => {
 
             <div className='flex flex-col flex-1 w-2/3 gap-3 '>
               {main && <NewPost />}
-              {
+              {posts.length > 0 &&
                 <InfiniteScroll
                     dataLength={posts.length}
                     next={fetchNextPosts}
@@ -304,8 +325,8 @@ const Profile = () => {
                   onClick={()=> inputRef.current?.click()}
                 />
                 <div className='flex gap-4 items-center'>
-                  <Button text='Cancel' className=' w-[200px] text-textColor' disabled={loadingImage} onClick={handleCloseModal} />
-                  <Button text='Save' iconLoading={loadingImage} disabled={loadingImage} className='bg-primaryColor w-[200px] text-textColor' onClick={handleSaveAvatar} />
+                  <Button text='Cancel' className=' w-[200px] text-textColor' disabled={loadingImage || loadingSaveImage} onClick={handleCloseModal} />
+                  <Button text='Save' iconLoading={loadingImage || loadingSaveImage} disabled={loadingImage || loadingSaveImage} className='bg-primaryColor w-[200px] text-textColor' onClick={handleSaveAvatar} />
                 </div>
               </div>}
             />}

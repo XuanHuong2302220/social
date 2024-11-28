@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useCallback, useEffect} from 'react'
-import {Avatar, MiniProfile, NewPost, Post, SkeletonPost} from '@/components'
+import {Avatar, BoxMessage, MiniProfile, NewPost, Post, SkeletonPost} from '@/components'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import useGetAllPost from '@/api/post/getAllPost'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Layout from '@/components/DefaultLayout'
 import { selectUser } from '@/redux/features/user/userSlice'
-import { setPosts } from '@/redux/features/post/postSlice'
+import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice'
 
 const Home = React.memo(() => {
 
@@ -17,11 +17,11 @@ const Home = React.memo(() => {
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
 
+  console.log('post')
+
   const user = useAppSelector(selectUser)
 
   const dispatch = useAppDispatch()
-
-  console.log(user, 'user')
 
   const {getAllPost} = useGetAllPost()
 
@@ -31,6 +31,13 @@ const Home = React.memo(() => {
       scroll.style.overflowY = 'hidden'
     }
   })
+
+  // const refreshPost = async () => {
+  //   dispatch(setPosts([]));
+  //   dispatch(setCurrentPage(1));
+  //   dispatch(setHasMore(true));
+  //   await getAllPost();
+  // }
 
   useEffect(() => {
     dispatch(setPosts([]));
@@ -47,7 +54,7 @@ const Home = React.memo(() => {
 
   return (
     <Layout>
-       <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden' id="scrollableDiv" >
+       <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden relative' id="scrollableDiv" >
           <div className='w-1/4 bg-navbar h-fit p-4 rounded-xl'>
               <MiniProfile 
                 user={user}
@@ -71,7 +78,7 @@ const Home = React.memo(() => {
               {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let's create your first post</div>}
 
           </div>
-          <div className='w-1/4 bg-navbar'>friends</div>
+          <div className='w-1/4 '>friends</div>
           
           <div>
           </div>

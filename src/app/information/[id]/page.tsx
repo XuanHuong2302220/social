@@ -21,17 +21,16 @@ interface FormValues {
 const information = () => {
   const { register, handleSubmit,control,setValue, formState: { errors } } = useForm<FormValues>();
   const user = useAppSelector(selectUser);
-  const {lastName, firstName, username, id} = user;
+  const {lastName, firstName, username} = user;
   const router = useRouter()
   const [loadingLogout, setLoadingLogout] = useState(false)
-  const {slug} = useParams()
+  const {id} = useParams()
   const dispatch = useAppDispatch()
   const [isSlugValid, setIsSlugValid] = useState(false)
 
   const handleLogout =()=> {
     setLoadingLogout(true)
     dispatch(clearToken())
-    dispatch(cleaerUser())
     router.push('/login')
   }
 
@@ -45,7 +44,7 @@ const information = () => {
   }, [])
 
   useEffect(()=> {
-    if(slug !== username){
+    if(id !== username){
       router.push('/')
       setIsSlugValid(true)
     }
@@ -63,6 +62,7 @@ const information = () => {
   const {loading, update} = updateUser();
  
   const onSubmit = async(data: any) => {
+    console.log(data)
     await update(data)
     router.push('/')
   };
@@ -134,7 +134,7 @@ const information = () => {
                 {...field}
                 className="w-full h-10"
                 placeholder="Select Date"
-                onChange={(value) => field.onChange(value)} 
+                onChange={(value) => field.onChange(value ? value.toISOString().split('T')[0] : '')} 
                 value={field.value ? new Date(field.value) : null}
                 format="yyyy-MM-dd"
                 appearance="default"

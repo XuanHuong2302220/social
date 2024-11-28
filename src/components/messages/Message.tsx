@@ -1,30 +1,27 @@
 import React from 'react'
 import Avatar from '../Avatar'
+import { Message as IMessage } from '@/types'
+import { useAppSelector } from '@/redux/hooks'
+import { selectUser } from '@/redux/features/user/userSlice'
 
 interface MessageProps {
-    direction: 'chat-start' | 'chat-end'
+  message: IMessage
 }
 
-const Message = ({direction}: MessageProps) => {
+const Message = ({message}: MessageProps) => {
+
+  console.log(message)
+
+  const user = useAppSelector(selectUser)
   return (
-    // <div className={`chat chat-${direction}`}>
-    //     <div className="chat-image avatar">
-    //         <Avatar src='' alt='message' width={1} height={1} className='w-10 h-10'  />
-    //     </div>
-    //     <div className="chat-bubble bg-search">I hate you!</div>
-    //     <time className="text-xs opacity-50">12:45</time>
-    // </div>
-    <div className={`chat ${direction}`} >
-        <div className="chat-image avatar">
-            <div className="w-10 rounded-full">
-                <Avatar src='' alt='message' width={1} height={1} className='w-10 h-10'  />
-            </div>
-        </div>
-        <div className="chat-header text-textColor">
-            Ngo Xuan Huong
-        </div>
-        <div className="chat-bubble bg-search text-textColor">You were the Chosen One!</div>
-        <div className="chat-footer opacity-50">12:45</div>
+    <div className={`chat ${message.sender.id === user.id ? 'chat-end' : 'chat-start'}`} >
+       {message.sender.id !== user.id && <div className="chat-image avatar">
+          <div className="w-10 rounded-full">
+            <Avatar src={message.sender.avatar ?? undefined} alt='message' width={1} height={1} className='w-10 h-10' />
+          </div>
+        </div>}
+        <div className="chat-bubble bg-navbar text-textColor">{message.content}</div>
+        <div className="chat-footer opacity-50">{message.created_ago}</div>
     </div>
   )
 }
