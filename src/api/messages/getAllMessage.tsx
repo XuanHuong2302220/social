@@ -21,7 +21,6 @@ const useGetAllMessage = () => {
                 }
             })
             const {data} = await response.data
-            console.log(data)
             dispatch(addMessages({id: conversationId, messages: data}))
 
         } catch (error) {

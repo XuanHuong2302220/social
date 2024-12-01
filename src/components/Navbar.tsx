@@ -15,11 +15,12 @@ import useClickOutside from '@/hooks/useClickOutside';
 import { cleaerUser, selectUser } from '@/redux/features/user/userSlice';
 import { IoLogOut } from "react-icons/io5";
 import { clearToken } from '@/redux/features/auth/authSlice';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useSearch from '@/api/user/searchUser';
 import { debounce } from '@/utils/debound';
 import { clearConversation } from '@/redux/features/messages/messageSlice';
 import useGetAllConversation from '@/api/messages/getAllConversation';
+import { setCurrentPage, setHasMore } from '@/redux/features/post/postSlice';
 
 interface NavbarProps {
   onClickLogo?: ()=> void
@@ -51,9 +52,7 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
   const handleSearch = async(e: React.ChangeEvent<HTMLInputElement>) => {
     if(search.current){
       search.current.value = e.target.value;
-      if(e.target.value.trim()){
-        debouncedSearch(e.target.value)
-      }
+      debouncedSearch(e.target.value)
     }
   }
 
@@ -64,15 +63,25 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
     document.documentElement.setAttribute('data-theme', theme);
   }
 
+  const pathName = usePathname();
+  const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
+
   const handleLogout =()=> {
     setLoading(true)
     dispatch(clearToken())
     dispatch(clearConversation())
+    dispatch(setCurrentPage(1))
     router.push('/login')
   }
 
   const handleRedirect = ()=> {
     window.window.location.href = `/${user.username}`
+  }
+
+  const handleRedirectSearch = (e: React.KeyboardEvent<HTMLDivElement>)=> {
+    if(search.current && search.current.value.trim() && e.key === 'Enter'){
+      window.location.href = `/search/${search.current.value}`
+    }
   }
 
   useClickOutside(dropdownRef, ()=> setShowDropdownLogout(false))
@@ -104,13 +113,14 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
             tabIndex={0}
             parents={
               <Input
-              placeholder='Search...'
-              className='h-8 bg-search w-[250px] text-textColor'
-              type='text'
-              classInput='text-textColor'
-              iconComponent={showDropdown ? null : <MdOutlineSearch />}
-              ref={search}
-              onChange={handleSearch}
+                placeholder='Search...'
+                className='h-8 bg-search w-[250px] text-textColor'
+                type='text'
+                classInput='text-textColor'
+                iconComponent={showDropdown ? null : <MdOutlineSearch />}
+                ref={search}
+                onChange={handleSearch}
+                onKeyDown={handleRedirectSearch}
               />
             } 
             children={
@@ -135,17 +145,17 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
             <IoSunny className='text-xl cursor-pointer text-textColor' onClick={()=> {handleClickTheme('dark'); setShowDropDownChat(false); setShowDropdownLogout(false)}} /> 
           }
 
-          <div className='flex items-cente' ref={dropdownChatRef} >
+          {!isMessagesPath && <div className='flex items-cente' ref={dropdownChatRef} >
             <DropDown
               parents={<FaMessage onClick={handleOpenMessage} className='text-xl cursor-pointer text-textColor'  />}
               children={
-                showDropDownChat && <UserChat isBox />
+                showDropDownChat && <UserChat isBox backgroundColor='bg-navbar' setShowDropdown={()=>setShowDropDownChat(false)} />
               }
               tabIndex={0}
               className='text-whiteText' 
               classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-290px]'
             />
-          </div>
+          </div>}
 
           <IoNotifications className='text-xl cursor-pointer text-textColor' />
           <div ref={dropdownRef}>

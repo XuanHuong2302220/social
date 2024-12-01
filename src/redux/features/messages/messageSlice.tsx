@@ -20,7 +20,7 @@ const messageSlice = createSlice({
             const newConversation = state.boxConversation.find(conversation => conversation.id === action.payload.id);
             if(!newConversation){
                 if(state.boxConversation.length < 3){
-                    state.boxConversation = [action.payload, ...state.boxConversation];
+                    state.boxConversation = [...state.boxConversation, action.payload];
                 }
                 if(state.boxConversation.length > 3){
                     state.boxConversation.pop();
@@ -41,12 +41,20 @@ const messageSlice = createSlice({
             if (index !== -1) {
                 state.boxConversation[index].messages = action.payload.messages.reverse();
             }
+
+            const indexConversataion = state.conversations.findIndex(conversation => conversation.id === action.payload.id);
+            if (indexConversataion !== -1) {
+                state.conversations[indexConversataion].messages = action.payload.messages
+            }
         },
         addMessage: (state, action: PayloadAction<{id: String, message: Message}>) => {
             const index = state.boxConversation.findIndex(conversation => conversation.id === action.payload.id);
             if (index !== -1) {
                 state.boxConversation[index].messages = [ ...state.boxConversation[index].messages, action.payload.message];
-                console.log(state.boxConversation[index].messages)
+            }
+            const indexMessage = state.conversations.findIndex(conversation => conversation.id === action.payload.id);
+            if (indexMessage !== -1) {
+                state.conversations[indexMessage].messages = [ ...state.conversations[indexMessage].messages, action.payload.message];
             }
         }
         

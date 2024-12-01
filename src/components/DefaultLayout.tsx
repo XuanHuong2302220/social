@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import refreshToken from '@/api/auth/refreshToken';
 import Conversations from './messages/Conversations';
 import { removeBoxMessage } from '@/redux/features/messages/messageSlice';
+import { usePathname } from 'next/navigation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,6 +17,8 @@ const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
     const dispatch = useAppDispatch();
 
     const conversations = useAppSelector(state => state.message.boxConversation);
+    const pathName = usePathname();
+    const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
 
     useEffect(()=> {
       if(token){
@@ -32,10 +35,10 @@ const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
       <Navbar onClickLogo={onClickLogo} />
       <main>{children}</main>
       {
-        conversations.length > 0 && 
+       !isMessagesPath &&conversations.length > 0 && 
         conversations.map((conversation, index) => (
-          <div key={conversation.receiver.id} className={`absolute z-40 w-[300px] h-[400px] rounded-t-lg card shadow-2xl bg-search bottom-0 right-[${index === 0 ? '5' : index * 20 + 5  }%]`}>
-            <Conversations closeConversation={()=>closeBoxMessage(conversation.id)} conversation={conversation} />
+          <div key={conversation.receiver.id} className={`absolute z-40 w-[300px] h-[400px] rounded-t-lg rounded-b-none card shadow-2xl bg-search bottom-0 `} style={{right: `${index === 0 ? '5' : index*20 + 5}%` }}>
+            <Conversations isBox closeConversation={()=>closeBoxMessage(conversation.id)} conversation={conversation} />
           </div>
         ) )
       }

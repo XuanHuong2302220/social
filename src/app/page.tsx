@@ -8,6 +8,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Layout from '@/components/DefaultLayout'
 import { selectUser } from '@/redux/features/user/userSlice'
 import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice'
+import useCheckUser from '@/api/user/checkUser'
 
 const Home = React.memo(() => {
 
@@ -17,13 +18,13 @@ const Home = React.memo(() => {
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
 
-  console.log('post')
-
   const user = useAppSelector(selectUser)
 
   const dispatch = useAppDispatch()
 
   const {getAllPost} = useGetAllPost()
+
+  const {checkUser, profile} = useCheckUser()
 
   const scroll = document.querySelector('.my-infinite-scroll-home') as HTMLElement;
   useEffect(()=> {
@@ -32,16 +33,12 @@ const Home = React.memo(() => {
     }
   })
 
-  // const refreshPost = async () => {
-  //   dispatch(setPosts([]));
-  //   dispatch(setCurrentPage(1));
-  //   dispatch(setHasMore(true));
-  //   await getAllPost();
-  // }
-
   useEffect(() => {
     dispatch(setPosts([]));
     getAllPost();
+    if (user.username) {
+      checkUser(user.username);
+    }
   }, []);
 
   const fetchNextPosts = useCallback(async () => {
@@ -57,7 +54,7 @@ const Home = React.memo(() => {
        <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden relative' id="scrollableDiv" >
           <div className='w-1/4 bg-navbar h-fit p-4 rounded-xl'>
               <MiniProfile 
-                user={user}
+                user={profile ?? user}
               />
           </div>
           <div className='h-full w-2/4 flex flex-col gap-5 px-5' >

@@ -25,8 +25,6 @@ const useCreateConversation = () => {
 
             const data = await response.data
 
-            console.log(data)
-
             dispatch(addConversation(data))
             
         } catch (error) {

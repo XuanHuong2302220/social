@@ -10,8 +10,6 @@ interface MessageProps {
 
 const Message = ({message}: MessageProps) => {
 
-  console.log(message)
-
   const user = useAppSelector(selectUser)
   return (
     <div className={`chat ${message.sender.id === user.id ? 'chat-end' : 'chat-start'}`} >

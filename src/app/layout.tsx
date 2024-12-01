@@ -23,6 +23,8 @@ const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
   const user = useAppSelector(selectUser);
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
+
   const pathName = usePathname();
   
   useEffect(()=> {
@@ -31,10 +33,24 @@ const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
     }
 
     if((token && pathName === '/login') ||(token && pathName === '/signup') || (token && pathName === '/forgotpassword')){
+      setLoading(true)
       router.push('/')
+      setLoading(false)
+    }
+
+    if(!token && pathName !== '/login' && pathName !== '/signup' && pathName !== '/forgotpassword'){
+      setLoading(true)
+      router.push('/login')
+      setLoading(false)
     }
 
   }, [token, user])
+
+  if(loading){
+    return <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
+  </div>
+  }
 
   return (
     <>

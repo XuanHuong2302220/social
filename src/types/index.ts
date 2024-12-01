@@ -40,7 +40,8 @@ export interface UserProps {
     id: string,
     fullName: string,
     avatar: string | null,
-    username: string
+    username: string,
+    isFollowing?: string
 }
 
 export interface UserState {
@@ -53,9 +54,9 @@ export interface UserState {
     avatar: string | null,
     dob?: string | null,
     postCount?: number,
-    followers?: number
-    followings?: number,
-    isFollow?: string,
+    followers: number
+    followings: number,
+    isFollow: string,
 }
 
 export interface logoProps {

@@ -7,6 +7,7 @@ import { useState } from "react"
 const useCreateFollow = ()=> {
     const [loading, setLoading] = useState(false)
     const token = useAppSelector(state => state.auth.token)
+    const [isFollow, setIsFollow] = useState('')
 
     const createFollow = async (userId: string, type: string)=> {
         setLoading(true)
@@ -19,7 +20,10 @@ const useCreateFollow = ()=> {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                console.log(response)
+
+                const data = await response.data
+                setIsFollow(data.isFollowing)
+                console.log(data)
             }
             if(type === 'remove'){
                 const response = await axs.delete(`/follow/remove-follow`,{
@@ -30,7 +34,9 @@ const useCreateFollow = ()=> {
                         followingId: userId
                     }
                 })
-                console.log(response)
+                const data = await response.data
+                setIsFollow(data.isFollowing)
+                console.log(data)
             }
             
         } catch (error) {
@@ -40,7 +46,7 @@ const useCreateFollow = ()=> {
         }
     }
 
-    return {loading, createFollow}
+    return {loading, createFollow, isFollow}
 }
 
 export default useCreateFollow

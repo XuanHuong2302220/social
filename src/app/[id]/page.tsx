@@ -28,7 +28,7 @@ const Profile = () => {
   const [isError, setIsError] = useState(false);
   const [main, setMain] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserState | undefined>(profile);
+  const [userProfile, setUserProfile] = useState<UserState>();
   const [avatar, setAvatar] = useState<File | null>(null)
   const [openChangeAvatar, setOpenChangeAvatar] = useState(false)
   const [loadingImage, setLoadingImage] = useState(false)
@@ -47,7 +47,7 @@ const Profile = () => {
 
   const {getAllPost} = useGetAllPost()
 
-  const {loading: loadingFollow, createFollow} = useCreateFollow()
+  const {loading: loadingFollow, createFollow, isFollow} = useCreateFollow()
 
   const {createConversation} = useCreateConversation()
 
@@ -57,6 +57,30 @@ const Profile = () => {
       scroll.style.overflowY = 'hidden'
     }
   })
+
+  useEffect(()=> {
+    if(isFollow !== userProfile?.isFollow){
+      if(isFollow === 'follow' || isFollow === 'follow back'){
+        console.log(isFollow)
+        setUserProfile({
+          ...userProfile,
+          avatar: userProfile?.avatar ?? '',
+          followers: userProfile?.followers ? userProfile.followers - 1 : 0,
+          followings: userProfile?.followings ?? 0,
+          isFollow: isFollow
+        })
+      }
+      else {
+        setUserProfile({
+          ...userProfile,
+          avatar: userProfile?.avatar ?? '',
+          followers: userProfile?.followers ? userProfile.followers + 1 : 0 + 1,
+          followings: userProfile?.followings ?? 0,
+          isFollow: isFollow
+        })
+      }
+    }
+  }, [isFollow])
 
   const fullName = `${profile?.firstName} ${profile?.lastName}`
 
@@ -112,7 +136,10 @@ const Profile = () => {
     try {
       setUserProfile({
         ...userProfile,
-        avatar: ''
+        avatar: '',
+        followers: userProfile?.followers ?? 0,
+        followings: userProfile?.followings ?? 0,
+        isFollow: userProfile?.isFollow ?? ''
       })
       await updateAvatar('none')
     } catch (error) {
@@ -127,7 +154,10 @@ const Profile = () => {
         const url = await getDownloadURL(storageRef);
         setUserProfile({
           ...userProfile,
-          avatar: url
+          avatar: url,
+          followers: userProfile?.followers ?? 0,
+          followings: userProfile?.followings ?? 0,
+          isFollow: userProfile?.isFollow ?? ''
         })
         await updateAvatar(url)
         setOpenChangeAvatar(false)
@@ -138,7 +168,10 @@ const Profile = () => {
           const url = await getDownloadURL(storageRef);
           setUserProfile({
             ...userProfile,
-            avatar: url
+            avatar: '',
+            followers: userProfile?.followers ?? 0,
+            followings: userProfile?.followings ?? 0,
+            isFollow: userProfile?.isFollow ?? ''
           })
           await updateAvatar(url)
           setOpenChangeAvatar(false)
@@ -154,29 +187,11 @@ const Profile = () => {
       if(userProfile.isFollow === 'follow' || userProfile.isFollow === 'follow back'){
         if (userProfile.id) {
           await createFollow(userProfile.id, 'create');
-           setUserProfile({
-            ...userProfile,
-            isFollow: 'Following',
-            followers: userProfile.followers && userProfile.followers  + 1
-          })
-          dispatch(setAttributes({
-            ...user,
-            followings: user.followings && user.followings + 1,
-          }))
         }
       }
       else {
         if (userProfile.id) {
           await createFollow(userProfile.id, 'remove');
-          setUserProfile({
-            ...userProfile,
-            isFollow: 'follow',
-            followers: userProfile.followers && userProfile.followers - 1
-          })
-          dispatch(setAttributes({
-            ...user,
-            followings: user.followings && user.followings - 1,
-          }))
         }
       }
     }
@@ -222,8 +237,8 @@ const Profile = () => {
                 <div className='flex flex-col text-textColor w-1/2 items-center'>
                   {main ? <div ref={modalRef}>
                     <DropDown
-                      className='absolute right-[72px] top-[-87px]'
-                      classNameContent='bg-search p-2 w-[200px] rounded-lg shadow-lg z-50 right-0 top-[50px]'
+                      className='absolute right-[72px] top-[-128px]'
+                      classNameContent='bg-search p-2 w-[200px] rounded-lg shadow-lg z-50 right-0 top-[10px]'
                       tabIndex={0}
                       parents={<Avatar
                         src={userProfile.avatar ?? ""}
@@ -242,7 +257,7 @@ const Profile = () => {
                     />
                   </div> : <Avatar
                         src={userProfile.avatar ?? ""}
-                        className='w-32 h-32 rounded-full absolute right-[72px] top-[-87px]'
+                        className='w-32 h-32 rounded-full absolute right-[72px] top-[-128px]'
                         alt='avatar'
                         width={80}
                         height={80}

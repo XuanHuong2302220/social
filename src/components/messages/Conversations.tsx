@@ -12,25 +12,36 @@ import useGetAllMessage from '@/api/messages/getAllMessage';
 import DropDown from '../DropDown';
 import Button from '../Button';
 import useCreateMessage from '@/api/messages/createMessage';
+import { selectUser } from '@/redux/features/user/userSlice';
+import { useParams, usePathname } from 'next/navigation';
 
 interface ConversationsProps {
-  conversation: Conversation,
+  conversation: Conversation | any,
   closeConversation?: ()=> void,
-  background?: string
+  background?: string,
+  isBox?: boolean,
+  loadingMess?: boolean
 }
 
-const Conversations = ({conversation, closeConversation, background}: ConversationsProps) => {
+const Conversations = ({conversation, closeConversation, background, isBox, loadingMess}: ConversationsProps) => {
 
   const textRef = useRef<HTMLInputElement>(null)
   const [openEmoji, setOpenEmoji] = useState(false)
   const emojiRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  const user = useAppSelector(selectUser)
+
   const [dropdown, setDropdown] = useState(false)
 
-  const messages = useAppSelector(state => state.message.boxConversation.find(con => con.id === conversation.id)?.messages ?? [])
+  const messages = isBox ? 
+  useAppSelector(state => state.message.boxConversation.find(con => con.id === conversation?.id)?.messages ?? []) : 
+  useAppSelector(state => state.message.conversations.find(con => con.id === conversation?.id)?.messages ?? [])
 
   const messageRef = useRef<HTMLDivElement>(null)
+
+  const pathName = usePathname();
+  const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
 
   useEffect(()=> {
     if(messageRef.current){
@@ -52,8 +63,10 @@ const Conversations = ({conversation, closeConversation, background}: Conversati
   }
 
   useEffect(()=> {
-    getAllMessage(conversation.id)
-  }, [])
+    if(conversation?.id){
+      getAllMessage(conversation?.id)
+    }
+  }, [conversation?.id])
 
   const handleEmojiClick = (emojiObject: any) => {
     if(textRef.current){
@@ -64,8 +77,8 @@ const Conversations = ({conversation, closeConversation, background}: Conversati
   const handleSendMessage = () => {
     if(textRef.current){
       const message = textRef.current.value.trim()
-      if(message){
-        createMessage({content: message, conversationId: conversation.id})
+      if(message && user.id){
+        createMessage({content: message, conversationId: conversation.id, senderId:user.id})
         textRef.current.value = ''
       }
     }
@@ -81,45 +94,50 @@ const Conversations = ({conversation, closeConversation, background}: Conversati
   }
 
   return (
-    <div className={`w-full bg-${background} h-full flex rounded-t-lg flex-col relative`}>
-      <div className='px-4 flex bg-primaryColor rounded-t-lg gap-2 items-center py-3'>
-        <div ref={dropdownRef}>
+    <div className={`w-full bg-${background} h-full flex flex-col relative ${!isMessagesPath ? 'rounded-t-lg' : ''}`}>
+      <div className={`px-4 flex bg-primaryColor gap-2 items-center py-3 ${!isMessagesPath ? 'rounded-t-lg' : ''}`}>
+        {!isMessagesPath ? <div ref={dropdownRef}>
           <DropDown
             parents={
               <div className='w-full flex items-center hover:cursor-pointer gap-1' onClick={()=> setDropdown(!dropdown)}>
-                <Avatar width={1} height={1} src={conversation.receiver.avatar ?? undefined} alt='search' className='w-8 h-8' />
-                <span className='text-textColor font-bold'>{conversation.receiver.fullName}</span>
+                <Avatar width={1} height={1} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
+                <span className='text-textColor font-bold'>{conversation?.sender.id === user.id ? conversation?.receiver.fullName : conversation?.sender.fullName}</span>
               </div>
             }
             tabIndex={0}
-            classNameContent='absolute top-12 right-0 w-[200px] bg-background p-2 rounded-lg shadow-lg'
+            classNameContent='absolute top-12 left-0 w-[200px] z-50 bg-background p-2 rounded-lg shadow-lg'
+            className='z-50'
             children={
               dropdown &&
               <div className='w-full p-2 flex flex-col gap-2'>
                   <Button
                     text='View Profile'
                     className='bg-navbar text-textColor'
-                    onClick={()=> window.location.href = `/${conversation.receiver.username}` }
+                    onClick={()=> window.location.href = `/${conversation?.receiver.username}`}
                   />
                   <Button
                     text='View in chat'
                     className='bg-navbar text-textColor'
-                    onClick={()=> window.location.href = `/messages/${conversation.id}`}
+                    onClick={()=> window.location.href = `/messages/${conversation?.id}`}
                   />
               </div>
             }
           />
-        </div>
-        <button className="btn btn-sm ml-auto mt-2 btn-circle text-textColor btn-ghost absolute right-2 top-2" onClick={closeConversation}>✕</button>
+        </div> : 
+        <div className='w-full flex items-center hover:cursor-pointer gap-1' onClick={()=> setDropdown(!dropdown)}>
+          <Avatar width={1} height={1} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
+          <span className='text-textColor font-bold'>{conversation?.sender.id === user.id ? conversation?.receiver.fullName : conversation?.sender.fullName}</span>
+        </div>}
+       {!isMessagesPath && <button className="btn btn-sm ml-auto mt-2 btn-circle text-textColor btn-ghost absolute right-2 top-2" onClick={closeConversation}>✕</button>}
       </div>
       <div className='divider m-0 bg-background h-[1px]' />
-      <div ref={messageRef} className={`p-2 mt-auto flex flex-col max-h-2/3 overflow-y-auto mb-4 ${(loading || (messages ?? []).length === 0) && 'justify-center items-center h-full' }`}>
-         {loading &&  <span className="loading loading-spinner text-center loading-sm"></span>}
+      <div ref={messageRef} className={`p-3 mt-auto flex flex-col max-h-2/3 overflow-y-auto mb-4 ${(loading || loadingMess || messages.length === 0) && 'justify-center items-center h-full' }`}>
+         {loading && <span className="loading loading-spinner text-center loading-sm"></span>}
          {
-            (messages ?? []).length > 0 ? (messages ?? []).map(message => (
+            !loading && !loadingMess && messages.length > 0 ? messages.map(message => (
               <Message key={message.id} message={message} />
             ))      
-            : !loading && (messages ?? []).length === 0 && <div className='text-center text-textColor'>Let send a first message</div>    
+            : !loading && messages.length === 0 && <div className='text-center text-textColor'>Let send a first message</div>    
          }
       </div>
       <div className='mb-2 h-[50px] w-full px-2 flex gap-3 items-center' >
@@ -128,7 +146,7 @@ const Conversations = ({conversation, closeConversation, background}: Conversati
           onKeyDown={handleKeyDown}
         />
         {loadingMessage ? <span className="loading loading-spinner text-center loading-sm"></span> :<IoMdSend className='text-2xl cursor-pointer text-textColor' onClick={handleSendMessage} />}
-        <BsEmojiSmile onClick={()=>setOpenEmoji(!openEmoji)} className='cursor-pointer absolute right-[20%]' />
+        <BsEmojiSmile onClick={()=>setOpenEmoji(!openEmoji)} className={`cursor-pointer absolute right-[${isBox ? '20%' : '7%'}]`} style={{ right: isBox ? '20%' : '7%' }} />
         <div ref={emojiRef}>
             <EmojiPicker
             open={openEmoji}

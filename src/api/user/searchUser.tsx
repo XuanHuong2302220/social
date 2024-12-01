@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppSelector } from "@/redux/hooks";
-import { UserProps } from "@/types";
+import { PostState, UserProps } from "@/types";
 import axs from "@/utils/axios";
 import { useState } from "react";
 
@@ -10,6 +10,7 @@ const useSearch = ()=> {
     const [loadingSearch, setLoadingSearch] = useState(false);
     const token = useAppSelector(state => state.auth.token);
     const [result, setResult] = useState<UserProps[]>([])
+    const [postResult, setPostResult] = useState<PostState[]>([])
 
     const searchUser = async (search: string) => {
         setLoadingSearch(true)
@@ -21,11 +22,9 @@ const useSearch = ()=> {
             })
 
             const {posts, users} = response.data;
-            if(users.length > 0){
-                setResult(users)
-            }
-            
-
+            console.log(users, posts)
+            setResult(users)
+            setPostResult(posts)
         } catch (error) {
             console.log(error)
         }
@@ -34,7 +33,7 @@ const useSearch = ()=> {
         }
     }
 
-    return {searchUser, result, loadingSearch}
+    return {searchUser, result, loadingSearch, postResult}
 }
 
 export default useSearch;

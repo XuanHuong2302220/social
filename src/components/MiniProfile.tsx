@@ -3,8 +3,6 @@
 import React, { useState } from 'react'
 import { RiUserSettingsLine } from "react-icons/ri";
 import {Avatar, Button, Modal} from '@/components'
-import { useAppSelector } from '@/redux/hooks'
-import { selectUser } from '@/redux/features/user/userSlice'
 import { MdCake } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
