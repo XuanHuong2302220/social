@@ -109,6 +109,8 @@ export interface PostState {
     reaction_count: number,
     comment_count: number,
     reactionType: string,
+    currentPage?: number,
+    hasMore?: boolean,
 }
 
 export interface TabProps {

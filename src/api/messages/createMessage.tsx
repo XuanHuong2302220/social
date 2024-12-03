@@ -1,9 +1,10 @@
 'use client'
 
-import { addMessage } from "@/redux/features/messages/messageSlice"
+import { addConversation, addMessage } from "@/redux/features/messages/messageSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import useSocket from "@/socket/socket"
 import { useEffect, useState } from "react"
+import useGetConversation from "./getConversation"
 
 interface CreateMessage {
     content: string,
@@ -13,14 +14,17 @@ interface CreateMessage {
 
 const useCreateMessage = ()=> {
     const [loading, setLoading] = useState(false)
-    const socket = useSocket()
+    const socket = useSocket('messages')
     const dispatch = useAppDispatch()
 
     useEffect(()=> {
         if(socket){
-            console.log('socket connected')
             socket.on('messageCreated', (message)=> {
                 dispatch(addMessage({id: message.idConversation, message}))
+            })
+            socket.on('conversationData', (conversation)=> {
+                console.log(conversation, 'conversation')
+                dispatch(addConversation(conversation))
             })
         }
 
@@ -33,6 +37,7 @@ const useCreateMessage = ()=> {
         try {
             if(socket){
                 socket.emit('sendMessage', data)
+                socket.emit('getConversation', {conversationId: data.conversationId})
             }
         } catch (error) {
             console.log(error)

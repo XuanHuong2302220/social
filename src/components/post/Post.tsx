@@ -176,7 +176,7 @@ const handleOpenModalReact = async()=> {
 const handleOpenModalComment = async(post: PostState)=>{
   if(post.id){
     setOpenModalComment(true)
-    await getAllComment(post.id)
+    // await getAllComment(post.id)
   }
 }
 
@@ -325,8 +325,6 @@ useEffect(()=> {
         <ModalPostComment 
           post={post}
           closeFunc={()=> setOpenModalComment(false)}
-          loadingComment={loadingComment}
-          comments={comments}
         />}
     </div>
   )

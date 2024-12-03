@@ -1,42 +1,73 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {Button, ChatComment, Comment, Modal, Post, SkeletonReaction} from '@/components'
 import { Comment as CommentInter, PostState } from '@/types'
 import useCreateComment from '@/api/comment/createComment'
-import { useAppDispatch } from '@/redux/hooks'
-import { setCountComment } from '@/redux/features/post/postSlice'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import useGetAllComment from '@/api/comment/getAllComment'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { clearComments, setCurrentPage } from '@/redux/features/comment/commentSlice'
 
 interface PostProps {
   post: PostState,
   closeFunc: () => void,
-  loadingComment?: boolean,
-  comments? : CommentInter[]
 }
 
-const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps) => {
+const ModalPostComment= ({post, closeFunc}: PostProps) => {
 
   const [text, setText] = useState<string>('')
   const [warningModal, setWarningModal] = useState<boolean>(false)
   const [activeDropdownIndex, setActiveDropdownIndex] = useState<number>(-1)
   const [height, setHeight] = useState<number>(150)
   const [checkReply, setCheckReply] = useState(false)
-  const dispatch = useAppDispatch()
 
   const {loading, createComment} = useCreateComment()
+
+  const {loading: loadingGetComment, getAllComment} = useGetAllComment()
+
+  const hasNextPage = useAppSelector(state => state.comment.hasMore)
+
+  const comments = useAppSelector(state => state.comment.comments)
+
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if(post.id){
+      getAllComment(post.id)
+    }
+  },[])
+
+  const fetchNextComments = useCallback(async()=> {
+      try {
+        await getAllComment(post.id ?? 0)
+      }
+      catch(error){
+        console.error('Error when get next comment:', error)
+      }
+  }, [loadingGetComment, hasNextPage, getAllComment])
 
   const handleEmojiClick = (emojiObject: any) => {
     setText((prevText) => prevText + emojiObject.emoji);
   }
+
+  const scroll = document.querySelector('.my-infinite-scroll-comment') as HTMLElement;
+  useEffect(()=> {
+    if(scroll){
+      scroll.style.overflowY = 'hidden'
+    }
+  })
 
   const handleShowDropdownEdit = (index: number) => {
     setActiveDropdownIndex(index);
   };
 
   const handleCloseModal = () => {
-      setWarningModal(false)
-      setText('')
-      closeFunc && closeFunc()
+    setWarningModal(false)
+    setText('')
+    dispatch(clearComments())
+    dispatch(setCurrentPage(1))
+    closeFunc && closeFunc()
   }
 
   useEffect(() => {
@@ -77,7 +108,7 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
           }
           children={
             <div className='flex flex-col h-full pt-[80px]'>
-              <div className='flex flex-col overflow-auto max-h-[85%]'>
+              <div className='flex flex-col overflow-auto max-h-[85%]' id='commentScroll'>
                 <Post 
                   post={post}
                   disableButton
@@ -85,21 +116,31 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
                 <div className='divider m-0 px-5' />
 
                {<div className='flex flex-col gap-3 px-5 pt-3'>
-                  {loadingComment ? <SkeletonReaction /> : comments && comments.map((comment, index)=> (
-                    <Comment 
-                      key={comment.id} 
-                      comment={comment} 
-                      index={index} 
-                      activeDropdownIndex={activeDropdownIndex} 
-                      handleShowDropdownEdit={handleShowDropdownEdit} 
-                      checkReply={checkReply}
-                      setCheckReply={setCheckReply}
-                      postId={post.id ?? 0}
-                    />    
-                  ))}
+                    {comments && <InfiniteScroll
+                      dataLength={comments.length}
+                      loader={<SkeletonReaction />}
+                      hasMore={hasNextPage}
+                      next={fetchNextComments}
+                      className='my-infinite-scroll-comment w-full flex flex-col gap-3'
+                      scrollableTarget='commentScroll'
+                    >
+                      {comments.map((comment, index)=> (
+                        <Comment 
+                          key={comment.id} 
+                          comment={comment} 
+                          index={index} 
+                          activeDropdownIndex={activeDropdownIndex} 
+                          handleShowDropdownEdit={handleShowDropdownEdit} 
+                          checkReply={checkReply}
+                          setCheckReply={setCheckReply}
+                          postId={post.id ?? 0}
+                        />    
+                      ))}
+
+                    </InfiniteScroll>}
                 </div>
                 }
-                { !loadingComment && comments && comments.length < 1 ? <h2 className='w-full py-5 text-center font-bold'>No Comment Yet</h2> : null}
+                { !loadingGetComment && comments && comments.length < 1 ? <h2 className='w-full py-5 text-center font-bold'>No Comment Yet</h2> : null}
 
               </div>
 
@@ -132,7 +173,6 @@ const ModalPostComment= ({post, closeFunc, loadingComment, comments}: PostProps)
               />}
             </div>
           }
-          // onClose={()=> setWarningModal(true)}
           className='overflow-hidden max-w-[600px] h-full p-0 bg-navbar'
         />
   )

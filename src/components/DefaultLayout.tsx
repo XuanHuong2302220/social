@@ -5,6 +5,7 @@ import refreshToken from '@/api/auth/refreshToken';
 import Conversations from './messages/Conversations';
 import { removeBoxMessage } from '@/redux/features/messages/messageSlice';
 import { usePathname } from 'next/navigation';
+import useUserOnline from '@/api/user/userOnline';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,11 @@ const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
     const conversations = useAppSelector(state => state.message.boxConversation);
     const pathName = usePathname();
     const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
+    const {getUserOnline} = useUserOnline()
+
+    useEffect(()=> {
+      getUserOnline();
+    }, [])
 
     useEffect(()=> {
       if(token){

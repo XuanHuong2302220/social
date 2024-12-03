@@ -1,6 +1,6 @@
 'use client'
 import useCheckUser from '@/api/user/checkUser'
-import { Avatar, Button, DropDown, MiniProfile, Modal, ModalPost, NewPost, Post, SkeletonPost } from '@/components'
+import { Avatar, Button, DropDown, Input, MiniProfile, Modal, ModalPost, NewPost, Post, SkeletonPost } from '@/components'
 import Layout from '@/components/DefaultLayout'
 import { selectUser, setAttributes } from '@/redux/features/user/userSlice'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
@@ -18,6 +18,15 @@ import { storage } from '@/firebase/firebase'
 import useUpdateAvatar from '@/api/user/updateAvatar'
 import useCreateConversation from '@/api/messages/createConversation'
 import useGetAllConversation from '@/api/messages/getAllConversation'
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useForm } from 'react-hook-form'
+import useChangePassword from '@/api/user/changePassword'
+
+interface FormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
 
 const Profile = () => {
 
@@ -30,10 +39,15 @@ const Profile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<UserState>();
   const [avatar, setAvatar] = useState<File | null>(null)
+  const [imageAvatar, setImageAvatar] = useState<string | null>(null)
   const [openChangeAvatar, setOpenChangeAvatar] = useState(false)
   const [loadingImage, setLoadingImage] = useState(false)
   const dispatch = useAppDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const {register, handleSubmit, formState: {errors}, reset} = useForm<FormValues>()
 
   const posts = useAppSelector((state) => state.post.posts);
 
@@ -48,6 +62,8 @@ const Profile = () => {
   const {getAllPost} = useGetAllPost()
 
   const {loading: loadingFollow, createFollow, isFollow} = useCreateFollow()
+
+  const {loading: loadingPassword, changePassword} = useChangePassword()
 
   const {createConversation} = useCreateConversation()
 
@@ -88,6 +104,14 @@ const Profile = () => {
 
   useClickOutside(modalRef, ()=> setOpenDropDown(false))
 
+  const handleChangePassword = async(data: FormValues) => {
+    if(data){
+      await changePassword(data.currentPassword, data.newPassword, data.confirmPassword)
+      reset()
+      setIsModalOpen(false)
+    }
+  }
+
   const fetchNextPosts = useCallback(async () => {
     try {
       if(userProfile){
@@ -101,8 +125,6 @@ const Profile = () => {
   const handleOpenPostorMessage = () => {
     if(main){
       setIsModalOpen(true)
-    } else {
-      window.location.href = `/message/${user.username}`
     }
   }
 
@@ -111,7 +133,9 @@ const Profile = () => {
   }
 
   const handleOpenFileInput = ()=> {
+    setImageAvatar(userProfile?.avatar ?? '')
     setOpenChangeAvatar(true)
+    setOpenDropDown(false)
   }
 
   const handleMessage = async() => {
@@ -128,6 +152,7 @@ const Profile = () => {
       const url = URL.createObjectURL(file);
       if(url){
         setAvatar(file)
+        setImageAvatar(url)
       }
     }
   }
@@ -141,7 +166,7 @@ const Profile = () => {
         followings: userProfile?.followings ?? 0,
         isFollow: userProfile?.isFollow ?? ''
       })
-      await updateAvatar('none')
+      await updateAvatar('')
     } catch (error) {
       console.error('Lỗi khi xóa ảnh đại diện:', error);
     }
@@ -168,7 +193,7 @@ const Profile = () => {
           const url = await getDownloadURL(storageRef);
           setUserProfile({
             ...userProfile,
-            avatar: '',
+            avatar: url,
             followers: userProfile?.followers ?? 0,
             followings: userProfile?.followings ?? 0,
             isFollow: userProfile?.isFollow ?? ''
@@ -282,14 +307,73 @@ const Profile = () => {
                   
                   }
                   <Button 
-                    text={main ? 'Add Post' : 'Message'}
+                    text={main ? 'Change Password' : 'Message'}
                     className='text-primaryColor w-1/3 bg-textColor border-primaryColor hover:bg-textColor hover:text-backGround hover:opacity-60'
                     onClick={main ? handleOpenPostorMessage : handleMessage}
                   />
                   {isModalOpen && 
-                  <ModalPost
-                    onClose={() => setIsModalOpen(false)}
-                  />}
+                    <Modal
+                      onClose={() => {setIsModalOpen(false); reset()}}
+                      title={<div className='w-full text-textColor text-center font-bold text-xl py-2'>Change Your Password</div>}
+                      closeIcon
+                      className='bg-navbar'
+                      children={
+                      <form className='w-full flex flex-col gap-2 text-textColor' onSubmit={handleSubmit(handleChangePassword)}>
+                         <label className='text-textColor flex  text-sm font-bold w-full'>Current Password</label>
+                          <Input
+                              className='w-full h-10'
+                              placeholder='Password...'
+                              width={20}
+                              height={20}
+                              type={showPassword ? 'text' : 'password'}
+                              onClick={() => setShowPassword(!showPassword)}
+                              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+                              {...register('currentPassword', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
+                            />
+                            {errors.currentPassword && (
+                              <p className='text-red-600 text-sm py-1'>
+                                {errors.currentPassword?.message}
+                              </p>
+                            )}
+
+                          <label className='text-textColor flex  text-sm font-bold w-full'>New Password</label>
+                          <Input
+                              className='w-full h-10'
+                              placeholder='New Password...'
+                              width={20}
+                              height={20}
+                              onClick={() => setShowPassword(!showPassword)}
+                              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+                              type={showPassword ? 'text' : 'password'}
+                              {...register('newPassword', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
+                            />
+                            {errors.newPassword && (
+                              <p className='text-red-600 text-sm py-1'>
+                                {errors.newPassword?.message}
+                              </p>
+                            )}
+
+                          <label className='text-textColor flex  text-sm font-bold w-full'>Confirm Password</label>
+                          <Input
+                              className='w-full h-10'
+                              placeholder='Confirm Password...'
+                              type={showPassword ? 'text' : 'password'}
+                              onClick={() => setShowPassword(!showPassword)}
+                              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+                              {...register('confirmPassword', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
+                              width={20}
+                              height={20}
+                            />
+                            {errors.confirmPassword && (
+                              <p className='text-red-600 text-sm py-1'>
+                                {errors.confirmPassword?.message}
+                              </p>
+                            )}
+
+                          <Button text='Save' className='w-[200px] ml-auto mt-4 bg-primaryColor text-textColor' iconLoading={loadingPassword} />
+                      </form>
+                      }
+                    />}
                 </div>
               </div>
           </div>
@@ -327,12 +411,12 @@ const Profile = () => {
            {openChangeAvatar &&  
            <Modal
               title={<div className='w-full text-textColor text-center font-bold text-xl py-2'>Change Avatar</div>}
-              closeIcon
+              closeIcon={!loadingImage}
               onClose={handleCloseModal}
               className='w-1/3 bg-navbar'
               children={<div className='w-full flex flex-col justify-center items-center gap-4'>
                 <Avatar
-                  src={avatar ? URL.createObjectURL(avatar) : ''}
+                  src={imageAvatar ? imageAvatar : undefined}
                   className='max-w-96 max-h-max-w-96 rounded-full'
                   alt='avatar'
                   width={80}

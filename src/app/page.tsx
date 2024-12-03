@@ -70,7 +70,7 @@ const Home = React.memo(() => {
               >
                 {posts.map((post) => (
                   <Post key={post.id} post={post} />
-              ))}
+                ))}
               </InfiniteScroll>}
               {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let's create your first post</div>}
 
