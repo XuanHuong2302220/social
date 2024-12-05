@@ -79,6 +79,7 @@ const MiniProfile = ({hide, user}: MiniProfileProps) => {
             <a href={`/${user.username}`} className='flex items-center'>
                 <Avatar
                     width={10}
+                    id={user.id}
                     height={10}
                     alt={user.avatar ?? ''}
                     className='w-[52px] h-[52px]'
@@ -128,7 +129,7 @@ const MiniProfile = ({hide, user}: MiniProfileProps) => {
             children={
                 follows && follows.map((follow)=> (
                     <div className='flex gap-2 items-start' key={follow.id}>
-                    <a href={`/${follow.userName}`}> <Avatar width={1} height={1} src={follow.avatar ?? undefined} alt='avatar' className='w-[42px] h-[42px]'/></a>
+                    <a href={`/${follow.userName}`}> <Avatar width={1} id={follow.id} height={1} src={follow.avatar ?? undefined} alt='avatar' className='w-[42px] h-[42px]'/></a>
                     <div className='flex flex-col cursor-pointer'>
                         <a href={`/${follow.userName}`} className='font-bold hover:underline text-textColor'>{follow.fullName}</a>
                         <span className='text-textColor text-sm'>{follow.isFollowing}</span>

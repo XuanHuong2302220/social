@@ -40,7 +40,7 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
         <div className='flex flex-col gap-2 mt-3 px-4'>
           {conversations.length > 0 ? conversations.map((conversation, index) => (
             <div key={conversation.id} className={`flex items-center ${!isBox && selectedConversation === conversation.id ? 'bg-search' : ''} gap-2 p-2 rounded-lg cursor-pointer hover:bg-search`} onClick={()=>handleCreateConversation(conversation.id)}>
-              <Avatar width={1} height={1} src={conversation.sender.id === user.id ? conversation.receiver.avatar ?? undefined : conversation.sender.avatar ?? undefined} alt='search' className='w-12 h-12' />
+              <Avatar id={conversation?.sender.id === user.id ? conversation?.receiver.id : conversation?.sender.id} width={1} height={1} src={conversation.sender.id === user.id ? conversation.receiver.avatar ?? undefined : conversation.sender.avatar ?? undefined} alt='search' className='w-12 h-12' />
               <div className='flex flex-col'>
                   <span className='text-textColor text-lg font-bold'>{conversation.sender.id === user.id ? conversation.receiver.fullName : conversation.sender.fullName}</span>
                   {conversation.lastMessage && <span className='text-sm text-textColor'>{conversation.lastMessage.content}</span>}

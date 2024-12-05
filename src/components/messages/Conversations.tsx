@@ -100,7 +100,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
           <DropDown
             parents={
               <div className='w-full flex items-center hover:cursor-pointer gap-1' onClick={()=> setDropdown(!dropdown)}>
-                <Avatar width={1} height={1} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
+                <Avatar width={1} id={conversation?.sender.id === user.id ? conversation?.receiver.id : conversation?.sender.id} height={1} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
                 <span className='text-textColor font-bold'>{conversation?.sender.id === user.id ? conversation?.receiver.fullName : conversation?.sender.fullName}</span>
               </div>
             }
@@ -125,7 +125,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
           />
         </div> : 
         <div className='w-full flex items-center hover:cursor-pointer gap-1' onClick={()=> setDropdown(!dropdown)}>
-          <Avatar width={1} height={1} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
+          <Avatar width={1} height={1} id={conversation?.sender.id === user.id ? conversation?.receiver.id : conversation?.sender.id} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
           <span className='text-textColor font-bold'>{conversation?.sender.id === user.id ? conversation?.receiver.fullName : conversation?.sender.fullName}</span>
         </div>}
        {!isMessagesPath && <button className="btn btn-sm ml-auto mt-2 btn-circle text-textColor btn-ghost absolute right-2 top-2" onClick={closeConversation}>✕</button>}

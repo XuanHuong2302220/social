@@ -14,6 +14,7 @@ const initialState: UserState = {
     followings: 0,
     avatar: null,
     dob: null,
+    isFollow: '',
 }
 
 export const userSlice = createSlice({

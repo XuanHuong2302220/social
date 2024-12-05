@@ -4,9 +4,9 @@ import { addConversation, addMessage } from "@/redux/features/messages/messageSl
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import useSocket from "@/socket/socket"
 import { useEffect, useState } from "react"
-import useGetConversation from "./getConversation"
+import soundMessage from '@/assets/sound/notification.wav'
 
-interface CreateMessage {
+interface CreateMessage {   
     content: string,
     conversationId: string,
     senderId: string,
@@ -20,11 +20,9 @@ const useCreateMessage = ()=> {
     useEffect(()=> {
         if(socket){
             socket.on('messageCreated', (message)=> {
+                const sound = new Audio(soundMessage)
+                sound.play()
                 dispatch(addMessage({id: message.idConversation, message}))
-            })
-            socket.on('conversationData', (conversation)=> {
-                console.log(conversation, 'conversation')
-                dispatch(addConversation(conversation))
             })
         }
 
@@ -37,7 +35,6 @@ const useCreateMessage = ()=> {
         try {
             if(socket){
                 socket.emit('sendMessage', data)
-                socket.emit('getConversation', {conversationId: data.conversationId})
             }
         } catch (error) {
             console.log(error)

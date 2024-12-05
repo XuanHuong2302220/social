@@ -1,4 +1,3 @@
-// store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -9,11 +8,12 @@ import themeReducer from './features/theme/themeSlice';
 import postReducer from './features/post/postSlice';
 import commentReducer from './features/comment/commentSlice';
 import messageReducer from './features/messages/messageSlice';
+import socketReducer from './features/socket/socketSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['post', 'comment'],
+  blacklist: ['post', 'comment', 'socket'],
 };
 
 const rootReducer = combineReducers({
@@ -23,6 +23,7 @@ const rootReducer = combineReducers({
   post: postReducer,
   comment: commentReducer,
   message: messageReducer,
+  socket: socketReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

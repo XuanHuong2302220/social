@@ -260,7 +260,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
           <h3 className="font-bold text-xl text-textColor text-center">{post ? 'Update Post' : 'Create Post'}</h3>
           <div className='divider'></div>
           <div className="flex h-full gap-2 items-center">
-              <Avatar className='w-[42px] h-[42px]' src={post ? post.created_by.avatar ?? '' : user.avatar ?? ''} alt='avatar' width={1} height={1} />
+              <Avatar className='w-[42px] h-[42px]' id={post ? post.created_by.id : user.id} src={post ? post.created_by.avatar ?? '' : user.avatar ?? ''} alt='avatar' width={1} height={1} />
               <span className='text-lg  text-textColor font-bold'>{fullName}</span>
             </div>
           <div className='overflow-y-auto max-h-[450px]'>

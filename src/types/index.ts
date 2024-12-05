@@ -82,6 +82,7 @@ export interface AvatarProps {
     alt: string,
     height: number,
     className?: string,
+    id?: string | undefined,
     onClick?: ()=> void
 }
 
@@ -166,4 +167,6 @@ export interface Conversation {
     receiver: UserProps,
     lastMessage?: Message,
     messages: Message[],
+    currentPage?: number,
+    hasMore?: boolean
 }

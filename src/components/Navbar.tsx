@@ -20,7 +20,8 @@ import useSearch from '@/api/user/searchUser';
 import { debounce } from '@/utils/debound';
 import { clearConversation } from '@/redux/features/messages/messageSlice';
 import useGetAllConversation from '@/api/messages/getAllConversation';
-import { setCurrentPage, setHasMore } from '@/redux/features/post/postSlice';
+import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice';
+import useGetAllPost from '@/api/post/getAllPost';
 
 interface NavbarProps {
   onClickLogo?: ()=> void
@@ -38,6 +39,8 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
   const [showDropDownChat, setShowDropDownChat] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false)
+
+  const {getAllPost} = useGetAllPost()
 
   const {loadingSearch, result, searchUser} = useSearch()
 
@@ -84,6 +87,14 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
     }
   }
 
+  const handleClickLogo = async()=> {
+    dispatch(setCurrentPage(1))
+    dispatch(setHasMore(true))
+    dispatch(setPosts([]))
+    await getAllPost()
+    router.push('/')
+  }
+
   useClickOutside(dropdownRef, ()=> setShowDropdownLogout(false))
   useClickOutside(dropdownChatRef, ()=> setShowDropDownChat(false))
 
@@ -99,13 +110,8 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
   return (
     <div className={`w-full z-50 h-[65px] flex flex-wrap items-center bg-navbar px-7 justify-between fixed border-b border-b-background`}>
         <div className='flex w-1/3 gap-4 items-center h-full'>
-          {
-            onClickLogo ? 
-            <Logo size='text-3xl' width={30} onClick={onClickLogo} /> :
-            <a href="/">
-              <Logo size='text-3xl' width={30} />
-            </a>
-          }
+          
+          <Logo size='text-3xl' width={30} onClick={handleClickLogo} />
 
           <DropDown 
             className='text-textColor' 
@@ -128,7 +134,7 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
                 <div className='flex flex-col gap-2'>
                   {result.map((user, index)=> (
                     <a key={user.id} href={`/${user.username}`} className='flex items-center p-2 cursor-pointer gap-2 rounded-lg hover:bg-navbar'>
-                      <Avatar src={user.avatar ?? undefined} alt={user.avatar ?? 'search'} width={1} height={1} className='w-8 h-8' />
+                      <Avatar src={user.avatar ?? undefined} id={user.id} alt={user.avatar ?? 'search'} width={1} height={1} className='w-8 h-8' />
                       <span className='text-textColor'>{user.fullName}</span>
                     </a>
                   ))}

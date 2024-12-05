@@ -304,6 +304,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
               width={40}
               height={40}
               alt='avatar'
+              id={comment.created_by.id}
               src={comment.created_by.avatar ?? ''}
               className='w-[40px] h-[40px]'
             />

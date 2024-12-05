@@ -15,7 +15,7 @@ const Message = ({message}: MessageProps) => {
     <div className={`chat ${message.sender.id === user.id ? 'chat-end' : 'chat-start'}`} >
        {message.sender.id !== user.id && <div className="chat-image avatar">
           <div className="w-10 rounded-full">
-            <Avatar src={message.sender.avatar ?? undefined} alt='message' width={1} height={1} className='w-10 h-10' />
+            <Avatar src={message.sender.avatar ?? undefined} id={message.sender.id} alt='message' width={1} height={1} className='w-10 h-10' />
           </div>
         </div>}
         <div className="chat-bubble bg-navbar text-textColor">{message.content}</div>

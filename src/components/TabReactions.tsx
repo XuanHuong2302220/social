@@ -114,7 +114,7 @@ const TabReactions = ({typeReaction, listReaction, loading, onClose}: TabsProps)
             getListReaction.map((reaction, index) => (
               <div key={index} className='flex gap-2 items-center justify-between py-2'>
               <div className='flex gap-2 items-center'>
-                <Avatar width={1} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
+                <Avatar id={reaction.user.id} width={1} src={reaction.user.avatar ?? undefined} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
                 <div className='flex flex-col'>
                   <Link href={'/'} className='font-bold hover:underline text-textColor'>{reaction.user.fullName}</Link>
                 </div>

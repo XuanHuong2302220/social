@@ -202,20 +202,20 @@ useEffect(()=> {
 
   return (
     <div className='rounded-xl w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 
-        <div className='flex w-full gap-2 items-center'>
+        <div className='flex w-full gap-2 items-center '>
             <a href={`/${post.created_by.username}`}>
-              <Avatar width={1} height={1} alt='avatar' src={post.created_by.avatar??''} className='w-[42px] h-[42px]'/>
+              <Avatar width={1} height={1} alt='avatar' src={post.created_by.avatar??''} id={post.created_by.id} className='w-[42px] h-[42px]'/>
             </a>
             <div className='flex flex-col'>
               <a href={`/${post.created_by.username}`} className='font-bold hover:underline text-textColor'>{post.created_by.fullName}</a>
               <span className='text-[12px] text-textColor'>{post.created_ago}</span>
             </div>
 
-            {user.id === post.created_by.id && <div className='ml-auto z-50'>
+            {user.id === post.created_by.id && <div className='ml-auto z-30'>
               <DropDown
                 parents={<Button
                   left icon={<BsThreeDots className='text-2xl' />}
-                  className='ml-auto bg-transparent w-[50px] h-[50px] border-transparent hover:bg-search rounded-full'
+                  className='ml-auto bg-transparent z-30 w-[50px] h-[50px] border-transparent hover:bg-search rounded-full'
                 />}
                 classNameContent='bg-search right-2 w-[200px] rounded-lg menu'
                 children={

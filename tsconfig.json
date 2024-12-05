@@ -21,6 +21,12 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/global.d.ts",  // Include global.d.ts here if it's located in the src folder
+    ".next/types/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import refreshToken from '@/api/auth/refreshToken';
 import Conversations from './messages/Conversations';
 import { removeBoxMessage } from '@/redux/features/messages/messageSlice';
 import { usePathname } from 'next/navigation';
-import useUserOnline from '@/api/user/userOnline';
+import useGetOnlineUser from '@/api/user/getUserOnline';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,17 +19,11 @@ const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
     const conversations = useAppSelector(state => state.message.boxConversation);
     const pathName = usePathname();
     const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
-    const {getUserOnline} = useUserOnline()
+    const {getOnlineUser} = useGetOnlineUser();
 
     useEffect(()=> {
-      getUserOnline();
-    }, [])
-
-    useEffect(()=> {
-      if(token){
-        refreshToken(token, dispatch);
-      }
-    }, [token, dispatch])
+      getOnlineUser();
+    }, [token])
 
     const closeBoxMessage = (id: string) => {
       dispatch(removeBoxMessage(id));

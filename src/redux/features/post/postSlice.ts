@@ -12,7 +12,7 @@ interface Post {
 const initialPostState: Post = {
     posts: [],
     currentPage: 1,
-    hasMore: true,
+    hasMore: false,
     loading: false,
 }
 

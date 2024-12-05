@@ -26,7 +26,7 @@ const Search = () => {
                     {result.map((user)=>(
                         <div key={user.id} className='flex items-center gap-2 p-2'>
                             <a href={`/${user.username}`}>
-                                <Avatar width={1} height={1} src={user.avatar ?? undefined} alt='search' className='w-12 h-12' />
+                                <Avatar width={1} id={user.id} height={1} src={user.avatar ?? undefined} alt='search' className='w-12 h-12' />
                             </a>
                             <div className='flex flex-col'>
                                 <a href={`/${user.username}`} className='text-textColor text-lg font-bold'>{user.fullName}</a>

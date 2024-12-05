@@ -56,6 +56,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
             width={10}
             height={10}
             className='w-10 h-10 '
+            id={user.id}
             src={user.avatar ?? ''}
             alt={user.avatar ?? ''}
             />

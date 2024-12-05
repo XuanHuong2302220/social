@@ -161,7 +161,7 @@ const Profile = () => {
     try {
       setUserProfile({
         ...userProfile,
-        avatar: '',
+        avatar: null,
         followers: userProfile?.followers ?? 0,
         followings: userProfile?.followings ?? 0,
         isFollow: userProfile?.isFollow ?? ''
@@ -284,6 +284,7 @@ const Profile = () => {
                         src={userProfile.avatar ?? ""}
                         className='w-32 h-32 rounded-full absolute right-[72px] top-[-128px]'
                         alt='avatar'
+                        id={userProfile.id}
                         width={80}
                         height={80}
                       />}
