@@ -18,6 +18,8 @@ const Home = React.memo(() => {
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
 
+  const currentPage = useAppSelector((state) => state.post.currentPage);
+
   const user = useAppSelector(selectUser)
 
   const userOnline = useAppSelector((state) => state.socket.userOnline).filter(u => u.id !== user.id)
@@ -53,13 +55,13 @@ const Home = React.memo(() => {
 
   return (
     <Layout>
-       <div className='h-screen p-[90px] w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden relative' id="scrollableDiv" >
-          <div className='w-1/4 bg-navbar h-fit p-4 rounded-xl'>
+       <div className='h-screen p-[90px] tablet:px-5 phone:px-5 w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden relative' id="scrollableDiv" >
+          <div className='w-1/4 bg-navbar laptop:block tablet:hidden phone:hidden h-fit p-4 rounded-xl'>
               <MiniProfile 
                 user={profile ?? user}
               />
           </div>
-          <div className='h-full w-2/4 flex flex-col gap-5 px-5' >
+          <div className='h-full desktop:w-2/4 laptop:w-2/4 tablet:w-full phone:w-full flex flex-col gap-5 px-5' >
               <NewPost />
               {<InfiniteScroll
                 dataLength={posts.length}
@@ -71,13 +73,13 @@ const Home = React.memo(() => {
                 scrollableTarget='scrollableDiv'
               >
                 {posts.map((post) => (
-                  <Post key={post.id} post={post} />
+                  <Post key={post.id} post={post} width={700} />
                 ))}
               </InfiniteScroll>}
               {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let's create your first post</div>}
 
           </div>
-          <div className='w-1/4 '>
+          <div className='w-1/4 laptop:block tablet:hidden phone:hidden'>
               <div className='bg-navbar h-fit p-4 rounded-xl'>
                 <div className='flex justify-between items-center'>
                   <h1 className='text-xl font-bold'>Online Users</h1>

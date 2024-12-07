@@ -7,13 +7,14 @@ import EmojiPicker, { Theme } from 'emoji-picker-react';
 import useClickOutside from '@/hooks/useClickOutside';
 import Message from './Message';
 import { Conversation, Message as IMessage } from '@/types';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import useGetAllMessage from '@/api/messages/getAllMessage';
 import DropDown from '../DropDown';
 import Button from '../Button';
 import useCreateMessage from '@/api/messages/createMessage';
 import { selectUser } from '@/redux/features/user/userSlice';
 import { useParams, usePathname } from 'next/navigation';
+import { clearMessages } from '@/redux/features/messages/messageSlice';
 
 interface ConversationsProps {
   conversation: Conversation | any,
@@ -78,7 +79,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
     if(textRef.current){
       const message = textRef.current.value.trim()
       if(message && user.id){
-        createMessage({content: message, conversationId: conversation.id, senderId:user.id})
+        createMessage({content: message, idConversation: conversation.id, senderId:user.id})
         textRef.current.value = ''
       }
     }

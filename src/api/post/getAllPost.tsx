@@ -1,6 +1,6 @@
 'use client'
 
-import { addPosts, setCurrentPage, setHasMore, setLoading, setPosts } from "@/redux/features/post/postSlice"
+import { addPosts, setCurrentPage, setHasMore, setLoading} from "@/redux/features/post/postSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
 import { useCallback} from "react"
@@ -14,7 +14,6 @@ const useGetAllPost = () => {
     const getAllPost = useCallback(async (userId?: string) => {
 
         dispatch(setLoading(true))
-
         try {
             const response = await axs.get(`/post/get-all-post?page=${currentPage}&pageSize=10${userId ? '&userid=' + userId : '' }`, {
                 headers: {

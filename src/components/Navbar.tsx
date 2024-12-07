@@ -46,6 +46,8 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
 
   const { getAllConversation} = useGetAllConversation();
 
+  const currentPage = useAppSelector((state) => state.post.currentPage);
+
   const debouncedSearch = useRef(
     debounce((query: string) => {
       searchUser(query); 
@@ -68,6 +70,7 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
 
   const pathName = usePathname();
   const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
+  const isNotHome = pathName !== '/';
 
   const handleLogout =()=> {
     setLoading(true)
@@ -87,13 +90,17 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
     }
   }
 
-  const handleClickLogo = async()=> {
-    dispatch(setCurrentPage(1))
-    dispatch(setHasMore(true))
-    dispatch(setPosts([]))
-    await getAllPost()
-    router.push('/')
-  }
+  const handleClickLogo = useCallback(async()=> {
+    if(isNotHome){
+      window.location.href = '/'
+    }
+    else {
+      dispatch(setCurrentPage(1))
+      dispatch(setHasMore(false))
+      dispatch(setPosts([]))
+      await getAllPost()
+    }
+  }, [])
 
   useClickOutside(dropdownRef, ()=> setShowDropdownLogout(false))
   useClickOutside(dropdownChatRef, ()=> setShowDropDownChat(false))

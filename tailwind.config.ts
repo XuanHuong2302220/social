@@ -30,7 +30,8 @@ const config: Config = {
     },
     daisyui: {
       
-    }
+    },
+    mode: 'jit',
   },
   plugins: [daisyui],
 };
