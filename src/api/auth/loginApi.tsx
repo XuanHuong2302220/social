@@ -19,42 +19,32 @@ const useLoginApi = () => {
         try {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-            let idToken = await user.getIdToken();
+            const userGg = result.user;
         
-            const displayName = user.displayName || '';
+            const displayName = userGg.displayName || '';
             const [firstName, lastName] = displayName.split(' ');
 
-            const response = await axs.post('/auth/store-GG-Info', {
+            const response = await axs.post('/auth/login-gg', {
                 firstName: firstName,
                 lastName: lastName,
-                email: user.email,
-                avatar: user.photoURL,
-                refreshToken: user.refreshToken,
-                id: user.uid,
+                email: userGg.email,
+                avatar: userGg.photoURL,
             })
 
-            dispatch(setToken(idToken))
-
-            const data = await response.data;
-
+            const {token, user} = await response.data;
+            dispatch(setToken(token.token));
             dispatch(setUser({
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                avatar: data.photoURL,
-                id: data.id,
-                username: data.username,
-                dob: data.dob,
-                gender: data.gender
+                ...user,
+                followers: user.followers || 0,
+                followings: user.followings || 0,
+                postCount: user.postCount || 0,
             }))
 
-          
-            if(data.username){
-                router.push('/');
+            if(user.dob && user.gender){
+                window.location.href = '/';
             }
             else {
-                router.push(`/information/${data.id}`);
+                window.location.href = `/information/${user.username}`
             }
         } catch (error: any) {
             toast.warning(error?.response?.data?.message || "Login failed", {

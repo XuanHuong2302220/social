@@ -109,6 +109,7 @@ export interface PostState {
     tags: string[] | null,
     reaction_count: number,
     comment_count: number,
+    isReacted: boolean,
     reactionType: string,
     currentPage?: number,
     hasMore?: boolean,

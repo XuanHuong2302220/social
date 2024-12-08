@@ -25,6 +25,7 @@ const information = () => {
   const router = useRouter()
   const [loadingLogout, setLoadingLogout] = useState(false)
   const {id} = useParams()
+  const encodedEmail = decodeURIComponent(Array.isArray(id) ? id[0] : id)
   const dispatch = useAppDispatch()
   const [isSlugValid, setIsSlugValid] = useState(false)
 
@@ -44,7 +45,7 @@ const information = () => {
   }, [])
 
   useEffect(()=> {
-    if(id !== username){
+    if(encodedEmail !== username){
       router.push('/')
       setIsSlugValid(true)
     }

@@ -19,7 +19,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
 
   return (
     <label className={`input flex items-center gap-2 ${className}`}>
-        {icon && <Image src={icon} alt={icon} width={width} height={height} />}
+        {icon && <Image src={icon} alt={icon} className='text-textColor' width={width} height={height} />}
         <input
           ref={ref}
           type={type}

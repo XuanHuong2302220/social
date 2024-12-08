@@ -17,7 +17,7 @@ const useGetAllComment = ()=> {
     const getAllComment = async (postId: number, commentId?: string) => {
         setLoading(true)
         try {
-            const response = await axs.get(`/comment/get-comment-of-post/${postId}?page=${currentPage}&pageSize=10${commentId ? `&commentId=${commentId}`: ''}`, {
+            const response = await axs.get(`/comment/get-comment-of-post/${postId}?page=${!commentId ? currentPage : 1}&pageSize=10${commentId ? `&commentId=${commentId}`: ''}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -25,6 +25,7 @@ const useGetAllComment = ()=> {
 
             const {data, meta} = response.data
             if(commentId){
+                console.log(data)
                 dispatch(addReplyComments({commentId: commentId, replyComments: data}))
             }
             else {

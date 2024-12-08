@@ -101,7 +101,7 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
             <div className='flex justify-center fixed items-center w-full flex-col  h-[70px]'>
               <div className='flex items-center justify-center w-full h-full'>
                 <span className='text-xl font-bold text-textColor'>{post.created_by.fullName}'s Post</span>
-                <button onClick={text || activeDropdownIndex !== -1 || checkReply ? ()=> setWarningModal(true) : handleCloseModal} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
+                <button onClick={text || activeDropdownIndex !== -1 || checkReply ? ()=> setWarningModal(true) : handleCloseModal} className="btn text-textColor btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
               </div>
               <div className='divider m-0' />
             </div>
@@ -140,7 +140,7 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
                     </InfiniteScroll>}
                 </div>
                 }
-                { !loadingGetComment && comments && comments.length < 1 ? <h2 className='w-full py-5 text-center font-bold'>No Comment Yet</h2> : null}
+                { !loadingGetComment && comments && comments.length < 1 ? <h2 className='w-full py-5 text-center text-lg text-textColor font-bold'>No Comment Yet</h2> : null}
 
               </div>
 

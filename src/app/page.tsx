@@ -18,9 +18,9 @@ const Home = React.memo(() => {
 
   const hasMore = useAppSelector((state) => state.post.hasMore);
 
-  const currentPage = useAppSelector((state) => state.post.currentPage);
-
   const user = useAppSelector(selectUser)
+
+  console.log(user)
 
   const userOnline = useAppSelector((state) => state.socket.userOnline).filter(u => u.id !== user.id)
 
@@ -82,14 +82,14 @@ const Home = React.memo(() => {
           <div className='w-1/4 laptop:block tablet:hidden phone:hidden'>
               <div className='bg-navbar h-fit p-4 rounded-xl'>
                 <div className='flex justify-between items-center'>
-                  <h1 className='text-xl font-bold'>Online Users</h1>
-                  <span className='text-md font-semibold'>{userOnline.length} users</span>
+                  <h1 className='text-xl font-bold text-textColor'>Online Users</h1>
+                  <span className='text-md font-semibold text-textColor'>{userOnline.length} users</span>
                 </div>
                 <div className='flex flex-col gap-2 mt-2'>
                   {userOnline.length > 0 && userOnline.map((user) => (
                     <div key={user.id} className='flex items-center gap-2'>
                       <Avatar src={user.avatar ?? undefined} id={user.id} alt='avatar' width={1} height={1} className='w-10 h-10' />
-                      <span className='text-md font-semibold'>{user.fullName}</span>
+                      <span className='text-md font-semibold text-textColor'>{user.fullName}</span>
                     </div>
                   ))}
                 </div>

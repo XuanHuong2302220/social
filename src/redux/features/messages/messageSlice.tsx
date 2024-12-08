@@ -50,11 +50,11 @@ const messageSlice = createSlice({
         addMessage: (state, action: PayloadAction<{id: String, message: Message}>) => {
             const index = state.boxConversation.findIndex(conversation => conversation.id === action.payload.id);
             if (index !== -1) {
-                state.boxConversation[index].messages = [ ...state.boxConversation[index].messages, action.payload.message];
+                state.boxConversation[index].messages = [ ...state.boxConversation[index]?.messages, action.payload.message];
             }
             const indexMessage = state.conversations.findIndex(conversation => conversation.id === action.payload.id);
             if (indexMessage !== -1) {
-                state.conversations[indexMessage].messages = [ ...state.conversations[indexMessage].messages, action.payload.message];
+                state.conversations[indexMessage].messages = [ ...state.conversations[indexMessage]?.messages, action.payload.message];
             }
         },
         clearMessages: (state) => {

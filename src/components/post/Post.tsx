@@ -59,9 +59,9 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const [showDropdown, setShowDropdown] = useState(false)
   const [showInteract, setShowInteract] = useState<InteractProps>({
-    name: post.reactionType || '',
-    icon: post.reactionType ? reactions.find(r => r.name === post.reactionType)?.icon : null,
-    color: post.reactionType ? reactions.find(r => r.name === post.reactionType)?.color || '' : ''
+    name: post.isReacted ? post.reactionType : '',
+    icon: post.isReacted ? reactions.find(r => r.name === post.reactionType)?.icon : null,
+    color: post.isReacted ? reactions.find(r => r.name === post.reactionType)?.color || '' : ''
   })
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -189,16 +189,6 @@ const handleDeletePost = (post: PostState) => {
     }))
   }
 }
-
-useEffect(()=> {
-  if(post.reactionType){
-    setShowInteract({
-      name: post.reactionType,
-      icon: reactions.find(r => r.name === post.reactionType)?.icon,
-      color: reactions.find(r => r.name === post.reactionType)?.color || ''
-    })
-  }
-}, [post.reactionType])
 
   return (
     <div className='rounded-xl w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 

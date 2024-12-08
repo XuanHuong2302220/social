@@ -34,6 +34,8 @@ const Profile = () => {
   const {loading: loadingProfile, checkUser, profile} = useCheckUser()
 
   const { id } = useParams() as { id: string }
+  const decodeId = decodeURIComponent(id)
+  console.log(decodeId)
   const [isError, setIsError] = useState(false);
   const [main, setMain] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -223,7 +225,7 @@ const Profile = () => {
   }
 
   useEffect(() => {
-    checkUser(id);
+    checkUser(decodeId);
   }, []);
 
   useEffect(() => {

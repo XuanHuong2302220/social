@@ -37,6 +37,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
       if (placeholderElement && placeholderElement instanceof HTMLElement && !text) {
         placeholderElement.style.position = 'absolute';
         placeholderElement.style.top = '84%';
+        placeholderElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
       }
     }, [text]);
 
@@ -61,7 +62,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
             alt={user.avatar ?? ''}
             />
             <div id='textcomment' className='flex-1 w-[90%] bg-search px-3 rounded-2xl overflow-y-auto max-h-[400px] z-50'>
-            <div onKeyDown={handleKeyDown}>
+            <div onKeyDown={handleKeyDown} className='text-textColor'>
               <HighlightWithinTextarea
                   value={text}
                   highlight={[{ highlight: [/#[\w]+/g], className: 'text-blue-500 bg-transparent' }]}
