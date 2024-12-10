@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useCallback, useEffect} from 'react'
-import {Avatar, BoxMessage, MiniProfile, NewPost, Post, SkeletonPost} from '@/components'
+import {Avatar,MiniProfile, NewPost, Post, SkeletonPost} from '@/components'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import useGetAllPost from '@/api/post/getAllPost'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Layout from '@/components/DefaultLayout'
 import { selectUser } from '@/redux/features/user/userSlice'
-import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice'
+import { setPosts } from '@/redux/features/post/postSlice'
 import useCheckUser from '@/api/user/checkUser'
 
 const Home = React.memo(() => {

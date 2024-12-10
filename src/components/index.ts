@@ -20,7 +20,6 @@ import MiniProfile from "./MiniProfile"
 import UserChat from "./messages/UserChat"
 import Conversations from "./messages/Conversations"
 import Message from "./messages/Message"
-import BoxMessage from "./messages/BoxMessage"
 
 export {
     Input,
@@ -45,5 +44,4 @@ export {
     UserChat,
     Conversations,
     Message,
-    BoxMessage
 }
