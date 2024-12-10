@@ -4,14 +4,13 @@ import { selectUser, setAttributes } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { UserState } from "@/types";
 import axs from "@/utils/axios";
-import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 import { useState } from "react"
 import { toast } from "react-toastify";
 
 const useUpdateUser = () => {
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
     const token = useAppSelector(state => state.auth.token);
     const userState = useAppSelector(selectUser)
 
@@ -42,9 +41,12 @@ const useUpdateUser = () => {
             }
 
             toast.success(message)
-            // router.push('/')
-        } catch (error:any) {
-            toast.error(error.response.data.message)
+        } catch (error) {
+            if (error instanceof AxiosError && error.response) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
         }
    }
 

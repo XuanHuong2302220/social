@@ -4,6 +4,7 @@ import { addPost } from "@/redux/features/post/postSlice"
 import { selectUser, setAttributes } from "@/redux/features/user/userSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
+import { AxiosError } from "axios"
 import { useState } from "react"
 import { toast } from "react-toastify"
 
@@ -42,8 +43,12 @@ const useCreatePost = () => {
                 created_ago: 'Just now'
             }))
 
-        } catch (error: any) {
-            toast.error(error)
+        } catch (error) {
+            if (error instanceof AxiosError && error.response) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
         }
         finally{
             setLoading(false)

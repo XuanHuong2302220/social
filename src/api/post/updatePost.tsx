@@ -31,10 +31,9 @@ const useUpdatePost = () =>{
         })
 
         const post = await response.data.post
-        console.log(post)
         dispatch(editPost(post))
        } catch (error) {
-              console.log(error)
+            console.log(error)
        }
        finally {
             setLoading(false)

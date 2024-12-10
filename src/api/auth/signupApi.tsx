@@ -38,7 +38,7 @@ const useSignupApi = () => {
                 route.push('/login')
             }, 3000)
         }
-        catch (error: any) {
+        catch (error) {
             if (error instanceof AxiosError && error.response) {
                 toast.warning(error.response.data.message);
             } else {

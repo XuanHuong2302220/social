@@ -3,7 +3,9 @@
 import { addPosts, setCurrentPage, setHasMore, setLoading} from "@/redux/features/post/postSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
+import { AxiosError } from "axios"
 import { useCallback} from "react"
+import { toast } from "react-toastify"
 
 const useGetAllPost = () => {
     const token = useAppSelector((state) => state.auth.token)
@@ -32,8 +34,12 @@ const useGetAllPost = () => {
                 dispatch(setHasMore(false))
             }
 
-        } catch (error: any) {
-            console.error("Error fetching posts:", error);
+        } catch (error) {
+            if (error instanceof AxiosError && error.response) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
           }
         finally {
             dispatch(setLoading(false))

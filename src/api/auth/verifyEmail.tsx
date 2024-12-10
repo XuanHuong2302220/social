@@ -4,6 +4,7 @@ import { setToken } from "@/redux/features/auth/authSlice";
 import { selectUser } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axs from "@/utils/axios";
+import { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "react-toastify";
@@ -26,10 +27,12 @@ const useVerifyEmail = () => {
                 dispatch(setToken(data.token));
                 router.push(`/information/${user.username}`);
             }
-        } catch (error : any) {
-            toast.error(error?.response?.data?.message, {
-                position: 'bottom-center',
-            });
+        } catch (error) {
+            if (error instanceof AxiosError && error.response) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
         }
         finally {
             setLoading(false);
