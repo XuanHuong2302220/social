@@ -7,7 +7,7 @@ import { cleaerUser, selectUser } from '@/redux/features/user/userSlice';
 import { DatePicker } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css'; // Import CSS cho rsuite
 import { useParams, useRouter } from 'next/navigation';
-import updateUser from '@/api/auth/updateUser';
+import useUpdateUser from '@/api/auth/updateUser';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearToken } from '@/redux/features/auth/authSlice';
 
@@ -60,7 +60,7 @@ const information = () => {
     return minDate;
   };
 
-  const {loading, update} = updateUser();
+  const {loading, update} = useUpdateUser();
  
   const onSubmit = async(data: any) => {
     await update(data)

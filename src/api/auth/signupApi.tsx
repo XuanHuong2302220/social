@@ -3,6 +3,7 @@
 import { setUser } from "@/redux/features/user/userSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import axs from "@/utils/axios";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { toast } from "react-toastify";
@@ -38,10 +39,11 @@ const useSignupApi = () => {
             }, 3000)
         }
         catch (error: any) {
-            toast.warning(error?.response?.data?.message || "Login failed", {
-                position: 'bottom-center',
-            });
-
+            if (error instanceof AxiosError && error.response) {
+                toast.warning(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
         } finally {
             setLoading(false);
         }
