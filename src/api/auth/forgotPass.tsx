@@ -10,8 +10,8 @@ const useForgotPassword = () =>{
     const router = useRouter();
 
     const fgPass = async (email: string) => {
+        setLoading(true);
         try {
-            setLoading(true);
             const response = await axs.post('/auth/reset-password', {email});
             toast.success(response.data.message);
             router.push('/login');
