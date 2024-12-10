@@ -63,7 +63,6 @@ const information = () => {
   const {loading, update} = updateUser();
  
   const onSubmit = async(data: any) => {
-    console.log(data)
     await update(data)
     router.push('/')
   };

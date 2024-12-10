@@ -22,7 +22,6 @@ const useGetAllPost = () => {
             })
 
             const {data, meta} = await response.data
-            console.log(data, 'data')
 
             dispatch(addPosts(data));
             if (meta.hasNextPage) {

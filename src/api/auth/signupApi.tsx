@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { toast } from "react-toastify";
 
-const signupApi = () => {
+const useSignupApi = () => {
 
     const dispatch = useAppDispatch();
 
@@ -49,4 +49,4 @@ const signupApi = () => {
     return {signup, loading};
 }
 
-export default signupApi;
+export default useSignupApi;

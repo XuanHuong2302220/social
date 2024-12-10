@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import {auth} from "@/firebase/firebase";
 import { setToken } from "@/redux/features/auth/authSlice";
+import { AxiosError } from "axios";
 
 const useLoginApi = () => {
     const router = useRouter()
@@ -46,11 +47,12 @@ const useLoginApi = () => {
             else {
                 window.location.href = `/information/${user.username}`
             }
-        } catch (error: any) {
-            toast.warning(error?.response?.data?.message || "Login failed", {
-                position: 'bottom-center',
-            });
-            
+        } catch (error) {
+            if (error instanceof AxiosError && error.response) {
+                toast.warning(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
         }
     };
 
@@ -61,7 +63,6 @@ const useLoginApi = () => {
             const response = await axs.post('/auth/login', { username: username, password: password });
             const token = await response.data.token.token
             const user = await response.data.user
-            console.log(user, token)
             dispatch(setToken(token))
             dispatch(setUser({
                 ...user,
@@ -83,11 +84,12 @@ const useLoginApi = () => {
                 router.push(`/information/${user.username}`);
             }
 
-        } catch (error: any) {
-            toast.warning(error?.response?.data?.message || "Login failed", {
-                position: 'bottom-center',
-            });
-            
+        } catch (error) {
+            if (error instanceof AxiosError && error.response) {
+                toast.warning(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
         } finally {
             setLoading(false);
         }

@@ -1,17 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { Input, Button, Logo } from '@/components';
-import { useRouter } from 'next/navigation';
 import background from '@/assets/images/background.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
-import useLoginApi from '@/api/auth/loginApi';
-import Link from 'next/link';
-import signupApi from '@/api/auth/signupApi';
+import useSignupApi from '@/api/auth/signupApi';
 import { useAppSelector } from '@/redux/hooks';
-import { selectUser } from '@/redux/features/user/userSlice';
 
 interface FormValues {
   username: string;
@@ -22,7 +18,7 @@ interface FormValues {
 
 const SignUp = () => {
 
-  const { signup, loading } = signupApi();
+  const { signup, loading } = useSignupApi();
   const token = useAppSelector(state => state.auth.token);
 
   if(token){

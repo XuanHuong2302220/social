@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import Conversations from './messages/Conversations';
 import { removeBoxMessage } from '@/redux/features/messages/messageSlice';
 import { usePathname } from 'next/navigation';
-import useGetOnlineUser from '@/api/user/getUserOnline';
 import useSocket from '@/socket/socket';
 import { setUserOnline } from '@/redux/features/socket/socketSlice';
 
@@ -15,7 +14,6 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
 
-    const token = useAppSelector(state => state.auth.token);
     const dispatch = useAppDispatch();
 
     const conversations = useAppSelector(state => state.message.boxConversation);

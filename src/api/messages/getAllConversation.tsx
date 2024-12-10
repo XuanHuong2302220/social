@@ -23,9 +23,7 @@ const useGetAllConversation = () => {
             })
 
             const {data} = await response.data
-            console.log(data)
             const dataFilter = data.filter((conversation: Conversation) => conversation.lastMessage)
-            console.log(dataFilter)
             dispatch(setConversations(dataFilter))
             
         } catch (error) {

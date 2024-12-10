@@ -22,7 +22,6 @@ const useCheckUser = ()=> {
                 }
             })
             const data = await response.data.user;
-            console.log(data)
             if(data){
                 setProfile(data)
             }

@@ -22,7 +22,6 @@ const useSearch = ()=> {
             })
 
             const {posts, users} = response.data;
-            console.log(users, posts)
             setResult(users)
             setPostResult(posts)
         } catch (error) {

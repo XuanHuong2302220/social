@@ -35,7 +35,6 @@ const Profile = () => {
 
   const { id } = useParams() as { id: string }
   const decodeId = decodeURIComponent(id)
-  console.log(decodeId)
   const [isError, setIsError] = useState(false);
   const [main, setMain] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,7 +78,6 @@ const Profile = () => {
   useEffect(()=> {
     if(isFollow !== userProfile?.isFollow){
       if(isFollow === 'follow' || isFollow === 'follow back'){
-        console.log(isFollow)
         setUserProfile({
           ...userProfile,
           avatar: userProfile?.avatar ?? '',

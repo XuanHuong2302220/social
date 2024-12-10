@@ -23,7 +23,6 @@ const useCreateFollow = ()=> {
 
                 const data = await response.data
                 setIsFollow(data.isFollowing)
-                console.log(data)
             }
             if(type === 'remove'){
                 const response = await axs.delete(`/follow/remove-follow`,{
@@ -36,7 +35,6 @@ const useCreateFollow = ()=> {
                 })
                 const data = await response.data
                 setIsFollow(data.isFollowing)
-                console.log(data)
             }
             
         } catch (error) {

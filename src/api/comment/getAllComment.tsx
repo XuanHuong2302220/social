@@ -25,11 +25,9 @@ const useGetAllComment = ()=> {
 
             const {data, meta} = response.data
             if(commentId){
-                console.log(data)
                 dispatch(addReplyComments({commentId: commentId, replyComments: data}))
             }
             else {
-                console.log(response.data)
                 dispatch(addComments(data))
                 if(meta.hasNextPage){
                     dispatch(setCurrentPage(currentPage + 1))

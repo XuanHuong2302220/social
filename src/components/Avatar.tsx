@@ -6,7 +6,6 @@ import { useAppSelector } from '@/redux/hooks'
 const Avatar = ({width, src, alt, className, height, id, onClick}: AvatarProps) => {
 
   const userOnline = useAppSelector(state => state.socket.userOnline) || [];
-  console.log(userOnline)
 
   return (
     <div className={`avatar ${id && userOnline && userOnline?.some(user => user.id === id) ? 'online' : ''} `}>
