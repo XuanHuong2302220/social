@@ -32,11 +32,13 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
   const search = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const dropdownChatRef = useRef<HTMLDivElement>(null)
+  const dropdownNotificationRef = useRef<HTMLDivElement>(null)
   const theme = useAppSelector((state) => state.theme.theme)
   const dispatch = useAppDispatch();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showDropdownLogout, setShowDropdownLogout] = useState(false);
   const [showDropDownChat, setShowDropDownChat] = useState(false);
+  const [showDropDownNotification, setShowDropDownNotification] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false)
 
@@ -45,8 +47,6 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
   const {loadingSearch, result, searchUser} = useSearch()
 
   const { getAllConversation} = useGetAllConversation();
-
-  const currentPage = useAppSelector((state) => state.post.currentPage);
 
   const debouncedSearch = useRef(
     debounce((query: string) => {
@@ -104,6 +104,7 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
 
   useClickOutside(dropdownRef, ()=> setShowDropdownLogout(false))
   useClickOutside(dropdownChatRef, ()=> setShowDropDownChat(false))
+  useClickOutside(dropdownNotificationRef, ()=> setShowDropDownNotification(false))
 
   const user = useAppSelector(selectUser);
   const fullName = `${user.firstName} ${user.lastName}`
@@ -170,7 +171,17 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
             />
           </div>}
 
-          <IoNotifications className='text-xl cursor-pointer text-textColor' />
+          <div className='flex items-cente' ref={dropdownNotificationRef} >
+            <DropDown
+              parents={<IoNotifications onClick={()=>setShowDropDownNotification(!showDropDownNotification)} className='text-xl cursor-pointer text-textColor' />}
+              children={
+                showDropDownNotification && <UserChat isBox backgroundColor='bg-navbar' setShowDropdown={()=>setShowDropDownChat(false)} />
+              }
+              tabIndex={0}
+              className='text-whiteText' 
+              classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-270px]'
+            />
+          </div>
           <div ref={dropdownRef}>
             <DropDown
               className='text-whiteText w-[200px]'

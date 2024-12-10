@@ -3,7 +3,7 @@
 import { Button, Input, Logo } from '@/components';
 import React from 'react'
 import { useForm } from 'react-hook-form';
-import forgotPass from '@/api/auth/forgotPass';
+import useForgotPassword from '@/api/auth/forgotPass';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/redux/hooks';
 
@@ -16,7 +16,7 @@ const forgotPassword = () => {
 
   const router = useRouter();
 
-  const {fgPass, loading} = forgotPass();
+  const {fgPass, loading} = useForgotPassword();
 
   const token = useAppSelector(state => state.auth.token);
 

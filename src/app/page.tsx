@@ -20,9 +20,8 @@ const Home = React.memo(() => {
 
   const user = useAppSelector(selectUser)
 
-  console.log(user)
-
-  const userOnline = useAppSelector((state) => state.socket.userOnline).filter(u => u.id !== user.id)
+  const userOnline = useAppSelector((state) => state.socket.userOnline) ?? []
+  console.log(userOnline)
 
   const dispatch = useAppDispatch()
 
@@ -56,7 +55,7 @@ const Home = React.memo(() => {
   return (
     <Layout>
        <div className='h-screen p-[90px] tablet:px-5 phone:px-5 w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden relative' id="scrollableDiv" >
-          <div className='w-1/4 bg-navbar laptop:block tablet:hidden phone:hidden h-fit p-4 rounded-xl'>
+          <div className='w-/4 bg-navbar laptop:block tablet:hidden phone:hidden h-fit p-4 rounded-xl'>
               <MiniProfile 
                 user={profile ?? user}
               />
@@ -73,7 +72,7 @@ const Home = React.memo(() => {
                 scrollableTarget='scrollableDiv'
               >
                 {posts.map((post) => (
-                  <Post key={post.id} post={post} width={700} />
+                  <Post key={post.id} post={post} width={900} />
                 ))}
               </InfiniteScroll>}
               {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let's create your first post</div>}

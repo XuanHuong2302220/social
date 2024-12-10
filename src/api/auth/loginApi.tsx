@@ -1,10 +1,10 @@
 'use client'
 
-import { selectUser, setUser } from "@/redux/features/user/userSlice";
+import { setUser } from "@/redux/features/user/userSlice";
 import axs from "@/utils/axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import {auth} from "@/firebase/firebase";

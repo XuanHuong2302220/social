@@ -24,15 +24,16 @@ const useCreateComment = () => {
             socket.on('commentCreated', (comment)=> {
                 if(!existComment.has(comment.commentId)){
                     existComment.add(comment.commentId)
-                    if(comment.parentId){
-                        dispatch(addReplyComment({
-                            parentId: comment.parentId,
-                            commentId: comment.commentId,
-                            replyComment: comment
-                        }))
-                        dispatch(increaCountComment({parentId: comment.parentId}))
-                        dispatch(setCountComment({postId : comment.post.id}))
-                    }
+                    dispatch(addComment({
+                        ...comment,
+                        created_by: {
+                            id: comment.created_by.id,
+                            fullName: comment.created_by.fullName,
+                            avatar: comment.created_by.avatar
+                        },
+                        created_at: new Date().toISOString()
+                    }))
+                    dispatch(setCountComment({postId: comment.post.id}))
                 }
             })
 
@@ -47,7 +48,7 @@ const useCreateComment = () => {
     const createComment = async (postId: number, content: string, parentId?: string, commentId?: string) => {
         setLoading(true)
         try {
-            if(socket && !parentId){
+            if(socket){
                 socket.emit('createComment', {
                     postId: postId,
                     content: content,

@@ -5,6 +5,8 @@ import Conversations from './messages/Conversations';
 import { removeBoxMessage } from '@/redux/features/messages/messageSlice';
 import { usePathname } from 'next/navigation';
 import useGetOnlineUser from '@/api/user/getUserOnline';
+import useSocket from '@/socket/socket';
+import { setUserOnline } from '@/redux/features/socket/socketSlice';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,11 +21,22 @@ const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
     const conversations = useAppSelector(state => state.message.boxConversation);
     const pathName = usePathname();
     const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
-    const {getOnlineUser} = useGetOnlineUser();
 
-    useEffect(()=> {
-      getOnlineUser();
-    }, [token])
+    const socket = useSocket('users')
+
+    useEffect(() => {
+      if (socket) {
+          socket.on('updateUserOnline', (users) => {
+            console.log(users);
+            dispatch(setUserOnline(users));
+          });
+
+          return () => {
+            socket.off('updateUserOnline');
+            dispatch(setUserOnline([]));
+          };
+        }
+      }, [socket]);
 
     const closeBoxMessage = (id: string) => {
       dispatch(removeBoxMessage(id));

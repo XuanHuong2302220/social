@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const forgotPassword = () =>{
+const useForgotPassword = () =>{
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -27,4 +27,4 @@ const forgotPassword = () =>{
     return {fgPass, loading}
 }
 
-export default forgotPassword;
+export default useForgotPassword;

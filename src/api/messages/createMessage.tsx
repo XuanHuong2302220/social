@@ -6,6 +6,8 @@ import useSocket from "@/socket/socket"
 import { useEffect, useState } from "react"
 import soundMessage from '@/assets/sound/notification.wav'
 import axs from "@/utils/axios"
+import { userAgent } from "next/server"
+import { selectUser } from "@/redux/features/user/userSlice"
 
 interface CreateMessage {   
     content: string,
@@ -16,8 +18,8 @@ interface CreateMessage {
 const useCreateMessage = ()=> {
     const [loading, setLoading] = useState(false)
     const socket = useSocket('messages')
-    const token = useAppSelector((state) => state.auth.token)
     const dispatch = useAppDispatch()
+    const user = useAppSelector(selectUser)
 
     useEffect(()=> {
         if(socket){
@@ -34,8 +36,24 @@ const useCreateMessage = ()=> {
 
     const createMessage = async ( data: CreateMessage) => {
         setLoading(true)
-        console.log(data)
-        
+        const message = {
+            id: Math.random().toString(),
+            content: data.content,
+            created_ago: 'Just now',
+            sender: {
+                id: data.senderId,
+                fullName: 'Sender Full Name',
+                avatar: user.avatar,
+                username: 'Sender Username'
+            },
+            receiver: {
+                id: '1',
+                fullName: 'Receiver Full Name',
+                avatar: 'Receiver Avatar URL',
+                username: 'Receiver Username'
+            },
+            idConversation: data.idConversation
+        }
         try {
             if(socket){
                 socket.emit('sendMessage', {
@@ -43,16 +61,7 @@ const useCreateMessage = ()=> {
                     conversationId: data.idConversation
                 })
             }
-            const response = await axs.post('/message/create-message', {
-                ...data,
-                conversationId: data.idConversation
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            const message = await response.data
-            dispatch(addMessage({id: message.idConversation, message}))
+            dispatch(addMessage({id: data.idConversation, message}))
         } catch (error) {
             console.log(error)
         }

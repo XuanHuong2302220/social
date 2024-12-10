@@ -16,7 +16,7 @@ const useGetOnlineUser = ()=> {
           socket.emit('getOnlineUsers')
           socket.on('onlineUsers', users => {
             dispatch(setUserOnline(users))
-        })
+         })
 
           return () => {
             socket.off('onlineUsers')
