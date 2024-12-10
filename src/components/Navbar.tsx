@@ -6,13 +6,13 @@ import { MdOutlineSearch } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
 import { IoNotifications } from "react-icons/io5";
-import {Input, DropDown, Button, Modal, Avatar, UserChat, BoxMessage} from '@/components'
+import {Input, DropDown, Button, Modal, Avatar, UserChat} from '@/components'
 import { IoSunny } from "react-icons/io5";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setTheme } from '@/redux/features/theme/themeSlice';
 import { GoTriangleDown } from "react-icons/go";
 import useClickOutside from '@/hooks/useClickOutside';
-import { cleaerUser, selectUser } from '@/redux/features/user/userSlice';
+import {selectUser } from '@/redux/features/user/userSlice';
 import { IoLogOut } from "react-icons/io5";
 import { clearToken } from '@/redux/features/auth/authSlice';
 import { usePathname, useRouter } from 'next/navigation';

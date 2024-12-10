@@ -8,7 +8,7 @@ import { useState } from "react"
 interface updatePost {
     postId: number,
     description?: string,
-    images?: string[]
+    images: string[]
 }
 
 const updatePost = () =>{

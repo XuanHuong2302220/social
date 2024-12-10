@@ -203,7 +203,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   const handleSubmit = async () => {
     if (text || images.length > 0) {
       try {
-        const uploadedFiles = await Promise.all(
+        const uploadedFiles : string[] = (await Promise.all(
           files.map(async (file) => {
             const storageRef = ref(storage, `images/${file.name}`);
             try {
@@ -224,7 +224,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
               setLoadingImage(false)
             }
           })
-        );
+        )).filter((url): url is string => url !== undefined);
 
         if(post){
           await update({
