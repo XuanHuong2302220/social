@@ -21,7 +21,7 @@ import { HighlightWithinTextarea } from 'react-highlight-within-textarea'
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { BsEmojiSmile } from "react-icons/bs";
 import { PostState } from '@/types'
-import updatePost from '@/api/post/updatePost'
+import useUpdatePost from '@/api/post/updatePost'
 
 interface ModalPostProps {
   post?: PostState;
@@ -70,7 +70,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   const onChange = (text: React.SetStateAction<string>) => setText(text);
 
   const {loading, createPost} = useCreatePost();
-  const {loading: loadingUpdate, update} = updatePost();
+  const {loading: loadingUpdate, update} = useUpdatePost();
 
   useClickOutside(dropdownRef, ()=> {
     setShowDropdown(false);
@@ -110,7 +110,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   // handle close modal post  
   const handleCloseModal = (leave : boolean) => {
     if(images.length > 0 || text){
-      console.log('kkk')
       setOpenPost(true)
     }
     
@@ -154,12 +153,10 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   // handle get file image
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    console.log(file)
     if(file){
       try {
         setFiles((prevFile) => [...prevFile, file])
         const url = URL.createObjectURL(file);
-        console.log(url)
         setImages((prevImages) => [...prevImages, url])
       } catch (error) {
         console.log(error)
@@ -173,7 +170,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
 
   // handle delete image
   const clearImage = (index: number) => {
-    console.log(index)
     setImages((prevImages) => {
       const newImages = [...prevImages];
       URL.revokeObjectURL(newImages[index]);

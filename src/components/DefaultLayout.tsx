@@ -25,7 +25,6 @@ const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
     useEffect(() => {
       if (socket) {
           socket.on('updateUserOnline', (users) => {
-            console.log(users);
             dispatch(setUserOnline(users));
           });
 

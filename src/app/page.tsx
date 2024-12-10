@@ -21,7 +21,6 @@ const Home = React.memo(() => {
   const user = useAppSelector(selectUser)
 
   const userOnline = useAppSelector((state) => state.socket.userOnline) ?? []
-  console.log(userOnline)
 
   const dispatch = useAppDispatch()
 

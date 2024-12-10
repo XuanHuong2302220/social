@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "react-toastify";
 
-const verifyEmail = () => {
+const useVerifyEmail = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const [loading, setLoading] = useState(false)
@@ -39,4 +39,4 @@ const verifyEmail = () => {
     return {verify, loading}
 }
 
-export default verifyEmail;
+export default useVerifyEmail;

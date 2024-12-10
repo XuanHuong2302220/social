@@ -91,7 +91,6 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
   const handleClickDefault = () => {
     if(post.id){
       if(showInteract.name === '') {
-        console.log(post.id)
         setShowInteract({ name: 'Like', icon: likeIcon, color: 'text-blue-600' })
         dispatch(changeTypeReaction({postId: post.id, type: 'Like'}))
         dispatch(increaLike({ postId: post.id }))

@@ -5,7 +5,6 @@ export const debounce = (func: Function, delay: number)=> {
         if(timeout){
             clearTimeout(timeout);
         }
-        console.log('debounce')
         timeout = setTimeout(()=>func(...arg), delay)
     }
 }

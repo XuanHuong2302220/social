@@ -78,10 +78,8 @@ const postSlice = createSlice({
             }
         },
         changeTypeReaction: (state, action: PayloadAction<{ postId: number, type: string }>) => {
-            console.log(action.payload);
             const post = state.posts.find(post => post.id === action.payload.postId);
             if (post) {
-                console.log(action.payload.type);
                 post.reactionType = action.payload.type;
             }
         }

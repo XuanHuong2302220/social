@@ -11,7 +11,7 @@ interface updatePost {
     images: string[]
 }
 
-const updatePost = () =>{
+const useUpdatePost = () =>{
 
     const token = useAppSelector(state => state.auth.token)
     const [loading, setLoading] = useState(false)
@@ -43,4 +43,4 @@ const updatePost = () =>{
     return {loading, update}
 }
 
-export default updatePost
+export default useUpdatePost

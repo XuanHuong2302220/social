@@ -1,10 +1,10 @@
 'use client'
 
-import verifyEmail from '@/api/auth/verifyEmail';
+import useVerifyEmail from '@/api/auth/verifyEmail';
 import React, { useEffect } from 'react';
 
 const Verify = () => {
-  const { verify, loading } = verifyEmail();
+  const { verify, loading } = useVerifyEmail();
 
   useEffect(() => {
     verify();
