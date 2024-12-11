@@ -11,7 +11,7 @@ interface FormValues {
     email: string;
 }
 
-const forgotPassword = () => {
+const ForgotPassword = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
   const router = useRouter();
@@ -72,4 +72,4 @@ const forgotPassword = () => {
   )
 }
 
-export default forgotPassword;
+export default ForgotPassword;

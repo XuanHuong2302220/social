@@ -3,7 +3,7 @@
 import { Button, Input, Logo, Modal } from '@/components';
 import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form';
-import { cleaerUser, selectUser } from '@/redux/features/user/userSlice';
+import { selectUser } from '@/redux/features/user/userSlice';
 import { DatePicker } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css'; // Import CSS cho rsuite
 import { useParams, useRouter } from 'next/navigation';

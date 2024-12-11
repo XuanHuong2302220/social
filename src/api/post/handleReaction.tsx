@@ -1,7 +1,6 @@
 'use client'
 
-import { decreaseLike, increaLike } from "@/redux/features/post/postSlice"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
+import { useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
 
 const useHandleReaction = () => {

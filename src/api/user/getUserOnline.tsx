@@ -1,9 +1,8 @@
 'use client'
 
-import { addUserOnline, setUserOnline } from "@/redux/features/socket/socketSlice"
+import { setUserOnline } from "@/redux/features/socket/socketSlice"
 import { useAppDispatch } from "@/redux/hooks"
 import useSocket from "@/socket/socket"
-import { UserProps } from "@/types"
 import { useEffect } from "react"
 
 const useGetOnlineUser = ()=> {

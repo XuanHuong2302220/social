@@ -4,13 +4,10 @@ import { addComments, addReplyComments, setCurrentPage, setHasMore } from "@/red
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
 import { useState } from "react"
-import { Comment } from "@/types"
-
 
 const useGetAllComment = ()=> {
     const [loading, setLoading] = useState<boolean>(false)
     const token = useAppSelector(state => state.auth.token)
-    const hasNextPage = useAppSelector(state => state.comment.hasMore)
     const currentPage = useAppSelector(state => state.comment.currentPage)
     const dispatch = useAppDispatch()
 

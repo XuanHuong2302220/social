@@ -1,7 +1,7 @@
 'use client'
 
 import {useAppSelector } from "@/redux/hooks"
-import { InteractProps, Reaction } from "@/types"
+import { Reaction } from "@/types"
 import axs from "@/utils/axios"
 import { useState } from "react"
 

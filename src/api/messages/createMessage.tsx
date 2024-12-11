@@ -1,12 +1,10 @@
 'use client'
 
-import { addConversation, addMessage } from "@/redux/features/messages/messageSlice"
+import { addMessage } from "@/redux/features/messages/messageSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import useSocket from "@/socket/socket"
 import { useEffect, useState } from "react"
 import soundMessage from '@/assets/sound/notification.wav'
-import axs from "@/utils/axios"
-import { userAgent } from "next/server"
 import { selectUser } from "@/redux/features/user/userSlice"
 
 interface CreateMessage {   

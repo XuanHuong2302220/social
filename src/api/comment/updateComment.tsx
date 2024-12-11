@@ -1,7 +1,6 @@
 'use client'
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
-import { Comment } from "@/types"
 import axs from "@/utils/axios"
 import { useState } from "react"
 import { updateComment as newUpdateComment, updateReplyComment } from "@/redux/features/comment/commentSlice"
