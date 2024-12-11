@@ -11,7 +11,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/redux/features/user/userSlice";
 import { usePathname} from "next/navigation";
 
-const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
+export const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
   const theme = useAppSelector((state) => state.theme.theme);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
       window.location.href = '/login'
     }
 
-  }, [token, user])
+  }, [token, user, pathName])
 
   return (
     <>
@@ -51,7 +51,6 @@ const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
   );
 });
 
-export { AppContent };
 
 export default function RootLayout({ 
   children,
