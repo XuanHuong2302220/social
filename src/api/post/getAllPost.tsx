@@ -44,7 +44,7 @@ const useGetAllPost = () => {
         finally {
             dispatch(setLoading(false))
         }
-    }, [currentPage, hasMore, token, dispatch])
+    }, [currentPage, token, dispatch])
 
     return {getAllPost}
 }

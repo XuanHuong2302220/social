@@ -5,11 +5,10 @@ import useGetAllMessage from '@/api/messages/getAllMessage'
 import useGetConversation from '@/api/messages/getConversation'
 import { Conversations, UserChat } from '@/components'
 import Layout from '@/components/DefaultLayout'
-import { useAppSelector } from '@/redux/hooks'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-const page = () => {
+const MessagePage = () => {
 
   const {getAllConversation} = useGetAllConversation()
   const { conversation, getConversation} = useGetConversation()
@@ -39,4 +38,4 @@ const page = () => {
   )
 }
 
-export default page
+export default MessagePage

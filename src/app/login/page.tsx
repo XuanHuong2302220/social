@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Input, Button, Logo, Modal } from '@/components';
+import React, { useState } from 'react';
+import { Input, Button, Logo } from '@/components';
 import UserIcon from '@/assets/icons/user.svg';
 import PasswordIcon from '@/assets/icons/password.svg';
 import GoogleIcon from '@/public/icons/google.svg';
@@ -18,7 +18,7 @@ interface FormValues {
   password: string;
 }
 
-const Login = React.memo(() => {
+const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -135,6 +135,6 @@ const Login = React.memo(() => {
       </div>
     </div>
   );
-})
+}
 
 export default Login;

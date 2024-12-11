@@ -21,7 +21,7 @@ const useGetOnlineUser = ()=> {
             socket.off('onlineUsers')
           }
         }
-    }, [socket])
+    }, [socket, dispatch])
 
     const getOnlineUser = async()=>{
         try{

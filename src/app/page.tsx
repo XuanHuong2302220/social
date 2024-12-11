@@ -10,7 +10,7 @@ import { selectUser } from '@/redux/features/user/userSlice'
 import { setPosts } from '@/redux/features/post/postSlice'
 import useCheckUser from '@/api/user/checkUser'
 
-const Home = React.memo(() => {
+const Home = () => {
 
   const posts = useAppSelector((state) => state.post.posts);
 
@@ -99,6 +99,6 @@ const Home = React.memo(() => {
         </div>
     </Layout>
   )
-})
+}
 
 export default Home

@@ -43,7 +43,7 @@ const useCreateComment = () => {
         }
 
 
-    }, [socket, dispatch])
+    }, [socket, dispatch, existComment])
 
     const createComment = async (postId: number, content: string, parentId?: string, commentId?: string) => {
         setLoading(true)
