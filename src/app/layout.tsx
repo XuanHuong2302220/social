@@ -11,7 +11,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/redux/features/user/userSlice";
 import { usePathname} from "next/navigation";
 
-export const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
+export const AppContent = ({ children }: { children: React.ReactNode }) => {
   const theme = useAppSelector((state) => state.theme.theme);
 
   useEffect(() => {
@@ -49,8 +49,7 @@ export const AppContent = React.memo(({ children }: { children: React.ReactNode 
       />
     </>
   );
-});
-
+};
 
 export default function RootLayout({ 
   children,
