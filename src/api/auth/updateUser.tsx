@@ -8,13 +8,20 @@ import { AxiosError } from "axios";
 import { useState } from "react"
 import { toast } from "react-toastify";
 
+interface FormValues {
+    firstName: string;
+    lastName: string;
+    dob: string;
+    gender: 'female' | 'male'
+  }
+
 const useUpdateUser = () => {
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     const token = useAppSelector(state => state.auth.token);
     const userState = useAppSelector(selectUser)
 
-   const update = async(user: UserState) => {
+   const update = async(user: FormValues) => {
     setLoading(true)
         try {
             const response = await axs.put('/user/update-inform', {

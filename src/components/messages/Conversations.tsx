@@ -33,9 +33,13 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
 
   const [dropdown, setDropdown] = useState(false)
 
-  const messages = isBox ? 
-  useAppSelector(state => state.message.boxConversation.find(con => con.id === conversation?.id)?.messages ?? []) : 
-  useAppSelector(state => state.message.conversations.find(con => con.id === conversation?.id)?.messages ?? [])
+  const messages = useAppSelector((state) => {
+    if (isBox) {
+      return state.message.boxConversation.find(con => con.id === conversation?.id)?.messages ?? [];
+    } else {
+      return state.message.conversations.find(con => con.id === conversation?.id)?.messages ?? [];
+    }
+  });
 
   const messageRef = useRef<HTMLDivElement>(null)
 
@@ -55,7 +59,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
   useClickOutside(emojiRef, ()=> setOpenEmoji(false))
   useClickOutside(dropdownRef, ()=> setDropdown(false))
 
-  const handleOnchange = (e: any) => {
+  const handleOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if(textRef.current){
       textRef.current.value = e.target.value
     }

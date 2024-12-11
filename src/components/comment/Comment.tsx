@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {Avatar, Button, ChatComment, DropDown, Interact, TabReactions} from '@/components'
 import { reactions } from '@/utils/reactions'
-import { Comment as CommentInter } from '@/types'
+import { Comment as CommentInter, EmojiObject } from '@/types'
 import { BsThreeDots } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
@@ -267,7 +267,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
     }
   }
 
-  const handleEmojiClick = (emojiObject: any, type: string) => {
+  const handleEmojiClick = (emojiObject: EmojiObject, type: string) => {
     if(type === 'comment') {
       setText((prevText) => prevText + emojiObject.emoji);
     }
@@ -352,14 +352,15 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
                   onClick={handleShowDropDownEdit}
                 />}
                 classNameContent='bg-search right-2 w-[200px] rounded-lg menu'
-                children={
+              >
+                {
                   showDropdownEdit && <div className='w-full flex flex-col'>
                   <Button left icon={<MdEdit className='text-2xl' />}  onClick={handleOpenEdit} text='Edit' className='flex items-center bg-transparent border-transparent justify-start' />
                   <div className='divider m-0 bg-search'/>
                     <Button left icon={!loadingDelete && <FaTrash className='text-lg' />} onClick={handleDeleteComment} text={loadingDelete ? '' : 'Delete'} className={`flex items-center bg-transparent border-transparent ${loadingDelete ? 'justify-center' : 'justify-start '}`} iconLoading={loadingDelete} />
                 </div>
                 }
-              />
+              </DropDown>
           </div>}
         </div>
         }

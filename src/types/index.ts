@@ -59,6 +59,11 @@ export interface UserState {
     isFollow: string,
 }
 
+export interface EmojiObject {
+    emoji: string,
+    name: string
+}
+
 export interface logoProps {
     size?: string,
     width?: number,

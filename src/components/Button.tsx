@@ -13,4 +13,5 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({text, icon, onClick,
   )
 })
 
+Button.displayName = 'Button';
 export default Button

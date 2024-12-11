@@ -9,12 +9,13 @@ import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker, { Theme } from 'emoji-picker-react'
 import { IoMdSend } from "react-icons/io";
 import useClickOutside from '@/hooks/useClickOutside'
+import { EmojiObject } from '@/types'
 
 interface ChatCommentProps {
     text: string,
     loading?: boolean,
     className?: string,
-    handleEmojiClick: (emojiObject: any) => void,
+    handleEmojiClick: (emojiObject: EmojiObject) => void,
     onChange: (e: any) => void,
     handleComment: () => void,
     height: number,
@@ -83,7 +84,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
                     width={300}
                     height={350}
                     theme={Theme.DARK}
-                    onEmojiClick={(emojiObject) => handleEmojiClick(emojiObject)}
+                    onEmojiClick={(emojiClickData) => handleEmojiClick({ emoji: emojiClickData.emoji, name: emojiClickData.names[0] })}
                     />
                 </div>
                 {loading ? <span className="loading loading-spinner loading-md"></span> :<IoMdSend className='text-xl cursor-pointer' onClick={handleComment} />}

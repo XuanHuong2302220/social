@@ -272,13 +272,12 @@ const Profile = () => {
                         height={80}
                         onClick={() => setOpenDropDown(!openDropDown)}
                       />}
-                      children={
-                        openDropDown && <div className='flex flex-col gap-2'>
+                    >
+                      {openDropDown && <div className='flex flex-col gap-2'>
                           <Button text='Change Avatar' onClick={handleOpenFileInput} disabled={loadingSaveImage} className='bg-navbar' />
                           {userProfile?.avatar !== '' && <Button text='Delete Avatar' iconLoading={loadingSaveImage} disabled={loadingSaveImage} onClick={handleDeleteAvatar} className='bg-navbar' />}
-                        </div>
-                      }
-                    />
+                        </div>}
+                    </DropDown>
                   </div> : <Avatar
                         src={userProfile.avatar ?? ""}
                         className='w-32 h-32 rounded-full absolute right-[72px] top-[-128px]'
@@ -317,7 +316,7 @@ const Profile = () => {
                       title={<div className='w-full text-textColor text-center font-bold text-xl py-2'>Change Your Password</div>}
                       closeIcon
                       className='bg-navbar'
-                      children={
+                    >
                       <form className='w-full flex flex-col gap-2 text-textColor' onSubmit={handleSubmit(handleChangePassword)}>
                          <label className='text-textColor flex  text-sm font-bold w-full'>Current Password</label>
                           <Input
@@ -372,8 +371,8 @@ const Profile = () => {
 
                           <Button text='Save' className='w-[200px] ml-auto mt-4 bg-primaryColor text-textColor' iconLoading={loadingPassword} />
                       </form>
-                      }
-                    />}
+                    </Modal>
+                    }
                 </div>
               </div>
           </div>
@@ -414,7 +413,8 @@ const Profile = () => {
               closeIcon={!loadingImage}
               onClose={handleCloseModal}
               className='w-1/3 bg-navbar'
-              children={<div className='w-full flex flex-col justify-center items-center gap-4'>
+            >
+              <div className='w-full flex flex-col justify-center items-center gap-4'>
                 <Avatar
                   src={imageAvatar ? imageAvatar : undefined}
                   className='max-w-96 max-h-max-w-96 rounded-full'
@@ -427,8 +427,8 @@ const Profile = () => {
                   <Button text='Cancel' className=' w-[200px] text-textColor' disabled={loadingImage || loadingSaveImage} onClick={handleCloseModal} />
                   <Button text='Save' iconLoading={loadingImage || loadingSaveImage} disabled={loadingImage || loadingSaveImage} className='bg-primaryColor w-[200px] text-textColor' onClick={handleSaveAvatar} />
                 </div>
-              </div>}
-            />}
+              </div>
+             </Modal> }
 
           </div>
       </div>}

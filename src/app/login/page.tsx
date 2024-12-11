@@ -119,7 +119,7 @@ const Login = () => {
             />
             <div>
               <span className='text-sm'>
-                Don't have an account?
+                Don&apos;t have an account?
                 <a href={'/signup'} className='ml-1 text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
                   Sign Up
                 </a>

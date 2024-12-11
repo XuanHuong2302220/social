@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect} from 'react';
 import Navbar from '@/components/Navbar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import Conversations from './messages/Conversations';
@@ -41,7 +41,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
 
   return (
     <div className="layout relative">
-      <Navbar onClickLogo={onClickLogo} />
+      <Navbar />
       <main>{children}</main>
       {
        !isMessagesPath &&conversations.length > 0 && 
