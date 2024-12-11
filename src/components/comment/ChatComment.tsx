@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import {Avatar, Button, DropDown, Interact} from '@/components'
+import {Avatar} from '@/components'
 import { useAppSelector } from '@/redux/hooks'
 import { selectUser } from '@/redux/features/user/userSlice'
 import HighlightWithinTextarea from 'react-highlight-within-textarea'

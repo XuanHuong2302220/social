@@ -11,7 +11,6 @@ const useGetAllPost = () => {
     const token = useAppSelector((state) => state.auth.token)
     const dispatch = useAppDispatch()
     const currentPage = useAppSelector((state) => state.post.currentPage)
-    const hasMore = useAppSelector((state) => state.post.hasMore)
 
     const getAllPost = useCallback(async (userId?: string) => {
 

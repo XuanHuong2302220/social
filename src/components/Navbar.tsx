@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import React, { memo, useCallback, useRef, useState } from 'react'
 import Logo from './Logo'
 import { MdOutlineSearch } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";

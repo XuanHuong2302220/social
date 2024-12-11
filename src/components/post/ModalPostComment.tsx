@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 import {Button, ChatComment, Comment, Modal, Post, SkeletonReaction} from '@/components'
-import { Comment as CommentInter, PostState } from '@/types'
+import {PostState } from '@/types'
 import useCreateComment from '@/api/comment/createComment'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import useGetAllComment from '@/api/comment/getAllComment'
@@ -100,7 +100,7 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
           title={
             <div className='flex justify-center fixed items-center w-full flex-col  h-[70px]'>
               <div className='flex items-center justify-center w-full h-full'>
-                <span className='text-xl font-bold text-textColor'>{post.created_by.fullName}'s Post</span>
+                <span className='text-xl font-bold text-textColor'>{post.created_by.fullName}&apos;s Post</span>
                 <button onClick={text || activeDropdownIndex !== -1 || checkReply ? ()=> setWarningModal(true) : handleCloseModal} className="btn text-textColor btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
               </div>
               <div className='divider m-0' />

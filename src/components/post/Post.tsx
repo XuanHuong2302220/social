@@ -1,12 +1,11 @@
 'use client'
 
-import React, {useEffect, useRef, useState } from 'react'
-import {Avatar, Button, DropDown, Interact, Modal, ModalPost, ModalPostComment, TabReactions} from '@/components'
+import React, {useRef, useState } from 'react'
+import {Avatar, Button, DropDown, Interact, ModalPost, ModalPostComment, TabReactions} from '@/components'
 import { BsThreeDots } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
-import Link from 'next/link';
 import { FaTrash } from "react-icons/fa";
-import { InteractProps, PostState, Reaction } from '@/types';
+import { InteractProps, PostState} from '@/types';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { IoChevronForwardSharp } from "react-icons/io5";
@@ -34,10 +33,6 @@ interface PostProps {
   post: PostState,
   disableButton?: boolean,
   width?: number
-}
-interface ReactionProps {
-  type: InteractProps;
-  count: number;
 }
 
 const reactions = [
@@ -74,7 +69,6 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
   const {createReaction, undoReaction} = useHandleReaction()
   const {loading, getAllReactions, listReaction, typeReaction} = useGetReactions()
   const {loading: loadingDelete, deletePost} = useDeletePost()
-  const comments = useAppSelector(state => state.comment.comments)
   const user = useAppSelector(selectUser)
 
 

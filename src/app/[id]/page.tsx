@@ -403,7 +403,7 @@ const Profile = () => {
                       <Post key={post.id} post={post} width={700} />
                     ))}
                   </InfiniteScroll> }
-                  {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let's create your first post</div>}
+                  {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let&apos;s create your first post</div>}
             </div>
 
             <input type='file' className='hidden' onChange={handleChangAvatar} ref={inputRef}/>

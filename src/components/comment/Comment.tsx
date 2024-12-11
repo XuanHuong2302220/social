@@ -406,7 +406,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
                 </div>
             }
             {loadingComment ? <span className="loading loading-spinner loading-md"></span> : 
-              replyComments.map((replyComment, index) => (
+              replyComments.map((replyComment) => (
                 <Comment 
                   key={replyComment.id}
                   comment={replyComment}

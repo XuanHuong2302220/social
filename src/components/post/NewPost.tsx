@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import {Avatar, Button, ModalPost} from '@/components'
 import { FaImages } from "react-icons/fa";
 import { BsPaperclip } from "react-icons/bs";
 import { AiTwotoneAudio } from "react-icons/ai";
-import Link from 'next/link';
 import { selectUser } from '@/redux/features/user/userSlice';
 import { useAppSelector } from '@/redux/hooks';
 
@@ -22,7 +21,7 @@ const NewPost = () => {
             <a href={`/${username}`}>
               <Avatar width={1} height={1} alt='avatar' id={user.id} src={user.avatar ? user.avatar : undefined} className='w-[52px] h-[52px]'/>
             </a>
-            <div className='w-full p-4 flex h-full items-center text-textColor bg-search rounded-full cursor-pointer hover:opacity-50' onClick={()=>setIsModalOpen(true)}>What's on your mind?</div>
+            <div className='w-full p-4 flex h-full items-center text-textColor bg-search rounded-full cursor-pointer hover:opacity-50' onClick={()=>setIsModalOpen(true)}>What&apos;s on your mind?</div>
         </div>
         <div className='divider mx-0 my-1'></div>
         <div className='h-1/3 w-full justify-between flex items-center'>

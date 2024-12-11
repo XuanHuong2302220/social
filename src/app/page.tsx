@@ -74,7 +74,7 @@ const Home = () => {
                   <Post key={post.id} post={post} width={900} />
                 ))}
               </InfiniteScroll>}
-              {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let's create your first post</div>}
+              {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let&apos;s create your first post</div>}
 
           </div>
           <div className='w-1/4 laptop:block tablet:hidden phone:hidden'>
