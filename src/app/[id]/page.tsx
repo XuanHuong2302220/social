@@ -1,8 +1,8 @@
 'use client'
 import useCheckUser from '@/api/user/checkUser'
-import { Avatar, Button, DropDown, Input, MiniProfile, Modal, ModalPost, NewPost, Post, SkeletonPost } from '@/components'
+import { Avatar, Button, DropDown, Input, MiniProfile, Modal, NewPost, Post, SkeletonPost } from '@/components'
 import Layout from '@/components/DefaultLayout'
-import { selectUser, setAttributes } from '@/redux/features/user/userSlice'
+import { selectUser } from '@/redux/features/user/userSlice'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useParams } from 'next/navigation'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -13,11 +13,10 @@ import { UserState } from '@/types'
 import useCreateFollow from '@/api/follow/createFollow'
 import { setPosts } from '@/redux/features/post/postSlice'
 import useClickOutside from '@/hooks/useClickOutside'
-import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { storage } from '@/firebase/firebase'
 import useUpdateAvatar from '@/api/user/updateAvatar'
 import useCreateConversation from '@/api/messages/createConversation'
-import useGetAllConversation from '@/api/messages/getAllConversation'
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from 'react-hook-form'
 import useChangePassword from '@/api/user/changePassword'
@@ -188,7 +187,7 @@ const Profile = () => {
         setOpenChangeAvatar(false)
       } catch (error) {
         setLoadingImage(true)
-        if ((error as any).code === 'storage/object-not-found') {
+        if ((error as { code: string }).code === 'storage/object-not-found') {
           await uploadBytes(storageRef, avatar as Blob);
           const url = await getDownloadURL(storageRef);
           setUserProfile({

@@ -8,7 +8,7 @@ import React, { useEffect } from 'react'
 
 const Search = () => {
 
-    const {result, searchUser, loadingSearch, postResult} = useSearch()
+    const {result, searchUser, postResult} = useSearch()
 
     const {id} = useParams() as { id: string }
 

@@ -18,7 +18,7 @@ const MiniProfile = ({hide, user}: MiniProfileProps) => {
 
   const fullName = `${user.firstName} ${user.lastName}`
 
-  const {loading, getFollow, follows} = useGetFollow()
+  const {getFollow, follows} = useGetFollow()
 
   const [openFollow, setOpenFollow] = useState<string>('')
 

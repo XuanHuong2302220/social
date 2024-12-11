@@ -23,11 +23,7 @@ import useGetAllConversation from '@/api/messages/getAllConversation';
 import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice';
 import useGetAllPost from '@/api/post/getAllPost';
 
-interface NavbarProps {
-  onClickLogo?: ()=> void
-}
-
-const Navbar = ({onClickLogo}: NavbarProps) => {
+const Navbar = () => {
 
   const search = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -146,7 +142,7 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
             children={
               result.length > 0 && 
                 <div className='flex flex-col gap-2'>
-                  {result.map((user, index)=> (
+                  {result.map((user)=> (
                     <a key={user.id} href={`/${user.username}`} className='flex items-center p-2 cursor-pointer gap-2 rounded-lg hover:bg-navbar'>
                       <Avatar src={user.avatar ?? undefined} id={user.id} alt={user.avatar ?? 'search'} width={1} height={1} className='w-8 h-8' />
                       <span className='text-textColor'>{user.fullName}</span>

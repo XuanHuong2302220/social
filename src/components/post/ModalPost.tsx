@@ -34,8 +34,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   const [files, setFiles] = useState<File[]>([])  
   const [images, setImages] = useState<string[]>([])
   const [updateImages, setUpdateImages] = useState<string[]>([])
-  const [isBeginning, setIsBeginning] = useState(true)
-  const [isEnd, setIsEnd] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null)
   const emojiRef = useRef<HTMLDivElement>(null)
@@ -103,7 +101,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
     setText((prevText) => prevText + emojiObject.emoji);
   }
 
-  const handleOpenDropdown = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOpenDropdown = () => {
     setShowDropdown(prev => !prev)
   }
 
@@ -139,8 +137,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   const handleSlideChange = () => {
     if (swiperRef.current) {
       setIndexImg(swiperRef.current.activeIndex);
-      setIsBeginning(swiperRef.current.isBeginning)
-      setIsEnd(swiperRef.current.isEnd)
     }
   }
 

@@ -20,18 +20,16 @@ const SignUp = () => {
 
   const { signup, loading } = useSignupApi();
   const token = useAppSelector(state => state.auth.token);
+  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setconfirmPassword] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
   if(token){
     return  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
-  </div>
+      <div className="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
+    </div>
   }
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [confirmPassword, setconfirmPassword] = useState(false);
-
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-
+  
   const onSubmit = async (data: FormValues) => {
     if (data) {
       await signup(data.username, data.password, data.confirmPassword, data.email);

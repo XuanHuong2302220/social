@@ -6,18 +6,16 @@ import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import useClickOutside from '@/hooks/useClickOutside';
 import Message from './Message';
-import { Conversation, Message as IMessage } from '@/types';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { Conversation} from '@/types';
+import { useAppSelector } from '@/redux/hooks';
 import useGetAllMessage from '@/api/messages/getAllMessage';
 import DropDown from '../DropDown';
 import Button from '../Button';
 import useCreateMessage from '@/api/messages/createMessage';
 import { selectUser } from '@/redux/features/user/userSlice';
-import { useParams, usePathname } from 'next/navigation';
-import { clearMessages } from '@/redux/features/messages/messageSlice';
-
+import {  usePathname } from 'next/navigation';
 interface ConversationsProps {
-  conversation: Conversation | any,
+  conversation: Conversation,
   closeConversation?: ()=> void,
   background?: string,
   isBox?: boolean,
