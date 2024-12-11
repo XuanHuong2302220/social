@@ -76,12 +76,12 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
     setReplyComment('')
   }
 
-  const onChange = (text: React.SetStateAction<string>, type: string) => {
+  const onChange = (text: React.ChangeEvent<HTMLInputElement>, type: string) => {
     if(type === 'comment') {
-      setText(text)
+      setText(text.target.value)
     }
     else {
-      setReplyComment(text)
+      setReplyComment(text.target.value)
     }
   }
 
@@ -283,7 +283,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             <ChatComment
               text={text}
               handleEmojiClick={(emojiObject)=>handleEmojiClick(emojiObject, 'comment')}
-              onChange={(text) => onChange(text, 'comment')}
+              onChange={(event) => onChange(event, 'comment')}
               handleComment={handleUpdateComment}
               className='0'
               height={height}
@@ -378,7 +378,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             <ChatComment
               text={replyComment}
               handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
-              onChange={(text) => onChange(text, 'replyComment')}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(event, 'replyComment')}
               handleComment={handleReplyComment}
               className='0'
               height={height}
@@ -390,7 +390,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             <ChatComment
               text={replyComment}
               handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
-              onChange={(text) => onChange(text, 'replyComment')}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(event, 'comment')}
               handleComment={handleReplyComment}
               className='0'
               height={height}

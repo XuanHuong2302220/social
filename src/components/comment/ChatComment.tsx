@@ -9,14 +9,13 @@ import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker, { Theme } from 'emoji-picker-react'
 import { IoMdSend } from "react-icons/io";
 import useClickOutside from '@/hooks/useClickOutside'
-import { EmojiObject } from '@/types'
 
 interface ChatCommentProps {
     text: string,
     loading?: boolean,
     className?: string,
-    handleEmojiClick: (emojiObject: EmojiObject) => void,
-    onChange: (e: any) => void,
+    handleEmojiClick: (emojiObject: any) => void,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     handleComment: () => void,
     height: number,
     edit?: boolean,
@@ -67,7 +66,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
               <HighlightWithinTextarea
                   value={text}
                   highlight={[{ highlight: [/#[\w]+/g], className: 'text-blue-500 bg-transparent' }]}
-                  onChange={onChange}
+                  onChange={()=>onChange}
                   placeholder={!edit ? 'Write a comment...' : undefined}
               />
             </div>
@@ -84,7 +83,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
                     width={300}
                     height={350}
                     theme={Theme.DARK}
-                    onEmojiClick={(emojiClickData) => handleEmojiClick({ emoji: emojiClickData.emoji, name: emojiClickData.names[0] })}
+                    onEmojiClick={(emojiObject) => handleEmojiClick(emojiObject)}
                     />
                 </div>
                 {loading ? <span className="loading loading-spinner loading-md"></span> :<IoMdSend className='text-xl cursor-pointer' onClick={handleComment} />}

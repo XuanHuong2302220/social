@@ -2,7 +2,6 @@
 
 import { selectUser, setAttributes } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { UserState } from "@/types";
 import axs from "@/utils/axios";
 import { AxiosError } from "axios";
 import { useState } from "react"
