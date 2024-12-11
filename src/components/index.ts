@@ -19,6 +19,7 @@ import MiniProfile from "./MiniProfile"
 import UserChat from "./messages/UserChat"
 import Conversations from "./messages/Conversations"
 import Message from "./messages/Message"
+import NotiBox from "./notification/NotiBox"
 
 export {
     Input,
@@ -42,4 +43,5 @@ export {
     UserChat,
     Conversations,
     Message,
+    NotiBox
 }

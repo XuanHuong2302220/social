@@ -6,7 +6,7 @@ import { MdOutlineSearch } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
 import { IoNotifications } from "react-icons/io5";
-import {Input, DropDown, Button, Modal, Avatar, UserChat} from '@/components'
+import {Input, DropDown, Button, Modal, Avatar, UserChat, NotiBox} from '@/components'
 import { IoSunny } from "react-icons/io5";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setTheme } from '@/redux/features/theme/themeSlice';
@@ -110,8 +110,15 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
 
   const handleOpenMessage = async()=> {
     setShowDropDownChat(!showDropDownChat); 
+    setShowDropDownNotification(false)
     setShowDropdownLogout(false)
     await getAllConversation()
+  }
+
+  const handleOpenNotification = async()=> {
+    setShowDropDownNotification(!showDropDownNotification); 
+    setShowDropDownChat(false)
+    setShowDropdownLogout(false)
   }
 
   return (
@@ -154,8 +161,8 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
         <div className='flex gap-8 items-center text-whiteText h-full'>
 
           {theme === 'dark' ? 
-            <FaMoon className='text-xl cursor-pointer text-textColor' onClick={()=> {handleClickTheme('light'); setShowDropDownChat(false); setShowDropdownLogout(false)}} /> : 
-            <IoSunny className='text-xl cursor-pointer text-textColor' onClick={()=> {handleClickTheme('dark'); setShowDropDownChat(false); setShowDropdownLogout(false)}} /> 
+            <FaMoon className='text-xl cursor-pointer text-textColor' onClick={()=> {handleClickTheme('light'); setShowDropDownChat(false); setShowDropdownLogout(false); setShowDropDownNotification(false) }} /> : 
+            <IoSunny className='text-xl cursor-pointer text-textColor' onClick={()=> {handleClickTheme('dark'); setShowDropDownChat(false); setShowDropdownLogout(false); setShowDropDownNotification(false)}} /> 
           }
 
           {!isMessagesPath && <div className='flex items-cente' ref={dropdownChatRef} >
@@ -166,19 +173,19 @@ const Navbar = ({onClickLogo}: NavbarProps) => {
               }
               tabIndex={0}
               className='text-whiteText' 
-              classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-290px]'
+              classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-315px]'
             />
           </div>}
 
           <div className='flex items-cente' ref={dropdownNotificationRef} >
             <DropDown
-              parents={<IoNotifications onClick={()=>setShowDropDownNotification(!showDropDownNotification)} className='text-xl cursor-pointer text-textColor' />}
+              parents={<IoNotifications onClick={handleOpenNotification} className='text-xl cursor-pointer text-textColor' />}
               children={
-                showDropDownNotification && <UserChat isBox backgroundColor='bg-navbar' setShowDropdown={()=>setShowDropDownChat(false)} />
+                showDropDownNotification && <NotiBox />
               }
               tabIndex={0}
               className='text-whiteText' 
-              classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-270px]'
+              classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-260px]'
             />
           </div>
           <div ref={dropdownRef}>

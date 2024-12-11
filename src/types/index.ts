@@ -162,6 +162,18 @@ export interface Message {
     idConversation: string
 }
 
+export interface Notification {
+    id: string,
+    content: string,
+    created_ago: string,
+    sender: UserProps,
+    type: string,
+    postId: number,
+    commentId?: string,
+    replyCommentId?: string,
+    reactionType?: string
+}
+
 export interface Conversation {
     id: string,
     sender: UserProps,
