@@ -9,10 +9,9 @@ import { setUserOnline } from '@/redux/features/socket/socketSlice';
 
 interface LayoutProps {
   children: React.ReactNode;
-  onClickLogo?: ()=> void
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, onClickLogo}) => {
+const Layout: React.FC<LayoutProps> = ({ children}) => {
 
     const dispatch = useAppDispatch();
 

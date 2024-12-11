@@ -31,7 +31,6 @@ const Navbar = () => {
   const dropdownNotificationRef = useRef<HTMLDivElement>(null)
   const theme = useAppSelector((state) => state.theme.theme)
   const dispatch = useAppDispatch();
-  const [showDropdown, setShowDropdown] = useState(false);
   const [showDropdownLogout, setShowDropdownLogout] = useState(false);
   const [showDropDownChat, setShowDropDownChat] = useState(false);
   const [showDropDownNotification, setShowDropDownNotification] = useState(false);
@@ -133,7 +132,7 @@ const Navbar = () => {
                 className='h-8 bg-search w-[250px] text-textColor'
                 type='text'
                 classInput='text-textColor'
-                iconComponent={showDropdown ? null : <MdOutlineSearch />}
+                iconComponent={ <MdOutlineSearch />}
                 ref={search}
                 onChange={handleSearch}
                 onKeyDown={handleRedirectSearch}

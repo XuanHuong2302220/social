@@ -126,7 +126,8 @@ const MiniProfile = ({hide, user}: MiniProfileProps) => {
             onClose={handleCloseModal}
             closeIcon
             className='bg-navbar'
-            children={
+        >
+            {
                 follows && follows.map((follow)=> (
                     <div className='flex gap-2 items-start' key={follow.id}>
                     <a href={`/${follow.userName}`}> <Avatar width={1} id={follow.id} height={1} src={follow.avatar ?? undefined} alt='avatar' className='w-[42px] h-[42px]'/></a>
@@ -138,7 +139,7 @@ const MiniProfile = ({hide, user}: MiniProfileProps) => {
                 </div>
                 ))
             }
-        />}
+        </Modal>}
 
     </div>
   )

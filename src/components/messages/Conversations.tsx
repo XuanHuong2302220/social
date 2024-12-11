@@ -6,7 +6,7 @@ import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import useClickOutside from '@/hooks/useClickOutside';
 import Message from './Message';
-import { Conversation} from '@/types';
+import { Conversation, EmojiObject} from '@/types';
 import { useAppSelector } from '@/redux/hooks';
 import useGetAllMessage from '@/api/messages/getAllMessage';
 import DropDown from '../DropDown';
@@ -71,7 +71,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
     }
   }, [conversation?.id])
 
-  const handleEmojiClick = (emojiObject: any) => {
+  const handleEmojiClick = (emojiObject: EmojiObject) => {
     if(textRef.current){
       textRef.current.value += emojiObject.emoji
     }
@@ -109,8 +109,8 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
             }
             tabIndex={0}
             classNameContent='absolute top-12 left-0 w-[200px] z-50 bg-background p-2 rounded-lg shadow-lg'
-            className='z-50'
-            children={
+            className='z-50'>
+            {
               dropdown &&
               <div className='w-full p-2 flex flex-col gap-2'>
                   <Button
@@ -125,7 +125,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
                   />
               </div>
             }
-          />
+            </DropDown>
         </div> : 
         <div className='w-full flex items-center hover:cursor-pointer gap-1' onClick={()=> setDropdown(!dropdown)}>
           <Avatar width={1} height={1} id={conversation?.sender.id === user.id ? conversation?.receiver.id : conversation?.sender.id} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
@@ -158,7 +158,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
             width={250}
             height={350}
             theme={Theme.DARK}
-            onEmojiClick={(emojiObject) => handleEmojiClick(emojiObject)}
+            onEmojiClick={(emojiObject) => handleEmojiClick({emoji: emojiObject.emoji, name: emojiObject.names[0]})}
             />
         </div>
       </div>
