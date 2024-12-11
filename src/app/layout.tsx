@@ -6,11 +6,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { store, persistor } from '@/redux/store';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react';
-import { Navbar } from "@/components";
-import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import React, { useEffect } from "react";
+import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/redux/features/user/userSlice";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname} from "next/navigation";
 
 const AppContent = React.memo(({ children }: { children: React.ReactNode }) => {
   const theme = useAppSelector((state) => state.theme.theme);

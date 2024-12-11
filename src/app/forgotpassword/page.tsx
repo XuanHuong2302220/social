@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/redux/hooks';
 
 interface FormValues {
-    email: string;
+  email: string;
 }
 
 const ForgotPassword = () => {
@@ -26,7 +26,7 @@ const ForgotPassword = () => {
     </div>
   }
 
-  const onSubmit = async(data: any) => {
+  const onSubmit = async(data: FormValues) => {
       await fgPass(data.email);
   };
 

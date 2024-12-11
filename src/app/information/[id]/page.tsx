@@ -18,7 +18,7 @@ interface FormValues {
   gender: 'female' | 'male'
 }
 
-const information = () => {
+const Information = () => {
   const { register, handleSubmit,control,setValue, formState: { errors } } = useForm<FormValues>();
   const user = useAppSelector(selectUser);
   const {lastName, firstName, username} = user;
@@ -202,4 +202,4 @@ const information = () => {
   )
 }
 
-export default information
+export default Information
