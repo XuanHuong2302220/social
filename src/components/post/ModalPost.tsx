@@ -10,6 +10,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { storage } from '@/firebase/firebase'
 import Image from 'next/image'
 import {Swiper, SwiperSlide} from 'swiper/react';
+import { Swiper as SwiperClass } from 'swiper/types'; 
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -20,7 +21,7 @@ import useCreatePost from '@/api/post/createPost'
 import { HighlightWithinTextarea } from 'react-highlight-within-textarea'
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { BsEmojiSmile } from "react-icons/bs";
-import { PostState } from '@/types'
+import { EmojiObject, PostState } from '@/types'
 import useUpdatePost from '@/api/post/updatePost'
 
 interface ModalPostProps {
@@ -37,7 +38,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null)
   const emojiRef = useRef<HTMLDivElement>(null)
-  const swiperRef = useRef<any>(null)
+  const swiperRef = useRef<SwiperClass | null>(null)
   const [indexImg, setIndexImg] = useState<number>(0)
   const [text, setText] = useState('')
   const [openEmoji, setOpenEmoji] = useState(false)
@@ -97,7 +98,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
     inputFileRef.current?.click();
   }
 
-  const handleEmojiClick = (emojiObject: any) => {
+  const handleEmojiClick = (emojiObject: EmojiObject) => {
     setText((prevText) => prevText + emojiObject.emoji);
   }
 
@@ -205,7 +206,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
               return url;
             } catch (error) {
               setLoadingImage(true)
-              if ((error as any).code === 'storage/object-not-found') {
+              if ((error as { code: string }).code === 'storage/object-not-found') {
                 await uploadBytes(storageRef, file);
                 const url = await getDownloadURL(storageRef);
                 setUpdateImages((prevImages) => [...prevImages, url]);
@@ -391,7 +392,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
               width={300}
               height={350}
               theme={Theme.DARK}
-              onEmojiClick={(emojiObject) => handleEmojiClick(emojiObject)}
+              onEmojiClick={(emojiObject) => handleEmojiClick({emoji: emojiObject.emoji, name: emojiObject.names[0]})}
             />
           </div>
     </dialog>
