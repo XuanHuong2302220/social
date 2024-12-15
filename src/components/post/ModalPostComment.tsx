@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 import {Button, ChatComment, Comment, Modal, Post, SkeletonReaction} from '@/components'
-import {PostState } from '@/types'
+import {EmojiObject, PostState } from '@/types'
 import useCreateComment from '@/api/comment/createComment'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import useGetAllComment from '@/api/comment/getAllComment'
@@ -47,7 +47,7 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
       }
   }, [loadingGetComment, hasNextPage, getAllComment])
 
-  const handleEmojiClick = (emojiObject: any) => {
+  const handleEmojiClick = (emojiObject: EmojiObject) => {
     setText((prevText) => prevText + emojiObject.emoji);
   }
 
@@ -106,8 +106,9 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
               <div className='divider m-0' />
             </div>
           }
-          children={
-            <div className='flex flex-col h-full pt-[80px]'>
+          className='overflow-hidden max-w-[600px] h-full p-0 bg-navbar'
+        >
+          <div className='flex flex-col h-full pt-[80px]'>
               <div className='flex flex-col overflow-auto max-h-[85%]' id='commentScroll'>
                 <Post 
                   post={post}
@@ -164,17 +165,15 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
                     </div>
                   }
                   className='w-2/3 '
-                  children={
-                    <div className='flex flex-col gap-2'>
+              >
+                <div className='flex flex-col gap-2'>
                       <Button onClick={handleCloseModal} text='Leave' className='w-full bg-transparent text-red-700' />
                       <Button onClick={()=>setWarningModal(false)} text='Cancel' className='w-full  text-textColor' />
                     </div>
-                  }
-              />}
+               </Modal> 
+                }
             </div>
-          }
-          className='overflow-hidden max-w-[600px] h-full p-0 bg-navbar'
-        />
+        </Modal>
   )
 }
 

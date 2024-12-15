@@ -228,10 +228,10 @@ const Navbar = () => {
 
       {loading && <Modal
         className='w-[200px] h-fit flex justify-center items-center bg-navbar'
-        children={
-          <span className='font-bold text-textColor text-lg'>Logging out...</span>
+      >
+         <span className='font-bold text-textColor text-lg'>Logging out...</span>
+       </Modal> 
         }
-      />}
     </div>
   )
 }

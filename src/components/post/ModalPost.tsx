@@ -299,7 +299,8 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
                       tabIndex={0}
                       position='top'
                       classNameContent='max-w-[400px] overflow-x-auto overflow-y-hidden p-4 h-[130px] bg-backgroundIcon absolute right-0 mb-2 border-backgroundIcon z- rounded-lg'
-                      children={
+                    >
+                      {
                         showDropdown && <div className='flex gap-2 items-center' style={{ width: `${images.length === 1 ? images.length * 160 : images.length * 140}px`, maxWidth: '500px' }}>
                           {images?.map((image, index) => (
                           <div key={index} className='w-[100px] h-[100px] relative cursor-pointer' onClick={()=>handleImageClick(index)} >
@@ -328,16 +329,16 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
                             </div>
                           }
                           className='w-2/3 '
-                          children={
-                            <div className='flex flex-col gap-2'>
+                        >
+                          <div className='flex flex-col gap-2'>
                               <Button onClick={()=> clearImage(indexImg)} text='Discard' className='w-full bg-transparent text-red-700' />
                               <Button onClick={handleCloseModalImage} text='Cancel' className='w-full  text-textColor' />
                             </div>
+                        </Modal>
                           }
-                        />}
                         </div>
                       }
-                    />
+                    </DropDown>
                   </div>
                   </Swiper>
                 </>
@@ -361,13 +362,13 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
                   </div>
                 }
                 className='w-2/3 '
-                children={
+              >
                   <div className='flex flex-col gap-2'>
                     <Button onClick={()=>handleCloseModal(true)} text='Leave' className='w-full bg-transparent text-red-700' />
                     <Button onClick={()=>setOpenPost(false)} text='Cancel' className='w-full  text-textColor' />
                   </div>
+                </Modal>
                 }
-              />}
 
             </div>
           </div>

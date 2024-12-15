@@ -20,7 +20,6 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
   const user = useAppSelector(selectUser)
   const {getConversation} = useGetConversation()
   const {getAllMessage} = useGetAllMessage()
-  const socket = useSocket('messages')
   
   const handleCreateConversation = async(conversationId: string) => {
     if(isBox){
