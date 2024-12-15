@@ -184,8 +184,8 @@ const handleDeletePost = (post: PostState) => {
 }
 
   return (
-    <div className='rounded-xl w-full flex flex-col px-5 pt-3 pb-1 gap-3 bg-navbar'> 
-        <div className='flex w-full gap-2 items-center '>
+    <div className='rounded-xl w-full flex flex-col pt-3 pb-1 gap-3 bg-navbar'> 
+        <div className='flex w-full gap-2 items-center px-5'>
             <a href={`/${post.created_by.username}`}>
               <Avatar width={1} height={1} alt='avatar' src={post.created_by.avatar??''} id={post.created_by.id} className='w-[42px] h-[42px]'/>
             </a>
@@ -212,7 +212,7 @@ const handleDeletePost = (post: PostState) => {
             </div>}
             
         </div>
-        <div className='text-textColor'>{post.description && highlightText(post.description)}</div>
+        <div className='text-textColor px-5'>{post.description && highlightText(post.description)}</div>
         <div className='h-full relative w-full'>
             <Swiper
               onSlideChange={handleSlideChange}
@@ -226,14 +226,15 @@ const handleDeletePost = (post: PostState) => {
             >
               {post.images && post.images.map((image, index) => (
                   <SwiperSlide key={index}>
-                    <Image 
+                    <img 
                       alt={image} 
                       src={image} 
                       width={width ?? 590}
-                      layout="intrinsic"
+                      className='w-full h-full object-cover'
+                      // layout="intrinsic"
                       height={0}
                       style={{ objectFit: 'cover' }} 
-                      quality={100}
+                      // quality={100}
                     />
                 </SwiperSlide>
                 ) )}
@@ -247,7 +248,7 @@ const handleDeletePost = (post: PostState) => {
               <Button left icon={<IoChevronForwardSharp />} className={`bg-backgroundIcon border-backgroundIcon opacity-100 rounded-full p-0 w-[30px] h-[30px] min-h-[30px]  ${isEnd ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`} />
             </div> : null}
         </div>
-        <div>
+        <div className='px-5'>
             <div className='flex justify-between'>
               {post.reaction_count > 0 && 
                 <span onClick={handleOpenModalReact} className='text-sm flex items-center gap-1 text-textColor hover:underline cursor-pointer'>

@@ -54,6 +54,7 @@ body {
 }
 
 .public-DraftEditorPlaceholder-root{
+  display: none;
   position: absolute;
   top: 25%;
 }

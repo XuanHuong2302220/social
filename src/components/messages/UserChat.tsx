@@ -4,6 +4,7 @@ import { useAppSelector } from '@/redux/hooks'
 import useGetConversation from '@/api/messages/getConversation'
 import { selectUser } from '@/redux/features/user/userSlice'
 import useGetAllMessage from '@/api/messages/getAllMessage'
+import useSocket from '@/socket/socket'
 interface UserChatProps {
   className?: string,
   isBox?: boolean,
@@ -19,6 +20,7 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
   const user = useAppSelector(selectUser)
   const {getConversation} = useGetConversation()
   const {getAllMessage} = useGetAllMessage()
+  const socket = useSocket('messages')
   
   const handleCreateConversation = async(conversationId: string) => {
     if(isBox){
@@ -30,6 +32,8 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
       await getAllMessage(conversationId)
     }
   }
+
+
 
   return (
     <div className={`${className} flex flex-col z-50`}>

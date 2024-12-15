@@ -22,7 +22,7 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
   const [height, setHeight] = useState<number>(150)
   const [checkReply, setCheckReply] = useState(false)
 
-  const {loading, createComment} = useCreateComment()
+  const {loading, createComment} = useCreateComment(post.id ?? 0)
 
   const {loading: loadingGetComment, getAllComment} = useGetAllComment()
 
@@ -84,7 +84,7 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
 
   }, [text]);
 
-  const onChange = (text: React.SetStateAction<string>) => {
+  const onChange = (text: string) => {
     setText(text)
   }
 
@@ -150,7 +150,7 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
                   loading={loading}
                   text={text}
                   handleEmojiClick={handleEmojiClick}
-                  onChange={onChange}
+                  onChange={(text)=>onChange(text.target.value)}
                   handleComment={handleSendComment}
                   height={height}
                 />

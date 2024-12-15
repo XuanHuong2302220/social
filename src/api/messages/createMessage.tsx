@@ -1,29 +1,38 @@
 'use client'
 
-import { addMessage } from "@/redux/features/messages/messageSlice"
+import {addMessage } from "@/redux/features/messages/messageSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import useSocket from "@/socket/socket"
 import { useEffect, useState } from "react"
 import soundMessage from '@/assets/sound/notification.wav'
 import { selectUser } from "@/redux/features/user/userSlice"
+import { Socket } from "socket.io-client"
 
 interface CreateMessage {   
     content: string,
     idConversation: string,
-    senderId: string,
+    senderId: string
 }
 
-const useCreateMessage = ()=> {
+const useCreateMessage = (idConversation : string, userSocket?: Socket)=> {
     const [loading, setLoading] = useState(false)
     const socket = useSocket('messages')
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
+    // const userSocket = useSocket('users')
 
     useEffect(()=> {
         if(socket){
+            socket.emit('joinConversation', { conversationId: idConversation });
             socket.on('messageCreated', (message)=> {
-                const sound = new Audio(soundMessage)
-                sound.play()
+                if(message.receiver.id === user.id) {
+                    console.log('sound')
+                    const sound = new Audio(soundMessage)
+                    sound.play()
+                }
+                if(userSocket){
+                    userSocket.emit('getConversation', {conversationId: message.idConversation, senderId: user.id})
+                }
                 dispatch(addMessage({id: message.idConversation, message}))
             })
         }
@@ -34,32 +43,15 @@ const useCreateMessage = ()=> {
 
     const createMessage = async ( data: CreateMessage) => {
         setLoading(true)
-        const message = {
-            id: Math.random().toString(),
-            content: data.content,
-            created_ago: 'Just now',
-            sender: {
-                id: data.senderId,
-                fullName: 'Sender Full Name',
-                avatar: user.avatar,
-                username: 'Sender Username'
-            },
-            receiver: {
-                id: '1',
-                fullName: 'Receiver Full Name',
-                avatar: 'Receiver Avatar URL',
-                username: 'Receiver Username'
-            },
-            idConversation: data.idConversation
-        }
+
         try {
             if(socket){
                 socket.emit('sendMessage', {
                     ...data,
                     conversationId: data.idConversation
                 })
+
             }
-            dispatch(addMessage({id: data.idConversation, message}))
         } catch (error) {
             console.log(error)
         }

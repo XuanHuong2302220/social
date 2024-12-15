@@ -14,15 +14,17 @@ import Button from '../Button';
 import useCreateMessage from '@/api/messages/createMessage';
 import { selectUser } from '@/redux/features/user/userSlice';
 import {  usePathname } from 'next/navigation';
+import { Socket } from 'socket.io-client';
 interface ConversationsProps {
   conversation: Conversation,
   closeConversation?: ()=> void,
   background?: string,
   isBox?: boolean,
-  loadingMess?: boolean
+  loadingMess?: boolean,
+  userSocket?: Socket
 }
 
-const Conversations = ({conversation, closeConversation, background, isBox, loadingMess}: ConversationsProps) => {
+const Conversations = ({conversation, closeConversation, background, isBox, loadingMess, userSocket}: ConversationsProps) => {
 
   const textRef = useRef<HTMLInputElement>(null)
   const [openEmoji, setOpenEmoji] = useState(false)
@@ -54,7 +56,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
 
   const {loading, getAllMessage} = useGetAllMessage()
 
-  const {loading: loadingMessage, createMessage} = useCreateMessage()
+  const {loading: loadingMessage, createMessage} = useCreateMessage(conversation.id, userSocket)
 
   useClickOutside(emojiRef, ()=> setOpenEmoji(false))
   useClickOutside(dropdownRef, ()=> setDropdown(false))

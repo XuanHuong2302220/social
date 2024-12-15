@@ -2,10 +2,11 @@ import React, { useEffect} from 'react';
 import Navbar from '@/components/Navbar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import Conversations from './messages/Conversations';
-import { removeBoxMessage } from '@/redux/features/messages/messageSlice';
+import { addConversation, removeBoxMessage } from '@/redux/features/messages/messageSlice';
 import { usePathname } from 'next/navigation';
 import useSocket from '@/socket/socket';
 import { setUserOnline } from '@/redux/features/socket/socketSlice';
+import soundMessage from '@/assets/sound/notification.wav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,14 +24,24 @@ const Layout: React.FC<LayoutProps> = ({ children}) => {
 
     useEffect(() => {
       if (socket) {
-          socket.on('updateUserOnline', (users) => {
-            dispatch(setUserOnline(users));
-          });
-
-          return () => {
-            socket.off('updateUserOnline');
-            dispatch(setUserOnline([]));
-          };
+      socket.on('updateUserOnline', (users) => {
+        dispatch(setUserOnline(users));
+      });
+      socket.on('conversationUpdate', conversation=> {
+        if(conversations.find(conver => conver.id !== conversation.id)){
+          console.log(conversations)
+          console.log('sound in conversation')
+          // const sound = new Audio(soundMessage)
+          // sound.play()
+        }
+        dispatch(addConversation(conversation));
+      })
+       
+      return () => {
+        socket.off('updateUserOnline');
+        socket.off('conversationUpdate');
+        dispatch(setUserOnline([]));
+      };
         }
       }, [socket]);
 
@@ -44,11 +55,13 @@ const Layout: React.FC<LayoutProps> = ({ children}) => {
       <main>{children}</main>
       {
        !isMessagesPath &&conversations.length > 0 && 
-        conversations.map((conversation, index) => (
-          <div key={conversation.receiver.id} className={`absolute z-40 w-[300px] h-[400px] rounded-t-lg rounded-b-none card shadow-2xl bg-search bottom-0 `} style={{right: `${index === 0 ? '5' : index*20 + 5}%` }}>
-            <Conversations isBox closeConversation={()=>closeBoxMessage(conversation.id)} conversation={conversation} />
-          </div>
-        ) )
+        <div className='flex gap-3 absolute z-40 right-[5%] bottom-0'>
+          {conversations.map((conversation) => (
+            <div key={conversation.receiver.id} className={`w-[300px] h-[400px] rounded-t-lg rounded-b-none card shadow-2xl bg-search`} >
+              <Conversations isBox closeConversation={()=>closeBoxMessage(conversation.id)} conversation={conversation} userSocket={socket} />
+            </div>
+          ) )}
+        </div>
       }
     </div>
   );

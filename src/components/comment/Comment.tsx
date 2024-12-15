@@ -61,7 +61,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   const replyComments = comment.children ?? []
    
   const dispatch = useAppDispatch()
-  
+
   useClickOutside(dropdownRefEdit, ()=> setShowDropdownEdit(false))
 
   const handleClickExit = () => {
@@ -76,13 +76,12 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
     setReplyComment('')
   }
 
-  const onChange = (text: React.ChangeEvent<HTMLInputElement>, type: string) => {
-    if(type === 'comment') {
-      setText(text.target.value)
-    }
-    else {
-      setReplyComment(text.target.value)
-    }
+  const handleOnchange = (text: string, type: string) => {
+      if (type === 'comment') {
+        setText(text);
+      } else {
+        setReplyComment(text);
+      }
   }
 
   const handleOpenReactions = async() => {
@@ -152,7 +151,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
 
   const highlightText = (text: string) => {
     const regex = /(#\w+)/g;
-    return text.split('\n').map((line, index) => (
+    return text?.split('\n').map((line, index) => (
       <React.Fragment key={index}>
         {line.split(regex).map((part, i) =>
           regex.test(part) ? <span key={i} className="text-blue-500">{part}</span> : part
@@ -283,7 +282,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             <ChatComment
               text={text}
               handleEmojiClick={(emojiObject)=>handleEmojiClick(emojiObject, 'comment')}
-              onChange={(event) => onChange(event, 'comment')}
+              onChange={(value) => handleOnchange(value.target.value, 'comment')}
               handleComment={handleUpdateComment}
               className='0'
               height={height}
@@ -378,7 +377,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             <ChatComment
               text={replyComment}
               handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(event, 'replyComment')}
+              onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
               handleComment={handleReplyComment}
               className='0'
               height={height}
@@ -390,7 +389,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             <ChatComment
               text={replyComment}
               handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(event, 'comment')}
+              onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
               handleComment={handleReplyComment}
               className='0'
               height={height}

@@ -8,7 +8,7 @@ import useSocket from "@/socket/socket"
 import axs from "@/utils/axios"
 import { useEffect, useState } from "react"
 
-const useCreateComment = () => {
+const useCreateComment = (postId?: number) => {
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
@@ -17,24 +17,25 @@ const useCreateComment = () => {
 
     const socket = useSocket('comments')
 
-    const existComment = new Set()
+    // const existComment = new Set()
 
     useEffect(()=> {
         if(socket){
-            socket.on('commentCreated', (comment)=> {
-                if(!existComment.has(comment.commentId)){
-                    existComment.add(comment.commentId)
-                    dispatch(addComment({
-                        ...comment,
-                        created_by: {
-                            id: comment.created_by.id,
-                            fullName: comment.created_by.fullName,
-                            avatar: comment.created_by.avatar
-                        },
-                        created_at: new Date().toISOString()
-                    }))
-                    dispatch(setCountComment({postId: comment.post.id}))
-                }
+            if(postId){
+                socket.emit('joinPost', {postId: postId})
+            }
+            socket.on('messageCreated', (comment)=> {
+                dispatch(addComment({
+                    ...comment,
+                    created_by: {
+                        id: comment.created_by.id,
+                        fullName: comment.created_by.fullName,
+                        avatar: comment.created_by.avatar
+                    },
+                    created_at: new Date().toISOString()
+                }))
+                dispatch(setCountComment({postId: comment.post.id}))
+                
             })
 
             return ()=> {
@@ -43,12 +44,12 @@ const useCreateComment = () => {
         }
 
 
-    }, [socket, dispatch, existComment])
+    }, [socket, dispatch])
 
     const createComment = async (postId: number, content: string, parentId?: string, commentId?: string) => {
         setLoading(true)
         try {
-            if(socket){
+            if(socket && !parentId && !commentId){
                 socket.emit('createComment', {
                     postId: postId,
                     content: content,
@@ -57,7 +58,7 @@ const useCreateComment = () => {
                     userId: user.id
                 })
             }
-            else if (parentId){
+            else {
                 const {data} = await axs.post(`/comment/create-comment`, {
                     content: content,
                     parentId: parentId,
@@ -69,11 +70,11 @@ const useCreateComment = () => {
                 })
                 if(data){
                     dispatch(addReplyComment({
-                        parentId: parentId,
+                        parentId: parentId || '',
                         commentId: data.commentId,
                         replyComment: data
                     }))
-                    dispatch(increaCountComment({parentId: parentId}))
+                    dispatch(increaCountComment({parentId: parentId || ''}))
                     dispatch(setCountComment({postId: postId}))
                 }
             }

@@ -16,7 +16,7 @@ interface ChatCommentProps {
     loading?: boolean,
     className?: string,
     handleEmojiClick: (emojiObject: EmojiObject) => void,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
     handleComment: () => void,
     height: number,
     edit?: boolean,
@@ -33,14 +33,14 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
       setOpenEmoji(false);
     })
 
-    useEffect(() => {
-      const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
-      if (placeholderElement && placeholderElement instanceof HTMLElement && !text) {
-        placeholderElement.style.position = 'absolute';
-        placeholderElement.style.top = '84%';
-        placeholderElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
-      }
-    }, [text]);
+    // useEffect(() => {
+    //   const placeholderElement = document.querySelector('.public-DraftEditorPlaceholder-root');
+    //   if (placeholderElement && placeholderElement instanceof HTMLElement && !text) {
+    //     placeholderElement.style.position = 'absolute';
+    //     placeholderElement.style.top = '84%';
+    //     placeholderElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+    //   }
+    // }, [text]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if(text.trim() !== ''){
@@ -67,7 +67,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
               <HighlightWithinTextarea
                   value={text}
                   highlight={[{ highlight: [/#[\w]+/g], className: 'text-blue-500 bg-transparent' }]}
-                  onChange={()=>onChange}
+                  onChange={(nextValue: string) => onChange({ target: { value: nextValue } } as React.ChangeEvent<HTMLInputElement>)}
                   placeholder={!edit ? 'Write a comment...' : undefined}
               />
             </div>
