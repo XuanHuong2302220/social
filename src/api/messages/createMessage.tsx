@@ -26,7 +26,6 @@ const useCreateMessage = (idConversation : string, userSocket?: Socket)=> {
             socket.emit('joinConversation', { conversationId: idConversation });
             socket.on('messageCreated', (message)=> {
                 if(message.receiver.id === user.id) {
-                    console.log('sound')
                     const sound = new Audio(soundMessage)
                     sound.play()
                 }

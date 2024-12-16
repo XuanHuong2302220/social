@@ -8,7 +8,7 @@ export interface InputProps {
     width?: number,
     height?: number,
     right?: boolean,
-    iconComponent?: any,
+    iconComponent?: React.ElementType,
     onClick?: () => void,
     ref?: React.Ref<HTMLInputElement>,
     classInput?: string,

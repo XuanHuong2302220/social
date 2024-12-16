@@ -4,7 +4,6 @@ import { useAppSelector } from '@/redux/hooks'
 import useGetConversation from '@/api/messages/getConversation'
 import { selectUser } from '@/redux/features/user/userSlice'
 import useGetAllMessage from '@/api/messages/getAllMessage'
-import useSocket from '@/socket/socket'
 interface UserChatProps {
   className?: string,
   isBox?: boolean,

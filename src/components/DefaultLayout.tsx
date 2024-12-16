@@ -6,7 +6,6 @@ import { addConversation, removeBoxMessage } from '@/redux/features/messages/mes
 import { usePathname } from 'next/navigation';
 import useSocket from '@/socket/socket';
 import { setUserOnline } from '@/redux/features/socket/socketSlice';
-import soundMessage from '@/assets/sound/notification.wav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -28,12 +27,6 @@ const Layout: React.FC<LayoutProps> = ({ children}) => {
         dispatch(setUserOnline(users));
       });
       socket.on('conversationUpdate', conversation=> {
-        if(conversations.find(conver => conver.id !== conversation.id)){
-          console.log(conversations)
-          console.log('sound in conversation')
-          // const sound = new Audio(soundMessage)
-          // sound.play()
-        }
         dispatch(addConversation(conversation));
       })
        

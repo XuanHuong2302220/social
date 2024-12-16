@@ -89,7 +89,7 @@ const SignUp = () => {
               placeholder='password'
               type={showPassword ? 'text' : 'password'}
               onClick={() => setShowPassword(!showPassword)}
-              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+              iconComponent={showPassword ? FaEyeSlash : FaEye}
               {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
             />
             {(errors.password) && (
@@ -105,7 +105,7 @@ const SignUp = () => {
               placeholder='confirm password'
               type={confirmPassword ? 'text' : 'password'}
               onClick={() => setconfirmPassword(!confirmPassword)}
-              iconComponent={confirmPassword ? <FaEyeSlash /> : <FaEye />}
+              iconComponent={confirmPassword ? FaEyeSlash : FaEye}
               {...register('confirmPassword', { required: 'Confirm Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
             />
             {(errors.confirmPassword) && (

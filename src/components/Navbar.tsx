@@ -132,7 +132,7 @@ const Navbar = () => {
               className='h-8 bg-search w-[250px] text-textColor'
               type='text'
               classInput='text-textColor'
-              iconComponent={<MdOutlineSearch />}
+              iconComponent={MdOutlineSearch}
               ref={search}
               onChange={handleSearch}
               onKeyDown={handleRedirectSearch}

@@ -29,7 +29,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           onKeyDown={onKeyDown}
           {...rest}
         />
-        {iconComponent && <div onClick={onClick}>{iconComponent}</div>}
+        {iconComponent && <div onClick={onClick}>{React.createElement(iconComponent)}</div>}
     </label>
   )
 })

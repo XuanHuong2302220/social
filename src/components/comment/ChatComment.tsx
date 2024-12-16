@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, {useRef, useState } from 'react'
 import {Avatar} from '@/components'
 import { useAppSelector } from '@/redux/hooks'
 import { selectUser } from '@/redux/features/user/userSlice'

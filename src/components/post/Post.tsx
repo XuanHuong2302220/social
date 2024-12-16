@@ -22,6 +22,7 @@ import wowIcon from '@/assets/icons/wow.svg';
 import sadIcon from '@/assets/icons/sad.svg';
 import angryIcon from '@/assets/icons/angry.svg';
 import useHandleReaction from '@/api/post/handleReaction';
+import { Swiper as SwiperClass } from 'swiper/types'; 
 import { useAppDispatch, useAppSelector} from "@/redux/hooks"
 import { changeTypeReaction, decreaseLike, increaLike } from '@/redux/features/post/postSlice';
 import useGetReactions from '@/api/post/getAllReaction';
@@ -48,7 +49,7 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
 
   const [isBeginning, setIsBeginning] = useState(true)
   const [isEnd, setIsEnd] = useState(false)
-  const swiperRef = useRef<any>(null)
+  const swiperRef = useRef<SwiperClass | null>(null)
   const [modalPost, setModalPost] = useState<PostState>(post)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -62,7 +63,6 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [showModalReact, setShowModalReact] = useState(false);
   const [openModalComment, setOpenModalComment] = useState(false)
-  const {loading: loadingComment, getAllComment} = useGetAllComment()
 
   const dispatch = useAppDispatch();
 
@@ -201,14 +201,13 @@ const handleDeletePost = (post: PostState) => {
                   className='ml-auto bg-transparent z-30 w-[50px] h-[50px] border-transparent hover:bg-search rounded-full'
                 />}
                 classNameContent='bg-search right-2 w-[200px] rounded-lg menu'
-                children={
-                  <div className='w-full flex flex-col'>
-                      <Button left icon={<MdEdit className='text-2xl' />}  onClick={() => handleEditPost(post)} text='Edit Post' className='flex items-center bg-transparent border-transparent justify-start' />
-                      <div className='divider m-0 bg-search'/>
-                      <Button left icon={!loadingDelete && <FaTrash className='text-lg' />} onClick={()=> handleDeletePost(post) } text={loadingDelete ? '' : 'Delete Post'} className={`flex items-center bg-transparent border-transparent ${loadingDelete ? 'justify-center' : 'justify-start '}`} iconLoading={loadingDelete} />
+              >
+                <div className='w-full flex flex-col'>
+                  <Button left icon={<MdEdit className='text-2xl' />}  onClick={() => handleEditPost(post)} text='Edit Post' className='flex items-center bg-transparent border-transparent justify-start' />
+                  <div className='divider m-0 bg-search'/>
+                  <Button left icon={!loadingDelete && <FaTrash className='text-lg' />} onClick={()=> handleDeletePost(post) } text={loadingDelete ? '' : 'Delete Post'} className={`flex items-center bg-transparent border-transparent ${loadingDelete ? 'justify-center' : 'justify-start '}`} iconLoading={loadingDelete} />
                 </div>
-                }
-              />
+              </DropDown>
             </div>}
             
         </div>
@@ -216,7 +215,7 @@ const handleDeletePost = (post: PostState) => {
         <div className='h-full relative w-full'>
             <Swiper
               onSlideChange={handleSlideChange}
-              ref={swiperRef}
+              // ref={swiperRef}
               navigation={{
                 prevEl: '.custom-prev',
                 nextEl: '.custom-next',

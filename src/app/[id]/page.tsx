@@ -326,7 +326,7 @@ const Profile = () => {
                               height={20}
                               type={showPassword ? 'text' : 'password'}
                               onClick={() => setShowPassword(!showPassword)}
-                              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+                              iconComponent={showPassword ? FaEyeSlash : FaEye}
                               {...register('currentPassword', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
                             />
                             {errors.currentPassword && (
@@ -342,7 +342,7 @@ const Profile = () => {
                               width={20}
                               height={20}
                               onClick={() => setShowPassword(!showPassword)}
-                              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+                              iconComponent={showPassword ? FaEyeSlash : FaEye}
                               type={showPassword ? 'text' : 'password'}
                               {...register('newPassword', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
                             />
@@ -358,7 +358,7 @@ const Profile = () => {
                               placeholder='Confirm Password...'
                               type={showPassword ? 'text' : 'password'}
                               onClick={() => setShowPassword(!showPassword)}
-                              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+                              iconComponent={showPassword ? FaEyeSlash : FaEye}
                               {...register('confirmPassword', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
                               width={20}
                               height={20}
