@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {Button, ChatComment, Comment, Modal, Post, SkeletonReaction} from '@/components'
 import {EmojiObject, PostState } from '@/types'
 import useCreateComment from '@/api/comment/createComment'
@@ -12,15 +12,18 @@ import { clearComments, setCurrentPage } from '@/redux/features/comment/commentS
 interface PostProps {
   post: PostState,
   closeFunc: () => void,
+  idComment?: string
 }
 
-const ModalPostComment= ({post, closeFunc}: PostProps) => {
+const ModalPostComment= ({post, closeFunc, idComment}: PostProps) => {
 
   const [text, setText] = useState<string>('')
   const [warningModal, setWarningModal] = useState<boolean>(false)
   const [activeDropdownIndex, setActiveDropdownIndex] = useState<number>(-1)
   const [height, setHeight] = useState<number>(150)
   const [checkReply, setCheckReply] = useState(false)
+
+  const commentRefs = useRef<{[key: string]: HTMLDivElement | null}>({})
 
   const {loading, createComment} = useCreateComment(post.id ?? 0)
 
@@ -37,6 +40,20 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
       getAllComment(post.id)
     }
   },[])
+
+  useEffect(() => {
+    if (idComment && comments.length > 0) {
+      const commentElement = commentRefs.current[idComment];
+      if (commentElement instanceof HTMLElement) {
+        commentElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      } else {
+        console.log('Không thể cuộn, không phải phần tử DOM:', commentElement);
+      }
+    }
+  }, [idComment, comments]);
 
   const fetchNextComments = useCallback(async()=> {
       try {
@@ -126,16 +143,21 @@ const ModalPostComment= ({post, closeFunc}: PostProps) => {
                       scrollableTarget='commentScroll'
                     >
                       {comments.map((comment, index)=> (
-                        <Comment 
-                          key={comment.id} 
-                          comment={comment} 
-                          index={index} 
-                          activeDropdownIndex={activeDropdownIndex} 
-                          handleShowDropdownEdit={handleShowDropdownEdit} 
-                          checkReply={checkReply}
-                          setCheckReply={setCheckReply}
-                          postId={post.id ?? 0}
-                        />    
+                        <div
+                          key={comment.id}
+                          ref={(el) => { commentRefs.current[comment.id] = el; }}
+                        >
+                          <Comment
+                            comment={comment}
+                            index={index}
+                            activeDropdownIndex={activeDropdownIndex}
+                            handleShowDropdownEdit={handleShowDropdownEdit}
+                            checkReply={checkReply}
+                            setCheckReply={setCheckReply}
+                            postId={post.id ?? 0}
+                            idComment={idComment}
+                          />
+                        </div>
                       ))}
 
                     </InfiniteScroll>}

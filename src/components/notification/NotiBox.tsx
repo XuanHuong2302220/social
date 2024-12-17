@@ -62,14 +62,14 @@ const NotiBox = ({closeBox}: NotiBoxProps) => {
                         <span className='text-md text-textColor'>{noti.content}</span>
                         <img src={reactionTypes.find(react => react.name === noti.type)?.icon.src} alt='icon' className='w-8 h-8' />
                     </div>
+                    {postNoti && <ModalPostComment
+                        post={postNoti}
+                        closeFunc={()=>setPostNoti(null)}
+                        idComment={noti.comment}
+                    />}
                  </div>
                ))}
             </div>
-
-            {postNoti && <ModalPostComment
-                post={postNoti}
-                closeFunc={()=>setPostNoti(null)}
-            />}
         </div>
     )
 }

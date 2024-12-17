@@ -27,10 +27,11 @@ interface CommentProps {
   checkReply?: boolean
   setCheckReply?: (isReply: boolean) => void,
   postId: number,
-  reply?: boolean
+  reply?: boolean,
+  idComment?: string
 }
 
-const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, setCheckReply, postId, reply}: CommentProps) => {
+const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, setCheckReply, postId, reply, idComment}: CommentProps) => {
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -46,6 +47,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   const [showDropdownEdit, setShowDropdownEdit] = useState(false)
   const [isReply, setIsReply] = useState(false)
   const dropdownRefEdit = useRef<HTMLDivElement>(null)
+  const commentRef = useRef<HTMLDivElement>(null)
   const [edit, setEdit] = useState(false)
   const [text, setText] = useState<string>(comment.content)
   const [replyComment, setReplyComment] = useState('')
@@ -75,6 +77,12 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
     setCheckReply && setCheckReply(false)
     setReplyComment('')
   }
+
+  useEffect(()=> {
+    if(idComment){
+      setEdit(true)
+    }
+  }, [idComment])
 
   const handleOnchange = (text: string, type: string) => {
       if (type === 'comment') {
@@ -278,7 +286,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   return (
       <div>
         {edit && index === activeDropdownIndex ? 
-          <div id='chatComment' className='flex flex-col gap-2 items-start w-full'>
+          <div id='chatComment' className='flex flex-col gap-2 items-start w-full' >
             <ChatComment
               text={text}
               handleEmojiClick={(emojiObject)=>handleEmojiClick(emojiObject, 'comment')}
@@ -292,6 +300,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             />
           </div> : 
         <div
+            ref={commentRef}
             className='w-full flex gap-2 items-start relative pb-1'
             onMouseEnter={user.id === comment.created_by.id ? ()=> setShowEdit(true) : undefined}
             onMouseLeave={()=>{

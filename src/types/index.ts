@@ -175,7 +175,7 @@ export interface Notification {
     receiver: UserProps,
     type: string,
     post: number,
-    commentId?: string,
+    comment?: string,
     replyCommentId?: string,
     reactionType?: string
 }
