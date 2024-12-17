@@ -29,6 +29,7 @@ import useGetReactions from '@/api/post/getAllReaction';
 import useDeletePost from '@/api/post/deletePost';
 import useGetAllComment from '@/api/comment/getAllComment';
 import { selectUser, setAttributes } from '@/redux/features/user/userSlice';
+import useClickOutside from '@/hooks/useClickOutside';
 
 interface PostProps {
   post: PostState,
@@ -53,7 +54,9 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
   const [modalPost, setModalPost] = useState<PostState>(post)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const optionRef = useRef<HTMLDivElement>(null)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showOptionPost, setShowOptionPost] = useState(false)
   const [showInteract, setShowInteract] = useState<InteractProps>({
     name: post.isReacted ? post.reactionType : '',
     icon: post.isReacted ? reactions.find(r => r.name === post.reactionType)?.icon : null,
@@ -70,6 +73,8 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
   const {loading, getAllReactions, listReaction, typeReaction} = useGetReactions()
   const {loading: loadingDelete, deletePost} = useDeletePost()
   const user = useAppSelector(selectUser)
+
+  useClickOutside(optionRef, ()=> setShowOptionPost(false))
 
 
   const handleOpenReaction = () => {
@@ -194,19 +199,20 @@ const handleDeletePost = (post: PostState) => {
               <span className='text-[12px] text-textColor'>{post.created_ago}</span>
             </div>
 
-            {user.id === post.created_by.id && <div className='ml-auto z-30'>
+            {user.id === post.created_by.id && <div className='ml-auto z-30' ref={optionRef}>
               <DropDown
                 parents={<Button
+                  onClick={()=> setShowOptionPost(!showOptionPost)}
                   left icon={<BsThreeDots className='text-2xl' />}
                   className='ml-auto bg-transparent z-30 w-[50px] h-[50px] border-transparent hover:bg-search rounded-full'
                 />}
                 classNameContent='bg-search right-2 w-[200px] rounded-lg menu'
               >
-                <div className='w-full flex flex-col'>
+               {showOptionPost&& <div className='w-full flex flex-col'>
                   <Button left icon={<MdEdit className='text-2xl' />}  onClick={() => handleEditPost(post)} text='Edit Post' className='flex items-center bg-transparent border-transparent justify-start' />
                   <div className='divider m-0 bg-search'/>
                   <Button left icon={!loadingDelete && <FaTrash className='text-lg' />} onClick={()=> handleDeletePost(post) } text={loadingDelete ? '' : 'Delete Post'} className={`flex items-center bg-transparent border-transparent ${loadingDelete ? 'justify-center' : 'justify-start '}`} iconLoading={loadingDelete} />
-                </div>
+                </div>}
               </DropDown>
             </div>}
             

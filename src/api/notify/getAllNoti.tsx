@@ -1,6 +1,7 @@
 'use client'
 
-import { useAppSelector } from "@/redux/hooks"
+import { setNotifications } from "@/redux/features/notification/notifySlice"
+import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
 import { AxiosError } from "axios"
 import { useState } from "react"
@@ -10,6 +11,7 @@ const useGetAllNoti = ()=> {
 
     const [loading, setLoading] = useState<boolean>(false)
     const token = useAppSelector((state)=> state.auth.token)
+    const dispatch = useAppDispatch()
 
     const getAllNotify = async ()=> {
         setLoading(true)
@@ -21,7 +23,10 @@ const useGetAllNoti = ()=> {
                 }
             })
 
-            console.log(response.data)
+            const data = await response.data.data
+            console.log(data)
+            dispatch(setNotifications(data))
+            
         } catch (error) {
             if (error instanceof AxiosError && error.response) {
                 toast.error(error.response.data.message);

@@ -9,11 +9,12 @@ import postReducer from './features/post/postSlice';
 import commentReducer from './features/comment/commentSlice';
 import messageReducer from './features/messages/messageSlice';
 import socketReducer from './features/socket/socketSlice';
+import notifiReducer from './features/notification/notifySlice'
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['post', 'comment', 'socket'],
+  blacklist: ['post', 'comment', 'socket', 'notification'],
 };
 
 const rootReducer = combineReducers({
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   comment: commentReducer,
   message: messageReducer,
   socket: socketReducer,
+  notification: notifiReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

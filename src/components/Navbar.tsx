@@ -22,6 +22,7 @@ import { clearConversation } from '@/redux/features/messages/messageSlice';
 import useGetAllConversation from '@/api/messages/getAllConversation';
 import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice';
 import useGetAllPost from '@/api/post/getAllPost';
+import useGetAllNoti from '@/api/notify/getAllNoti';
 
 const Navbar = () => {
 
@@ -40,6 +41,8 @@ const Navbar = () => {
   const { getAllPost } = useGetAllPost()
 
   const { loadingSearch, result, searchUser } = useSearch()
+
+  const {loading: loadingNoti, getAllNotify} = useGetAllNoti()
 
   const { getAllConversation } = useGetAllConversation();
 
@@ -114,6 +117,7 @@ const Navbar = () => {
     setShowDropDownNotification(!showDropDownNotification);
     setShowDropDownChat(false)
     setShowDropdownLogout(false)
+    await getAllNotify()
   }
 
   return (
@@ -182,7 +186,7 @@ const Navbar = () => {
             classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-260px]'
           >
             {
-              showDropDownNotification && <NotiBox />
+              showDropDownNotification && <NotiBox closeBox={()=>setShowDropDownNotification(false)} />
             }
           </DropDown>
         </div>

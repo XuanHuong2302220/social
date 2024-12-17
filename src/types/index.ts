@@ -172,8 +172,9 @@ export interface Notification {
     content: string,
     created_ago: string,
     sender: UserProps,
+    receiver: UserProps,
     type: string,
-    postId: number,
+    post: number,
     commentId?: string,
     replyCommentId?: string,
     reactionType?: string
