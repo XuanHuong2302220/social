@@ -14,11 +14,10 @@ interface PostProps {
   closeFunc: () => void,
   idComment?: string,
   replyId?: string,
-  setReplyId?: (id: string) => void,
   setIdComment?: (id: string) => void
 }
 
-const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, setReplyId}: PostProps) => {
+const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: PostProps) => {
 
   const [text, setText] = useState<string>('')
   const [warningModal, setWarningModal] = useState<boolean>(false)

@@ -94,8 +94,8 @@ const TabReactions = ({typeReaction, listReaction, loading, onClose}: TabsProps)
       <Modal
         onClose={handleCloseModalReactions}
         closeIcon
-        children={
-          <div className='flex flex-col'>
+      >
+        <div className='flex flex-col'>
           <div role="tablist" className="tabs tabs-bordered flex ">
             {headerReaction.map((reaction, index)=> (
               <Button 
@@ -125,8 +125,7 @@ const TabReactions = ({typeReaction, listReaction, loading, onClose}: TabsProps)
             </div>
             ))}
         </div> 
-        }
-      />
+      </Modal>
     )
 
 }

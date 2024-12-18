@@ -13,7 +13,7 @@ export interface InputProps {
     ref?: React.Ref<HTMLInputElement>,
     classInput?: string,
     value?: string,
-    onChange?: (e: any) => void,
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void,
     tabIndex?: number,
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
 }

@@ -27,7 +27,6 @@ import { useAppDispatch, useAppSelector} from "@/redux/hooks"
 import { changeTypeReaction, decreaseLike, increaLike } from '@/redux/features/post/postSlice';
 import useGetReactions from '@/api/post/getAllReaction';
 import useDeletePost from '@/api/post/deletePost';
-import useGetAllComment from '@/api/comment/getAllComment';
 import { selectUser, setAttributes } from '@/redux/features/user/userSlice';
 import useClickOutside from '@/hooks/useClickOutside';
 

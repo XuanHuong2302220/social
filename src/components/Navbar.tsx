@@ -50,7 +50,7 @@ const Navbar = () => {
 
   const { loadingSearch, result, searchUser } = useSearch()
 
-  const {loading: loadingNoti, getAllNotify} = useGetAllNoti()
+  const {getAllNotify} = useGetAllNoti()
 
   const { getAllConversation } = useGetAllConversation();
 
@@ -277,7 +277,6 @@ const Navbar = () => {
         idComment={commentId}
         setIdComment={setCommentId}
         replyId={replyId}
-        setReplyId={setReplyId}
       />}
 
       {loading && <Modal
