@@ -4,7 +4,7 @@ import {addMessage } from "@/redux/features/messages/messageSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import useSocket from "@/socket/socket"
 import { useEffect, useState } from "react"
-import soundMessage from '@/assets/sound/notification.wav'
+// import soundMessage from '@/assets/sound/notification.wav'
 import { selectUser } from "@/redux/features/user/userSlice"
 import { Socket } from "socket.io-client"
 
