@@ -6,7 +6,7 @@ import { MdOutlineSearch } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
 import { IoNotifications } from "react-icons/io5";
-import { Input, DropDown, Button, Modal, Avatar, UserChat, NotiBox } from '@/components'
+import { Input, DropDown, Button, Modal, Avatar, UserChat, NotiBox, ModalPostComment } from '@/components'
 import { IoSunny } from "react-icons/io5";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setTheme } from '@/redux/features/theme/themeSlice';
@@ -23,6 +23,10 @@ import useGetAllConversation from '@/api/messages/getAllConversation';
 import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice';
 import useGetAllPost from '@/api/post/getAllPost';
 import useGetAllNoti from '@/api/notify/getAllNoti';
+import { PostState } from '@/types';
+import axs from '@/utils/axios';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
 
@@ -37,7 +41,11 @@ const Navbar = () => {
   const [showDropDownNotification, setShowDropDownNotification] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false)
-
+  const token = useAppSelector((state) => state.auth.token)
+  const [postNoti, setPostNoti] = useState<PostState | null>(null)
+  const [commentId, setCommentId] = useState<string>('')
+  const [replyId, setReplyId] = useState<string>('')
+  
   const { getAllPost } = useGetAllPost()
 
   const { loadingSearch, result, searchUser } = useSearch()
@@ -57,6 +65,38 @@ const Navbar = () => {
       search.current.value = e.target.value;
       debouncedSearch(e.target.value)
     }
+  }
+
+  const handleOpenNoti = async(post: number, comment: string, parentId?: string)=> {
+    try {
+      const response = await axs.get(`/post/get-post/${post}`, {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+      })
+      const data = await response.data
+      setPostNoti(data)
+      if(parentId){
+        setCommentId(parentId)
+        setReplyId(comment)
+      }
+      else {
+        setCommentId(comment)
+      }
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+          toast.error(error.response.data.message);
+      } else {
+          toast.error("An unexpected error occurred");
+      }
+    }
+    finally{
+        setShowDropDownNotification(false)
+    }
+  }
+
+  const handleClosePostNoti = ()=> {
+    setPostNoti(null)
   }
 
   const handleClickTheme = (theme: string) => {
@@ -186,7 +226,7 @@ const Navbar = () => {
             classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-260px]'
           >
             {
-              showDropDownNotification && <NotiBox closeBox={()=>setShowDropDownNotification(false)} />
+              showDropDownNotification && <NotiBox handleOpenPostNotify={(post, comment, parentId)=> handleOpenNoti(post, comment, parentId)} />
             }
           </DropDown>
         </div>
@@ -229,6 +269,16 @@ const Navbar = () => {
           </DropDown>
         </div>
       </div>
+
+      {postNoti && 
+      <ModalPostComment
+        post={postNoti}
+        closeFunc={handleClosePostNoti}
+        idComment={commentId}
+        setIdComment={setCommentId}
+        replyId={replyId}
+        setReplyId={setReplyId}
+      />}
 
       {loading && <Modal
         className='w-[200px] h-fit flex justify-center items-center bg-navbar'

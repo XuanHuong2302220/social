@@ -62,7 +62,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
             src={user.avatar ?? ''}
             alt={user.avatar ?? ''}
             />
-            <div id='textcomment' className='flex-1 w-[90%] bg-search px-3 rounded-2xl overflow-y-auto max-h-[400px] z-50'>
+            <div id='textcomment' className='flex-1 w-[90%] bg-search px-3 cursor-text rounded-2xl overflow-y-auto max-h-[400px] z-50'>
             <div onKeyDown={handleKeyDown} className='text-textColor'>
               <HighlightWithinTextarea
                   value={text}

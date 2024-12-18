@@ -12,14 +12,17 @@ import { clearComments, setCurrentPage } from '@/redux/features/comment/commentS
 interface PostProps {
   post: PostState,
   closeFunc: () => void,
-  idComment?: string
+  idComment?: string,
+  replyId?: string,
+  setReplyId?: (id: string) => void,
+  setIdComment?: (id: string) => void
 }
 
-const ModalPostComment= ({post, closeFunc, idComment}: PostProps) => {
+const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, setReplyId}: PostProps) => {
 
   const [text, setText] = useState<string>('')
   const [warningModal, setWarningModal] = useState<boolean>(false)
-  const [activeDropdownIndex, setActiveDropdownIndex] = useState<number>(-1)
+  const [activeDropdownIndex, setActiveDropdownIndex] = useState<string | null>(null)
   const [height, setHeight] = useState<number>(150)
   const [checkReply, setCheckReply] = useState(false)
 
@@ -42,18 +45,27 @@ const ModalPostComment= ({post, closeFunc, idComment}: PostProps) => {
   },[])
 
   useEffect(() => {
-    if (idComment && comments.length > 0) {
-      const commentElement = commentRefs.current[idComment];
-      if (commentElement instanceof HTMLElement) {
-        commentElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-      } else {
-        console.log('Không thể cuộn, không phải phần tử DOM:', commentElement);
+    if (comments.length > 0) {
+      if(idComment && !replyId){
+        const commentElement = commentRefs.current[idComment];
+        if (commentElement instanceof HTMLElement) {
+          commentElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+          setActiveDropdownIndex(idComment)
+          setCheckReply(true)
+          setIdComment && setIdComment('')
+        } else {
+          console.log('Không thể cuộn, không phải phần tử DOM:', commentElement);
+        }
+      }
+      else if (idComment && replyId){
+        setActiveDropdownIndex(replyId)
+        setCheckReply(true)
       }
     }
-  }, [idComment, comments]);
+  }, [comments]);
 
   const fetchNextComments = useCallback(async()=> {
       try {
@@ -75,8 +87,8 @@ const ModalPostComment= ({post, closeFunc, idComment}: PostProps) => {
     }
   })
 
-  const handleShowDropdownEdit = (index: number) => {
-    setActiveDropdownIndex(index);
+  const handleShowDropdownEdit = (id: string) => {
+    setActiveDropdownIndex(id);
   };
 
   const handleCloseModal = () => {
@@ -118,7 +130,7 @@ const ModalPostComment= ({post, closeFunc, idComment}: PostProps) => {
             <div className='flex justify-center fixed items-center w-full flex-col  h-[70px]'>
               <div className='flex items-center justify-center w-full h-full'>
                 <span className='text-xl font-bold text-textColor'>{post.created_by.fullName}&apos;s Post</span>
-                <button onClick={text || activeDropdownIndex !== -1 || checkReply ? ()=> setWarningModal(true) : handleCloseModal} className="btn text-textColor btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
+                <button onClick={text || activeDropdownIndex || checkReply ? ()=> setWarningModal(true) : handleCloseModal} className="btn text-textColor btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
               </div>
               <div className='divider m-0' />
             </div>
@@ -149,13 +161,13 @@ const ModalPostComment= ({post, closeFunc, idComment}: PostProps) => {
                         >
                           <Comment
                             comment={comment}
-                            index={index}
-                            activeDropdownIndex={activeDropdownIndex}
-                            handleShowDropdownEdit={handleShowDropdownEdit}
+                            activeDropdownIndex={activeDropdownIndex || null}
+                            handleShowDropdownEdit={()=>handleShowDropdownEdit}
                             checkReply={checkReply}
                             setCheckReply={setCheckReply}
                             postId={post.id ?? 0}
                             idComment={idComment}
+                            replyId={replyId}
                           />
                         </div>
                       ))}

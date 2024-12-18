@@ -81,7 +81,7 @@ const Login = () => {
               placeholder='password'
               type={showPassword ? 'text' : 'password'}
               onClick={() => setShowPassword(!showPassword)}
-              iconComponent={showPassword ? <FaEyeSlash /> : <FaEye />}
+              iconComponent={showPassword ? FaEyeSlash : FaEye}
               {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
             />
                 {(errors.password) && (

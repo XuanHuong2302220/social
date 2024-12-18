@@ -21,17 +21,17 @@ import { decreaCountComment } from '@/redux/features/post/postSlice'
 
 interface CommentProps {
   comment: CommentInter,
-  activeDropdownIndex?: number,
-  index?: number,
-  handleShowDropdownEdit?: (index: number) => void,
+  activeDropdownIndex?: string | null,
+  handleShowDropdownEdit?: (id: string | null) => void,
   checkReply?: boolean
   setCheckReply?: (isReply: boolean) => void,
   postId: number,
   reply?: boolean,
-  idComment?: string
+  idComment?: string,
+  replyId?: string
 }
 
-const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, setCheckReply, postId, reply, idComment}: CommentProps) => {
+const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckReply, postId, reply, idComment, replyId}: CommentProps) => {
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -48,6 +48,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   const [isReply, setIsReply] = useState(false)
   const dropdownRefEdit = useRef<HTMLDivElement>(null)
   const commentRef = useRef<HTMLDivElement>(null)
+  const commentRefs = useRef<{[key: string]: HTMLDivElement | null}>({})
   const [edit, setEdit] = useState(false)
   const [text, setText] = useState<string>(comment.content)
   const [replyComment, setReplyComment] = useState('')
@@ -68,7 +69,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
 
   const handleClickExit = () => {
     setEdit(false)
-    handleShowDropdownEdit && handleShowDropdownEdit(-1)
+    handleShowDropdownEdit && handleShowDropdownEdit(null)
     setShowDropdownEdit(false)
   }
 
@@ -79,10 +80,33 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   }
 
   useEffect(()=> {
-    if(idComment){
-      setEdit(true)
+    if(idComment === comment.id){
+      handleOpenReplycomment()
     }
-  }, [idComment])
+  }, [])
+
+  useEffect(()=> {
+    if(replyComments.length > 0 && idComment){
+        if(replyId){
+          const commentElement = commentRefs.current[replyId];
+          const replyElement = commentElement?.querySelector('#replyId')
+
+          if (commentElement instanceof HTMLElement) {
+            commentElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            });
+            if(replyElement instanceof HTMLElement) replyElement.click()
+          }
+          else {
+            console.log('Không thể cuộn, không phải phần tử DOM:', commentElement);
+          }
+        }
+        else if(!replyId){
+          setIsReply(true)  
+        }
+    }
+  }, [replyComments])
 
   const handleOnchange = (text: string, type: string) => {
       if (type === 'comment') {
@@ -111,10 +135,10 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
   }, [showDropdownEdit])
 
   useEffect(() => {
-    if (index !== activeDropdownIndex) {
+    if (!activeDropdownIndex) {
       setShowDropdownEdit(false);
     }
-  }, [index, activeDropdownIndex]);
+  }, [activeDropdownIndex]);
 
   const handleShowDropDownEdit = () => {
     setShowDropdownEdit(!showDropdownEdit)
@@ -154,6 +178,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
 
   const handleOpenReply = ()=> {
     setIsReply(true)
+    handleShowDropdownEdit && handleShowDropdownEdit(comment.id)
     setCheckReply && setCheckReply(true)
   }
 
@@ -210,7 +235,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
 
   const handleOpenEdit = ()=> {
     setEdit(true)
-    handleShowDropdownEdit && handleShowDropdownEdit(index ?? -1)
+    handleShowDropdownEdit && handleShowDropdownEdit(activeDropdownIndex || null)
   }
 
   const handleUpdateComment = async() => {
@@ -221,7 +246,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
       await updateComment(comment.id, text)
     }
     setEdit(false)
-    handleShowDropdownEdit && handleShowDropdownEdit(-1)
+    handleShowDropdownEdit && handleShowDropdownEdit(null)
   }
 
   const handleReplyComment = async() => {
@@ -285,7 +310,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
 
   return (
       <div>
-        {edit && index === activeDropdownIndex ? 
+        {edit && activeDropdownIndex ? 
           <div id='chatComment' className='flex flex-col gap-2 items-start w-full' >
             <ChatComment
               text={text}
@@ -339,7 +364,7 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
                         />
                         }
                     </div>
-                    <span className='text-sm text-textColor cursor-pointer hover:underline' onClick={handleOpenReply}>reply</span>
+                    <span className='text-sm text-textColor cursor-pointer hover:underline' id='replyId' onClick={handleOpenReply}>reply</span>
 
                     {comment.reactionCount > 0 && showReaction.icon && <div onClick={handleOpenReactions} className='ml-auto flex gap-1 items-center cursor-pointer hover:underline'>
                       <span className='text-textColor text-sm'>{comment.reactionCount}</span>
@@ -416,12 +441,13 @@ const Comment= ({comment, index, activeDropdownIndex, handleShowDropdownEdit, se
             }
             {loadingComment ? <span className="loading loading-spinner loading-md"></span> : 
               replyComments.map((replyComment) => (
-                <Comment 
-                  key={replyComment.id}
-                  comment={replyComment}
-                  reply
-                  postId={postId}
-                />
+                <div ref={(el)=> {commentRefs.current[replyComment.id] = el}} key={replyComment.id} >
+                  <Comment
+                    comment={replyComment}
+                    reply
+                    postId={postId}
+                  />
+                </div>
               ))
             }
           </div>

@@ -177,6 +177,8 @@ export interface Notification {
     post: number,
     comment?: string,
     replyCommentId?: string,
+    parentId?:string,
+    comment_content?: string,
     reactionType?: string
 }
 
