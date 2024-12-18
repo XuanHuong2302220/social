@@ -54,7 +54,7 @@ const Home = () => {
   return (
     <Layout>
        <div className='h-screen p-[90px] tablet:px-5 phone:px-5 w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden relative' id="scrollableDiv" >
-          <div className='w-/4 bg-navbar laptop:block tablet:hidden phone:hidden h-fit p-4 rounded-xl'>
+          <div className='w-1/4 bg-navbar laptop:block tablet:hidden phone:hidden h-fit p-4 rounded-xl'>
               <MiniProfile 
                 user={profile ?? user}
               />

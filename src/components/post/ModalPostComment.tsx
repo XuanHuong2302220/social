@@ -154,15 +154,15 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, set
                       className='my-infinite-scroll-comment w-full flex flex-col gap-3'
                       scrollableTarget='commentScroll'
                     >
-                      {comments.map((comment, index)=> (
+                      {comments.map((comment)=> (
                         <div
                           key={comment.id}
                           ref={(el) => { commentRefs.current[comment.id] = el; }}
                         >
                           <Comment
                             comment={comment}
-                            activeDropdownIndex={activeDropdownIndex || null}
-                            handleShowDropdownEdit={()=>handleShowDropdownEdit}
+                            activeDropdownIndex={activeDropdownIndex}
+                            handleShowDropdownEdit={(id)=>handleShowDropdownEdit(id ?? '')}
                             checkReply={checkReply}
                             setCheckReply={setCheckReply}
                             postId={post.id ?? 0}

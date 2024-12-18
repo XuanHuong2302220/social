@@ -52,7 +52,7 @@ const ChatComment = ({loading,height, text, handleComment, onChange, handleEmoji
       };
 
   return (
-    <div id='editComment' className={`bg-navbar py-3 w-full z-50 mb-3`} style={{ height: `${(height)}px`}}>
+    <div id='editComment' className={`bg-navbar py-3 w-full z-40 mb-3`} style={{ height: `${(height)}px`}}>
         <div className={`${loading && 'pointer-events-none opacity-25'} w-full flex px-5 gap-2 items-start`} style={{paddingInline : className}}>
             <Avatar 
             width={10}

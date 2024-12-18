@@ -379,7 +379,7 @@ const Profile = () => {
 
           <div className='w-full gap-5 flex h-1/3'>
 
-            <div className='w-1/3 p-4 rounded-lg text-textColor bg-navbar'>
+            <div className='w-1/3 p-4 h-fit rounded-lg text-textColor bg-navbar'>
                 <MiniProfile 
                   hide 
                   user={userProfile}

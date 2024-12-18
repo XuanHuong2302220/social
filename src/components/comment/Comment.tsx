@@ -18,6 +18,7 @@ import useCreateComment from '@/api/comment/createComment'
 import useGetReactions from '@/api/post/getAllReaction'
 import useGetAllComment from '@/api/comment/getAllComment'
 import { decreaCountComment } from '@/redux/features/post/postSlice'
+import { selectUser } from '@/redux/features/user/userSlice'
 
 interface CommentProps {
   comment: CommentInter,
@@ -36,7 +37,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const user = useAppSelector(state => state.user)
+  const user = useAppSelector(selectUser)
   const [showDropdown, setShowDropdown] = useState(false)
   const [showReaction, setShowReaction] = useState({
     color: comment.reactionType ? reactions.find(reaction=> reaction.name === comment.reactionType)?.color : 'text-textColor',
@@ -235,7 +236,11 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
 
   const handleOpenEdit = ()=> {
     setEdit(true)
-    handleShowDropdownEdit && handleShowDropdownEdit(activeDropdownIndex || null)
+    handleShowDropdownEdit && handleShowDropdownEdit(comment.id)
+    console.log({
+      id: comment.id,
+      activeDropdownIndex: activeDropdownIndex
+    })
   }
 
   const handleUpdateComment = async() => {
@@ -265,6 +270,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
     setReplyComment('')
     setIsReply(false)
     setCheckReply && setCheckReply(false)
+    handleShowDropdownEdit && handleShowDropdownEdit(null)
   }
 
   const handleClickDefaultReaction = async() => {
@@ -310,7 +316,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
 
   return (
       <div>
-        {edit && activeDropdownIndex ? 
+        {edit && activeDropdownIndex === comment.id ? 
           <div id='chatComment' className='flex flex-col gap-2 items-start w-full' >
             <ChatComment
               text={text}
@@ -446,6 +452,8 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                     comment={replyComment}
                     reply
                     postId={postId}
+                    activeDropdownIndex={activeDropdownIndex}
+                    handleShowDropdownEdit={(id)=>handleShowDropdownEdit && handleShowDropdownEdit(id ?? '')}
                   />
                 </div>
               ))
