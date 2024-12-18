@@ -5,7 +5,7 @@ import { Input, Button, Logo } from '@/components';
 import UserIcon from '@/assets/icons/user.svg';
 import PasswordIcon from '@/assets/icons/password.svg';
 import GoogleIcon from '@/public/icons/google.svg';
-import background from '@/assets/images/background.png';
+import background from '@/assets/images/primary-background.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
@@ -129,7 +129,7 @@ const Login = () => {
         </form>
         
         <div className='w-2/4 h-full desktop:flex 2xl:flex items-center justify-center tablet:hidden laptop:flex phone:hidden'>
-          <Image layout='responsive' src={background} alt="background" />
+          <Image layout='responsive' src={background} alt="background" className='rounded-xl' />
         </div>
 
       </div>
