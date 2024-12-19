@@ -54,7 +54,6 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const [text, setText] = useState<string>(comment.content)
   const [replyComment, setReplyComment] = useState('')
   const [hightLight, setHightLight] = useState<string>('')
-  const [height, setHeight] = useState<number>(100);
   const {updateComment, loading} = useUpdateComment()
   const {deleteComment, loading: loadingDelete} = useDeleteComment()
   const {createReactionComment, undoReactionComment} = useHandleReaction()
