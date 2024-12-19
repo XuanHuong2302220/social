@@ -26,6 +26,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         dispatch(setUserOnline(users));
       });
       socket.on('conversationUpdate', conversation => {
+        console.log('conversationUpdate', conversation);
         dispatch(addConversation(conversation));
       })
 

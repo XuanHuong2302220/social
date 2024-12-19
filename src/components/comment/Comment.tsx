@@ -53,6 +53,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const [edit, setEdit] = useState(false)
   const [text, setText] = useState<string>(comment.content)
   const [replyComment, setReplyComment] = useState('')
+  const [hightLight, setHightLight] = useState<string>('')
   const [height, setHeight] = useState<number>(100);
   const {updateComment, loading} = useUpdateComment()
   const {deleteComment, loading: loadingDelete} = useDeleteComment()
@@ -77,6 +78,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const handleCancelRepy = ()=> {
     setIsReply(false)
     setCheckReply && setCheckReply(false)
+    handleShowDropdownEdit?.(null)
     setReplyComment('')
   }
 
@@ -88,24 +90,33 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
 
   useEffect(()=> {
     if(replyComments.length > 0 && idComment){
-        if(replyId){
-          const commentElement = commentRefs.current[replyId];
-          const replyElement = commentElement?.querySelector('#replyId')
+      if(replyId){
+        const commentElement = commentRefs.current[replyId];
+        const replyElement = commentElement?.querySelector('#replyId')
 
-          if (commentElement instanceof HTMLElement) {
-            commentElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center',
-            });
-            if(replyElement instanceof HTMLElement) replyElement.click()
-          }
-          else {
-            console.log('Không thể cuộn, không phải phần tử DOM:', commentElement);
-          }
+        if (commentElement instanceof HTMLElement) {
+          commentElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+          if(replyElement instanceof HTMLElement) replyElement.click()
+          setReplyComment(comment.created_by.fullName)
+          setHightLight(comment.created_by.fullName)
         }
-        else if(!replyId){
-          setIsReply(true)  
+        else {
+          console.log('Không thể cuộn, không phải phần tử DOM:', commentElement);
         }
+      }
+      else if(!replyId){
+        setIsReply(true)  
+        setReplyComment(comment.created_by.fullName)
+        setHightLight(comment.created_by.fullName)
+      }
+    }
+    else if (replyComments.length === 0 && idComment === comment.id && !replyId){
+      setIsReply(true)
+      setReplyComment(comment.created_by.fullName)
+      setHightLight(comment.created_by.fullName)
     }
   }, [replyComments])
 
@@ -180,11 +191,16 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const handleOpenReply = ()=> {
     setIsReply(true)
     handleShowDropdownEdit && handleShowDropdownEdit(comment.id)
+    if(comment.created_by.id !== user.id) {
+      setReplyComment(comment.created_by.fullName)
+      setHightLight(comment.created_by.fullName)
+    }
     setCheckReply && setCheckReply(true)
   }
 
-  const highlightText = (text: string) => {
-    const regex = /(#\w+)/g;
+  const highlightText = (text: string, highlights: string[]) => {
+    const regex = new RegExp(`(${highlights.join('|')}|#\\w+)`, 'gi');
+    
     return text?.split('\n').map((line, index) => (
       <React.Fragment key={index}>
         {line.split(regex).map((part, i) =>
@@ -194,21 +210,6 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
       </React.Fragment>
     ));
   };
-
-  //set height for chat comment
-  useEffect(() => {
-    const textElement = document.querySelector('#textcomment');
-    if (textElement && textElement instanceof HTMLElement) {
-      if(text && textElement.clientHeight > (height - 50)){
-        setHeight(height)
-      }
-      else if(!text){
-        setHeight(100)
-      }
-    }
-
-  }, [text]);
-
 
   const handleClickReaction = async(name: string) => {
     if (hoverTimeoutRef.current) {
@@ -324,7 +325,6 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
               onChange={(value) => handleOnchange(value.target.value, 'comment')}
               handleComment={handleUpdateComment}
               className='0'
-              height={height}
               edit
               loading={loading}
               handleExit={handleClickExit}
@@ -339,19 +339,21 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
             setShowDropdownEdit(false)
           }}
         >
-            <Avatar
-              width={40}
-              height={40}
-              alt='avatar'
-              id={comment.created_by.id}
-              src={comment.created_by.avatar ?? ''}
-              className='w-[40px] h-[40px]'
-            />
+            <a href={`/${comment.created_by.username}`}>
+              <Avatar
+                width={40}
+                height={40}
+                alt='avatar'
+                id={comment.created_by.id}
+                src={comment.created_by.avatar ?? ''}
+                className='w-[40px] h-[40px]'
+              />
+            </a>
         
             <div className='flex flex-col gap-2 text-wrap break-words max-w-[80%]'>
                 <div className='flex flex-col text-textColor bg-search px-3 py-1 rounded-2xl w-auto items-start max-w-full'>
-                    <span className='text-xs font-bold cursor-pointer hover:underline w-auto'>{comment.created_by.fullName}</span>
-                    <span className='w-full'>{highlightText(comment.content)}</span>
+                    <span className='text-xs font-bold cursor-pointer hover:underline w-auto' onClick={()=> window.location.href = `/${comment.created_by.username}`} >{comment.created_by.fullName}</span>
+                    <span className='w-full'>{highlightText(comment.content, ['Nguyen Khang'])}</span>
                 </div>
                 <div className='flex px-3 gap-2 max-w-full'>
                     <span className='text-sm text-textColor'>{comment.created_ago}</span>
@@ -420,10 +422,10 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
               onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
               handleComment={handleReplyComment}
               className='0'
-              height={height}
               edit
               loading={loadingReplyComment}
               handleExit={handleCancelRepy}
+              hightLight={hightLight}
             />
           </div> : isReply && comment.parentId &&
             <ChatComment
@@ -432,10 +434,10 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
               onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
               handleComment={handleReplyComment}
               className='0'
-              height={height}
               edit
               loading={loadingReplyComment}
               handleExit={handleCancelRepy}
+              hightLight={hightLight}
             />
           }
 

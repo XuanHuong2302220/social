@@ -5,6 +5,7 @@ import useGetAllMessage from '@/api/messages/getAllMessage'
 import useGetConversation from '@/api/messages/getConversation'
 import { Conversations, UserChat } from '@/components'
 import Layout from '@/components/DefaultLayout'
+import useSocket from '@/socket/socket'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -15,6 +16,7 @@ const MessagePage = () => {
   const {loading, getAllMessage} = useGetAllMessage()
   const {id}  = useParams() as { id: string }
   const [selectedConversation, setSelectedConversation] = useState(id)
+  const userSocket = useSocket('users')
 
   useEffect(()=> {
     getAllConversation()
@@ -32,7 +34,7 @@ const MessagePage = () => {
         <div className='pt-[65px] h-screen flex rounded-md bg-background'>
           <UserChat handleSelectCon={handleSelectConversation} selectedConversation={selectedConversation} className='bg-navbar w-1/3 h-full' />
           <div className='divider divider-horizontal m-0 bg-background w-[1px]' />
-            {conversation && <Conversations background='search' conversation={conversation} loadingMess={loading} />}
+            {conversation && <Conversations background='search' conversation={conversation} userSocket={userSocket} loadingMess={loading} />}
         </div> 
     </Layout>
   )

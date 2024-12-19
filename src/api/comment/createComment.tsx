@@ -30,7 +30,8 @@ const useCreateComment = (postId?: number) => {
                     created_by: {
                         id: comment.created_by.id,
                         fullName: comment.created_by.fullName,
-                        avatar: comment.created_by.avatar
+                        avatar: comment.created_by.avatar,
+                        username: comment.created_by.username
                     },
                     created_at: new Date().toISOString()
                 }))

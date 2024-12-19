@@ -148,7 +148,8 @@ export interface Comment {
     created_by: {
         fullName: string,
         avatar: string,
-        id: string
+        id: string,
+        username: string
     },
     id: string,
     image?: string | null,
@@ -156,6 +157,8 @@ export interface Comment {
     reactionType: string,
     parentId?: string,
     commentCount: number,
+    notify1?: Notification,
+    notify2?: Notification
 }
 
 export interface Message {
@@ -179,7 +182,7 @@ export interface Notification {
     replyCommentId?: string,
     parentId?:string,
     comment_content?: string,
-    reactionType?: string
+    reaction_type?: string
 }
 
 export interface Conversation {

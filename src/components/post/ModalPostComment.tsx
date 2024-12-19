@@ -14,15 +14,15 @@ interface PostProps {
   closeFunc: () => void,
   idComment?: string,
   replyId?: string,
-  setIdComment?: (id: string) => void
+  setIdComment?: (id: string) => void,
+  setReplyId?: (id: string) => void
 }
 
-const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: PostProps) => {
+const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, setReplyId}: PostProps) => {
 
   const [text, setText] = useState<string>('')
   const [warningModal, setWarningModal] = useState<boolean>(false)
   const [activeDropdownIndex, setActiveDropdownIndex] = useState<string | null>(null)
-  const [height, setHeight] = useState<number>(150)
   const [checkReply, setCheckReply] = useState(false)
 
   const commentRefs = useRef<{[key: string]: HTMLDivElement | null}>({})
@@ -33,7 +33,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
 
   const hasNextPage = useAppSelector(state => state.comment.hasMore)
 
-  const comments = useAppSelector(state => state.comment.comments)
+  const comments = useAppSelector(state => state.comment.comments) || []
 
   const dispatch = useAppDispatch()
 
@@ -47,12 +47,13 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
     if (comments.length > 0) {
       if(idComment && !replyId){
         const commentElement = commentRefs.current[idComment];
+        console.log('commentElement:', commentElement);
         if (commentElement instanceof HTMLElement) {
           commentElement.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
           });
-          setActiveDropdownIndex(idComment)
+          // setActiveDropdownIndex(idComment)
           setCheckReply(true)
           setIdComment && setIdComment('')
         } else {
@@ -60,7 +61,8 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
         }
       }
       else if (idComment && replyId){
-        setActiveDropdownIndex(replyId)
+        console.log('replyId:', replyId);
+        // setActiveDropdownIndex(replyId)
         setCheckReply(true)
       }
     }
@@ -96,21 +98,8 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
     dispatch(clearComments())
     dispatch(setCurrentPage(1))
     closeFunc && closeFunc()
+    setReplyId && setReplyId('')
   }
-
-  useEffect(() => {
-    const textElement = document.querySelector('#textcomment');
-    
-    if (textElement && textElement instanceof HTMLElement) {
-      if(text && textElement.clientHeight > (height - 50)){
-        setHeight(height + 50)
-      }
-      else if(!text){
-        setHeight(150)
-      }
-    }
-
-  }, [text]);
 
   const onChange = (text: string) => {
     setText(text)
@@ -126,7 +115,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
   return (
         <Modal 
           title={
-            <div className='flex justify-center fixed items-center w-full flex-col  h-[70px]'>
+            <div className='flex justify-center fixed items-center w-full flex-col h-[70px]'>
               <div className='flex items-center justify-center w-full h-full'>
                 <span className='text-xl font-bold text-textColor'>{post.created_by.fullName}&apos;s Post</span>
                 <button onClick={text || activeDropdownIndex || checkReply ? ()=> setWarningModal(true) : handleCloseModal} className="btn text-textColor btn-sm btn-circle btn-ghost absolute right-2 top-">✕</button>
@@ -136,7 +125,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
           }
           className='overflow-hidden max-w-[600px] h-full p-0 bg-navbar'
         >
-          <div className='flex flex-col h-full pt-[80px]'>
+          <div className='flex flex-col max-h-full pt-[80px]'>
               <div className='flex flex-col overflow-auto max-h-[85%]' id='commentScroll'>
                 <Post 
                   post={post}
@@ -145,7 +134,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
                 <div className='divider m-0 px-5' />
 
                {<div className='flex flex-col gap-3 px-5 pt-3'>
-                    {comments && <InfiniteScroll
+                    {comments.length > 0 && <InfiniteScroll
                       dataLength={comments.length}
                       loader={<SkeletonReaction />}
                       hasMore={hasNextPage}
@@ -174,7 +163,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
                     </InfiniteScroll>}
                 </div>
                 }
-                { !loadingGetComment && comments && comments.length < 1 ? <h2 className='w-full py-5 text-center text-lg text-textColor font-bold'>No Comment Yet</h2> : null}
+                { loadingGetComment && comments.length === 0 ? <SkeletonReaction /> : !loadingGetComment && comments.length === 0 && <h2 className='w-full py-5 text-center text-lg text-textColor font-bold'>No Comment Yet</h2>}
 
               </div>
 
@@ -186,7 +175,6 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId}: Po
                   handleEmojiClick={handleEmojiClick}
                   onChange={(text)=>onChange(text.target.value)}
                   handleComment={handleSendComment}
-                  height={height}
                 />
               
                 {warningModal && <Modal

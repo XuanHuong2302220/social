@@ -19,14 +19,13 @@ const useCreateMessage = (idConversation : string, userSocket?: Socket)=> {
     const socket = useSocket('messages')
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
-    // const userSocket = useSocket('users')
 
     useEffect(()=> {
         if(socket){
             socket.emit('joinConversation', { conversationId: idConversation });
             socket.on('messageCreated', (message)=> {
                 if(message.receiver.id === user.id) {
-                    const sound = new Audio('/sound/notification.wav')
+                    const sound = new Audio('/assets/sound/notification.wav')
                     sound.play()
                 }
                 if(userSocket){
@@ -49,7 +48,6 @@ const useCreateMessage = (idConversation : string, userSocket?: Socket)=> {
                     ...data,
                     conversationId: data.idConversation
                 })
-
             }
         } catch (error) {
             console.log(error)

@@ -50,7 +50,7 @@ const Navbar = () => {
 
   const { loadingSearch, result, searchUser } = useSearch()
 
-  const {getAllNotify} = useGetAllNoti()
+  const {loading: loadingNotify ,getAllNotify} = useGetAllNoti()
 
   const { getAllConversation } = useGetAllConversation();
 
@@ -226,7 +226,7 @@ const Navbar = () => {
             classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-260px]'
           >
             {
-              showDropDownNotification && <NotiBox handleOpenPostNotify={(post, comment, parentId)=> handleOpenNoti(post, comment, parentId)} />
+              showDropDownNotification && <NotiBox loading={loadingNotify} handleOpenPostNotify={(post, comment, parentId)=> handleOpenNoti(post, comment, parentId)} />
             }
           </DropDown>
         </div>
@@ -277,6 +277,7 @@ const Navbar = () => {
         idComment={commentId}
         setIdComment={setCommentId}
         replyId={replyId}
+        setReplyId={setReplyId}
       />}
 
       {loading && <Modal

@@ -61,7 +61,7 @@ const Home = () => {
           </div>
           <div className='h-full desktop:w-2/4 laptop:w-2/4 tablet:w-full phone:w-full flex flex-col gap-5 px-5' >
               <NewPost />
-              {<InfiniteScroll
+              {posts.length > 0 ? <InfiniteScroll
                 dataLength={posts.length}
                 next={fetchNextPosts}
                 hasMore={hasMore}
@@ -73,8 +73,8 @@ const Home = () => {
                 {posts.map((post) => (
                   <Post key={post.id} post={post} width={900} />
                 ))}
-              </InfiniteScroll>}
-              {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let&apos;s create your first post</div>}
+              </InfiniteScroll>
+              :loading && posts.length === 0 ? <SkeletonPost /> : !loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let&apos;s create your first post</div>}
 
           </div>
           <div className='w-1/4 laptop:block tablet:hidden phone:hidden'>
