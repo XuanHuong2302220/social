@@ -2,7 +2,7 @@
 
 import React, { useState} from 'react';
 import { Input, Button, Logo } from '@/components';
-import background from '@/assets/images/background.png';
+import background from '@/assets/images/primary-background.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
