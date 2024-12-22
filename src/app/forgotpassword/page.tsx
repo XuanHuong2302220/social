@@ -32,7 +32,7 @@ const ForgotPassword = () => {
 
   return (
     <div className='bg-gray-100 w-screen h-screen flex justify-center items-center'>
-      <form onSubmit={handleSubmit(onSubmit)} className='w-1/3  bg-white rounded-lg shadow-lg p-8 '>
+      <form onSubmit={handleSubmit(onSubmit)} className='phone:w-full tablet:w-1/3 desktop:w-1/3 laptop:w-1/3 bg-white rounded-lg shadow-lg p-8 '>
           <div className='w-full pb-4 flex justify-center' >
             <Logo onClick={()=> router.push('/login')} />
           </div>
@@ -50,18 +50,18 @@ const ForgotPassword = () => {
                 {errors.email?.message}
               </p>
             )}
-        <div className='flex w-full justify-between mt-2'>
+        <div className='flex w-full justify-between mt-2 phone:gap-2'>
             <Button
               text='Back'
               classNameText='text-white font-bold'
-              className='w-1/3 h-10 rounded-lg bg-black'
+              className='phone:w-1/2 tablet:w-1/3 desktop:w-1/3 laptop:w-1/3 h-10 rounded-lg bg-black'
               onClick={()=> router.push('/login')}
             />
           <Button
             text={loading ? null : 'Submit'}
             type="submit"
             classNameText='text-white font-bold'
-            className='w-1/3 h-10 rounded-lg bg-primaryColor border-primaryColor'
+            className='phone:w-1/2 tablet:w-1/3 desktop:w-1/3 laptop:w-1/3 h-10 rounded-lg bg-primaryColor border-primaryColor'
             disabled={loading}
             iconLoading={loading}
           />

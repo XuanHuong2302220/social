@@ -369,7 +369,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                         />
                         }
                     </div>
-                    <span className='text-sm text-textColor cursor-pointer hover:underline' id='replyId' onClick={handleOpenReply}>reply</span>
+                    {!comment.parent?.id && <span className='text-sm text-textColor cursor-pointer hover:underline' id='replyId' onClick={handleOpenReply}>reply</span>}
 
                     {comment.reactionCount > 0 && showReaction.icon && <div onClick={handleOpenReactions} className='ml-auto flex gap-1 items-center cursor-pointer hover:underline'>
                       <span className='text-textColor text-sm'>{comment.reactionCount}</span>
@@ -412,30 +412,19 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
           />
         }
 
-          {isReply && !comment.parent?.id ? <div className='ml-[54px] z-50'>
+          {isReply &&  <div className='ml-[54px] z-50'>
             <ChatComment
-              text={replyComment}
-              handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
-              onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
-              handleComment={handleReplyComment}
-              className='0'
-              edit
-              loading={loadingReplyComment}
-              handleExit={handleCancelRepy}
-              hightLight={hightLight}
-            />
-          </div> : isReply && comment.parent?.id &&
-            <ChatComment
-              text={replyComment}
-              handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
-              onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
-              handleComment={handleReplyComment}
-              className='0'
-              edit
-              loading={loadingReplyComment}
-              handleExit={handleCancelRepy}
-              hightLight={hightLight}
-            />
+                text={replyComment}
+                handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
+                onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
+                handleComment={handleReplyComment}
+                className='0'
+                edit
+                loading={loadingReplyComment}
+                handleExit={handleCancelRepy}
+                hightLight={hightLight}
+              />
+            </div>
           }
 
           <div className={`ml-[54px] z-50 items-center gap-1 ${replyComments.length > 0 && 'pt-3 '} ${loadingComment && 'flex gap-1'}`}>

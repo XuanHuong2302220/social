@@ -87,10 +87,10 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
       placeholderElement.style.position = 'absolute';
       placeholderElement.style.top = '25%';
     }
-    else if (placeholderElement && placeholderElement instanceof HTMLElement && images.length === 0) {
-      placeholderElement.style.position = 'absolute';
-      placeholderElement.style.top = '30%';
-    }
+    // else if (placeholderElement && placeholderElement instanceof HTMLElement && images.length === 0) {
+    //   placeholderElement.style.position = 'absolute';
+    //   placeholderElement.style.top = '30%';
+    // }
   }, [ images.length > 0]);
 
   // open file
