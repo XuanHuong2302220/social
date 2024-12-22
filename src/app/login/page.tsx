@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import useLoginApi from '@/api/auth/loginApi';
 import Link from 'next/link';
 import { useAppSelector } from '@/redux/hooks';
+import logo from '@/assets/images/logo.svg';
 
 interface FormValues {
   username: string;
@@ -47,20 +48,21 @@ const Login = () => {
           className='desktop:w-2/4 laptop:w-2/4 tablet:w-full phone:w-full h-full'
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Link href={'/login'} className='cursor-pointer'>
+          <Link href={'/login'} className='cursor-pointer phone:hidden desktop:block laptop:block tablet:block'>
             <Logo />
           </Link>
           <div className='w-full h-full flex flex-col justify-center items-center gap-2'>
-            <div className='flex flex-col w-full items-center'>
-              <span className='desktop:text-7xl laptop:text-5xl tablet:text-5xl phone:text-5xl font-bold text-black'>
+            <div className='flex flex-col gap-2 w-full items-center'>
+              <span className='desktop:text-7xl laptop:text-5xl tablet:text-5xl phone:text-5xl font-bold text-primaryColor flex items-center gap-2'>
                 Welcome
+                <Image src={logo} width={40} height={40} className='w-10 h-10 phone:block tablet:hidden desktop:hidden laptop:hidden' alt='logo' />
               </span>
-              <span className='text-sm text-black'>
+              <span className='text-sm text-black pb-2'>
                 We are glad to see you back with me
               </span>
             </div>
             <Input
-              className='w-3/4 h-10'
+              className='h-12 cursor-pointer phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4'
               placeholder='username or email'
               type='text'
               icon={UserIcon}
@@ -74,7 +76,7 @@ const Login = () => {
                   </p>
                 )}
             <Input
-              className='w-3/4 h-10 cursor-pointer'
+              className='h-12 cursor-pointer phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4'
               icon={PasswordIcon}
               width={20}
               height={20}
@@ -91,18 +93,18 @@ const Login = () => {
                 )}
 
                 <a href={'/forgotpassword'} 
-                  className=' w-3/4 text-right text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
+                  className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 text-right text-primaryColor hover:underline hover:underline-offset-4 hover:cursor-pointer'>
                   forgot password?
                 </a>
             <Button
-              text={loading ? null : 'Next'}
+              text={loading ? null : 'Talk'}
               type="submit"
               classNameText='text-white font-bold'
-              className='w-3/4 h-10 rounded-lg bg-black'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-10 rounded-lg bg-primaryColor border-primaryColor hover:bg-primaryColor hover:border-primaryColor'
               disabled={loading}
               iconLoading={loading}
             />
-            <div className="flex items-center w-3/4">
+            <div className="flex items-center phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4">
               <div className="flex-grow border-t border-gray-300"></div>
               <span className="font-bold">
                 Login<span className="font-thin"> with Others</span>
@@ -112,7 +114,7 @@ const Login = () => {
             <Button
               text='Login with Google'
               classNameText='text-black'
-              className='w-3/4 h-10 bg-white hover:bg-gray-200'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-10 bg-white hover:bg-gray-200'
               icon={GoogleIcon}
               onClick={loginWithGoogle}
               width={20}

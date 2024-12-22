@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import useSignupApi from '@/api/auth/signupApi';
 import { useAppSelector } from '@/redux/hooks';
+import Link from 'next/link';
 
 interface FormValues {
   username: string;
@@ -43,7 +44,9 @@ const SignUp = () => {
           className='desktop:w-2/4 laptop:w-2/4 tablet:w-full phone:w-full h-full'
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Logo />
+          <Link href="/login" className='cursor-pointer phone:hidden desktop:block laptop:block tablet:block'>
+            <Logo />
+          </Link>
           <div className='w-full h-full flex flex-col justify-center items-center gap-5'>
             <div className='flex flex-col w-full items-center gap-2'>
               <span className='desktop:text-3xl laptop:text-2xl tablet:text-2xl phone:text-2xl font-bold text-black flex gap-1'>
@@ -55,7 +58,7 @@ const SignUp = () => {
               </span>
             </div>
             <Input
-              className='w-3/4 h-10'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12'
               placeholder='username'
               type='text'
               width={20}
@@ -69,7 +72,7 @@ const SignUp = () => {
             )}
 
             <Input
-              className='w-3/4 h-10'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12'
               placeholder='email'
               type='email'
               width={20}
@@ -83,7 +86,7 @@ const SignUp = () => {
             )}
 
             <Input
-              className='w-3/4 h-10 cursor-pointer'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 cursor-pointer'
               width={20}
               height={20}
               placeholder='password'
@@ -99,7 +102,7 @@ const SignUp = () => {
             )}
 
             <Input
-              className='w-3/4 h-10 cursor-pointer'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 cursor-pointer'
               width={20}
               height={20}
               placeholder='confirm password'
@@ -117,7 +120,7 @@ const SignUp = () => {
               text={loading ? null : 'Sign Up'}
               type="submit"
               classNameText='text-white font-bold'
-              className='w-3/4 h-10 rounded-lg bg-black'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-10 rounded-lg bg-primaryColor border-primaryColor hover:bg-primaryColor hover:border-primaryColor'
               disabled={loading}
               iconLoading={loading}
             />
@@ -133,7 +136,7 @@ const SignUp = () => {
         </form>
 
         <div className='w-2/4 h-full desktop:flex 2xl:flex items-center justify-center tablet:hidden laptop:flex phone:hidden'>
-          <Image layout='responsive' src={background} alt="background" />
+          <Image layout='responsive' src={background} alt="background" className='rounded-lg' />
         </div>
       </div>
     </div>
