@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import Conversations from './messages/Conversations';
 import { addConversation, removeBoxMessage } from '@/redux/features/messages/messageSlice';
 import { usePathname } from 'next/navigation';
-import useSocket from '@/socket/socket';
 import { setUserOnline } from '@/redux/features/socket/socketSlice';
 import { IoNotifications } from "react-icons/io5";
 import { toast } from 'react-toastify';
