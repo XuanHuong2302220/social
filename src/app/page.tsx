@@ -10,8 +10,6 @@ import { selectUser } from '@/redux/features/user/userSlice'
 import { setPosts } from '@/redux/features/post/postSlice'
 import useCheckUser from '@/api/user/checkUser'
 import useSocket from '@/socket/socket'
-import { Socket } from 'socket.io-client'
-
 
 const Home = () => {
 
