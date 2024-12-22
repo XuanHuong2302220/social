@@ -7,8 +7,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import useSocket from "@/socket/socket"
 import axs from "@/utils/axios"
 import { useEffect, useState } from "react"
+import { Socket } from "socket.io-client"
 
-const useCreateComment = (postId?: number) => {
+const useCreateComment = (postId?: number, userSocket?: Socket) => {
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
@@ -17,14 +18,13 @@ const useCreateComment = (postId?: number) => {
 
     const socket = useSocket('comments')
 
-    // const existComment = new Set()
-
     useEffect(()=> {
         if(socket){
             if(postId){
                 socket.emit('joinPost', {postId: postId})
             }
             socket.on('messageCreated', (comment)=> {
+                console.log('comment', comment)
                 dispatch(addComment({
                     ...comment,
                     created_by: {
@@ -35,6 +35,18 @@ const useCreateComment = (postId?: number) => {
                     },
                     created_at: new Date().toISOString()
                 }))
+                if(comment.notify2){
+                    userSocket?.emit('sendNotification', {
+                        id1: comment.notify1.id,
+                        id2: comment.notify2.id
+                    })
+                }
+                else if(comment.notify1) {
+                    userSocket?.emit('sendNotification', {
+                        id1: comment.notify1.id
+                    })
+                }
+                
                 dispatch(setCountComment({postId: comment.post.id}))
                 
             })
@@ -47,7 +59,7 @@ const useCreateComment = (postId?: number) => {
 
     }, [socket, dispatch])
 
-    const createComment = async (postId: number, content: string, parentId?: string, commentId?: string) => {
+    const createComment = async (postId: number, content: string, parentId?: string, commentId?: string, onlineSocket?: Socket) => {
         setLoading(true)
         try {
             if(socket && !parentId && !commentId){
@@ -69,12 +81,34 @@ const useCreateComment = (postId?: number) => {
                         Authorization: `Bearer ${token}`
                     }
                 })
+
+                console.log({
+                    content: content,
+                    parentId: parentId,
+                    postId: postId
+                })
+
                 if(data){
+                    console.log('data', data, onlineSocket)
                     dispatch(addReplyComment({
                         parentId: parentId || '',
                         commentId: data.commentId,
                         replyComment: data
                     }))
+                    if(onlineSocket){
+                        // console.log('userSocket', onlineSocket)
+                        if(data.notify2){
+                            onlineSocket?.emit('sendNotification', {
+                                id1: data.notify1.id,
+                                id2: data.notify2.id
+                            })
+                        }
+                        else if(data.notify1) {
+                            onlineSocket?.emit('sendNotification', {
+                                id1: data.notify1.id
+                            })
+                        }
+                    }
                     dispatch(increaCountComment({parentId: parentId || ''}))
                     dispatch(setCountComment({postId: postId}))
                 }

@@ -2,14 +2,15 @@
 
 import { useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
+import { Socket } from "socket.io-client"
 
-const useHandleReaction = () => {
+const useHandleReaction = (socket?: Socket) => {
 
     const token = useAppSelector(state => state.auth?.token)
     
     const createReaction = async (postId: number, reaction: string) => {
         try {
-            await axs.post('/reaction/create-reaction-of-post', {
+           const response = await axs.post('/reaction/create-reaction-of-post', {
                 reactionType: reaction,
                 postId: postId
             }, {
@@ -18,6 +19,14 @@ const useHandleReaction = () => {
                 }
             })
 
+            const data = response.data
+            
+            if(data.notify){
+                socket?.emit('sendNotification', {
+                    id1: data.notify.id
+                })
+            }
+
         } catch (error) {
             console.log(error)
         }
@@ -25,7 +34,7 @@ const useHandleReaction = () => {
 
     const createReactionComment = async (commentId: string, reaction: string) => {
         try {
-         await axs.post('/reaction/create-reaction-of-comment', {
+         const response = await axs.post('/reaction/create-reaction-of-comment', {
                 reactionType: reaction,
                 commentId: commentId
             }, {
@@ -34,6 +43,13 @@ const useHandleReaction = () => {
                 }
             })
 
+            const data = response.data
+
+            if(data.notify){
+                socket?.emit('sendNotification', {
+                    id1: data.notify.id
+                })
+            }
 
         } catch (error) {
             console.log(error)

@@ -19,6 +19,7 @@ import useGetReactions from '@/api/post/getAllReaction'
 import useGetAllComment from '@/api/comment/getAllComment'
 import { decreaCountComment } from '@/redux/features/post/postSlice'
 import { selectUser } from '@/redux/features/user/userSlice'
+import { Socket } from 'socket.io-client'
 
 interface CommentProps {
   comment: CommentInter,
@@ -29,10 +30,11 @@ interface CommentProps {
   postId: number,
   reply?: boolean,
   idComment?: string,
-  replyId?: string
+  replyId?: string,
+  socket?: Socket
 }
 
-const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckReply, postId, reply, idComment, replyId}: CommentProps) => {
+const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckReply, postId, reply, idComment, replyId, socket}: CommentProps) => {
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -56,7 +58,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const [hightLight, setHightLight] = useState<string>('')
   const {updateComment, loading} = useUpdateComment()
   const {deleteComment, loading: loadingDelete} = useDeleteComment()
-  const {createReactionComment, undoReactionComment} = useHandleReaction()
+  const {createReactionComment, undoReactionComment} = useHandleReaction(socket)
   const {createComment, loading: loadingReplyComment} = useCreateComment()
   const [showReactionModal, setShowReactionModal] = useState(false)
   const {loading: loadingReaction, getAllReactions, listReaction, typeReaction} = useGetReactions()
@@ -176,8 +178,8 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   };  
   
   const handleDeleteComment = async() => {
-    if(reply && comment.parentId){
-      await deleteComment(comment.id, comment.parentId)
+    if(reply && comment.parent?.id){
+      await deleteComment(comment.id, comment.parent?.id)
     }
     else {
       await deleteComment(comment.id)
@@ -197,13 +199,13 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
     setCheckReply && setCheckReply(true)
   }
 
-  const highlightText = (text: string, highlights: string[]) => {
+  const highlightText = (text: string, highlights: string[], username?: string) => {
     const regex = new RegExp(`(${highlights.join('|')}|#\\w+)`, 'gi');
     
     return text?.split('\n').map((line, index) => (
       <React.Fragment key={index}>
         {line.split(regex).map((part, i) =>
-          regex.test(part) ? <span key={i} className="text-blue-500">{part}</span> : part
+          regex.test(part) ? <a href={`/${username}`} key={i} className="text-blue-500">{part}</a> : part
         )}
         <br />
       </React.Fragment>
@@ -220,8 +222,8 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
       leaveTimeoutRef.current = null;
     }
      
-    if(reply && comment.parentId){
-      dispatch(increaLikeComment({commentId: comment.id, parentId: comment.parentId}))
+    if(reply && comment.parent?.id){
+      dispatch(increaLikeComment({commentId: comment.id, parentId: comment.parent?.id}))
     }
     else {
       dispatch(increaLikeComment({commentId: comment.id}))
@@ -237,15 +239,11 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const handleOpenEdit = ()=> {
     setEdit(true)
     handleShowDropdownEdit && handleShowDropdownEdit(comment.id)
-    console.log({
-      id: comment.id,
-      activeDropdownIndex: activeDropdownIndex
-    })
   }
 
   const handleUpdateComment = async() => {
-    if(reply && comment.parentId){
-      await updateComment(comment.id, text, comment.parentId)
+    if(reply && comment.parent?.id){
+      await updateComment(comment.id, text, comment.parent?.id)
     }
     else {
       await updateComment(comment.id, text)
@@ -255,17 +253,17 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   }
 
   const handleReplyComment = async() => {
-    if(comment.parentId){
+    if(comment.parent?.id){
       if(comment.commentCount < 2){
         setIsCommentCount(false)
       }
-      await createComment(postId, replyComment, comment.parentId, comment.id)
+      await createComment(postId, replyComment, comment.parent?.id, comment.id, socket)
     }
     else {
       if(comment.commentCount < 2){
         setIsCommentCount(false)
       }
-      await createComment(postId, replyComment, comment.id,'no')
+      await createComment(postId, replyComment, comment.id,'no', socket)
     }
     setReplyComment('')
     setIsReply(false)
@@ -275,8 +273,8 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
 
   const handleClickDefaultReaction = async() => {
     if(showReaction.color !== 'text-textColor'){
-      if(reply && comment.parentId){
-        dispatch(decreaLikeComment({commentId: comment.id, parentId: comment.parentId}))
+      if(reply && comment.parent?.id){
+        dispatch(decreaLikeComment({commentId: comment.id, parentId: comment.parent?.id}))
       }
       else {
         dispatch(decreaLikeComment({commentId: comment.id}))
@@ -290,8 +288,8 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
       await undoReactionComment(comment.id)
     }
     else {
-      if(reply && comment.parentId){
-        dispatch(increaLikeComment({commentId: comment.id, parentId: comment.parentId}))
+      if(reply && comment.parent?.id){
+        dispatch(increaLikeComment({commentId: comment.id, parentId: comment.parent?.id}))
       }
       else {
         dispatch(increaLikeComment({commentId: comment.id}))
@@ -352,7 +350,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
             <div className='flex flex-col gap-2 text-wrap break-words max-w-[80%]'>
                 <div className='flex flex-col text-textColor bg-search px-3 py-1 rounded-2xl w-auto items-start max-w-full'>
                     <span className='text-xs font-bold cursor-pointer hover:underline w-auto' onClick={()=> window.location.href = `/${comment.created_by.username}`} >{comment.created_by.fullName}</span>
-                    <span className='w-full'>{highlightText(comment.content, ['Nguyen Khang'])}</span>
+                    <span className='w-full'>{highlightText(comment.content, [comment.parent?.created_by.fullName ?? 'none'], comment.parent?.created_by.username ?? '')}</span>
                 </div>
                 <div className='flex px-3 gap-2 max-w-full'>
                     <span className='text-sm text-textColor'>{comment.created_ago}</span>
@@ -414,7 +412,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
           />
         }
 
-          {isReply && !comment.parentId ? <div className='ml-[54px] z-50'>
+          {isReply && !comment.parent?.id ? <div className='ml-[54px] z-50'>
             <ChatComment
               text={replyComment}
               handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
@@ -426,7 +424,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
               handleExit={handleCancelRepy}
               hightLight={hightLight}
             />
-          </div> : isReply && comment.parentId &&
+          </div> : isReply && comment.parent?.id &&
             <ChatComment
               text={replyComment}
               handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
@@ -455,6 +453,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                     postId={postId}
                     activeDropdownIndex={activeDropdownIndex}
                     handleShowDropdownEdit={(id)=>handleShowDropdownEdit && handleShowDropdownEdit(id ?? '')}
+                    socket={socket}
                   />
                 </div>
               ))

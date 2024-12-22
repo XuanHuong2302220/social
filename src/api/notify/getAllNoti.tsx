@@ -17,7 +17,7 @@ const useGetAllNoti = ()=> {
         setLoading(true)
 
         try {
-            const response = await axs.get('/notification/get-all-notifications', {
+            const response = await axs.get('/notification/get-all-notifications?page=1&pageSize=50', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

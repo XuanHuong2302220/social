@@ -68,6 +68,7 @@ const Navbar = () => {
   }
 
   const handleOpenNoti = async(post: number, comment: string, parentId?: string)=> {
+    
     try {
       const response = await axs.get(`/post/get-post/${post}`, {
           headers: {
@@ -76,6 +77,10 @@ const Navbar = () => {
       })
       const data = await response.data
       setPostNoti(data)
+      console.log({
+        comment: comment,
+        parentId: parentId,
+      })
       if(parentId){
         setCommentId(parentId)
         setReplyId(comment)
@@ -223,7 +228,7 @@ const Navbar = () => {
             parents={<IoNotifications onClick={handleOpenNotification} className='text-xl cursor-pointer text-textColor' />}
             tabIndex={0}
             className='text-whiteText'
-            classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-260px]'
+            classNameContent='bg-navbar w-[400px] max-h-[90vh] overflow-y-auto rounded-b-lg menu z-50 top-10 right-[-260px]'
           >
             {
               showDropDownNotification && <NotiBox loading={loadingNotify} handleOpenPostNotify={(post, comment, parentId)=> handleOpenNoti(post, comment, parentId)} />

@@ -155,7 +155,7 @@ export interface Comment {
     image?: string | null,
     reactionCount: number,
     reactionType: string,
-    parentId?: string,
+    parent?: Comment,
     commentCount: number,
     notify1?: Notification,
     notify2?: Notification
@@ -180,7 +180,7 @@ export interface Notification {
     post: number,
     comment?: string,
     replyCommentId?: string,
-    parentId?:string,
+    parent?:Comment,
     comment_content?: string,
     reaction_type?: string
 }

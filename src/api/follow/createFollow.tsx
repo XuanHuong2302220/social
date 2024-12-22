@@ -3,8 +3,9 @@
 import { useAppSelector } from "@/redux/hooks"
 import axs from "@/utils/axios"
 import { useState } from "react"
+import { Socket } from "socket.io-client"
 
-const useCreateFollow = ()=> {
+const useCreateFollow = (socket?: Socket)=> {
     const [loading, setLoading] = useState(false)
     const token = useAppSelector(state => state.auth.token)
     const [isFollow, setIsFollow] = useState('')
@@ -22,6 +23,11 @@ const useCreateFollow = ()=> {
                 })
 
                 const data = await response.data
+                if(data.notify){
+                    socket?.emit('sendNotification', {
+                        id1: data.notify.id
+                    })
+                }
                 setIsFollow(data.isFollowing)
             }
             if(type === 'remove'){

@@ -45,9 +45,21 @@ const ChatComment = ({ loading, text, handleComment, onChange, handleEmojiClick,
     if(hightLight) {
       setHighlights([hightLight])
     }
+    else {
+      setHighlights([])
+    }
   }, [hightLight])
 
   const highlightText = (text: string, highlights: string[]) => {
+    if (highlights.length === 0) {
+      return text.split('\n').map((line, index) => (
+        <React.Fragment key={index}>
+          {line}
+          <br />
+        </React.Fragment>
+      ));
+    }
+
     const regex = new RegExp(`(${highlights.join('|')}|#\\w+)`, 'gi');
     return text.split('\n').map((line, index) => (
       <React.Fragment key={index}>

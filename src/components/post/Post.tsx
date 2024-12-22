@@ -29,11 +29,13 @@ import useGetReactions from '@/api/post/getAllReaction';
 import useDeletePost from '@/api/post/deletePost';
 import { selectUser, setAttributes } from '@/redux/features/user/userSlice';
 import useClickOutside from '@/hooks/useClickOutside';
+import { Socket } from 'socket.io-client';
 
 interface PostProps {
   post: PostState,
   disableButton?: boolean,
-  width?: number
+  width?: number,
+  socket?: Socket
 }
 
 const reactions = [
@@ -45,7 +47,7 @@ const reactions = [
   { color: 'text-orange-600' ,name: 'Angry', icon: angryIcon}
 ]
 
-const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
+const Post: React.FC<PostProps> = ({ post, disableButton, width, socket }) => {
 
   const [isBeginning, setIsBeginning] = useState(true)
   const [isEnd, setIsEnd] = useState(false)
@@ -68,7 +70,7 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
 
   const dispatch = useAppDispatch();
 
-  const {createReaction, undoReaction} = useHandleReaction()
+  const {createReaction, undoReaction} = useHandleReaction(socket)
   const {loading, getAllReactions, listReaction, typeReaction} = useGetReactions()
   const {loading: loadingDelete, deletePost} = useDeletePost()
   const user = useAppSelector(selectUser)
@@ -144,6 +146,7 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width }) => {
 const handleReaction = (name: string, icon: StaticImageData, color: string) => {
   if(post.id){
     if(showInteract.name === '') {
+      handleCloseReaction()
       setShowInteract({ name, icon, color })
       dispatch(increaLike({ postId: post.id }))
       dispatch(changeTypeReaction({postId: post.id, type: name}))
@@ -151,6 +154,7 @@ const handleReaction = (name: string, icon: StaticImageData, color: string) => {
       createReaction(post.id, name);
     }
     else {
+      handleCloseReaction()
       setShowInteract({ name, icon, color })
       dispatch(changeTypeReaction({postId: post.id, type: name}))
       setShowDropdown(false)
@@ -255,11 +259,11 @@ const handleDeletePost = (post: PostState) => {
         <div className='px-5'>
             <div className='flex justify-between'>
               {post.reaction_count > 0 && 
-                <span onClick={handleOpenModalReact} className='text-sm flex items-center gap-1 text-textColor hover:underline cursor-pointer'>
-                <span>{post.reaction_count} </span>
-                  <Image src={reactions.find((r)=> r.name === post.reactionType)?.icon ?? ''} alt={post.reactionType} width={20} height={20} />
+                <span onClick={handleOpenModalReact} className='text-sm flex font-bold items-center gap-1 text-textColor hover:underline cursor-pointer'>
+               {post.reaction_count + " " + "React"} 
+                  {/* <Image src={reactions.find((r)=> r.name === post.reactionType)?.icon ?? ''} alt={post.reactionType} width={20} height={20} /> */}
                 </span>}
-              {post.comment_count > 0 && <span className={`text-sm text-textColor ${post.reaction_count === 0 && 'ml-auto'}`}>{post.comment_count} Comments</span>}
+              {post.comment_count > 0 && <span className={`text-sm text-textColor font-bold ${post.reaction_count === 0 && 'ml-auto'}`}>{post.comment_count} Comments</span>}
             </div>
             <div className='divider m-0' />
             <div className='flex justify-around h-2/4 w-full'>
@@ -313,6 +317,7 @@ const handleDeletePost = (post: PostState) => {
         <ModalPostComment 
           post={post}
           closeFunc={()=> setOpenModalComment(false)}
+          socket={socket}
         />}
     </div>
   )

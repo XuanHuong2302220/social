@@ -6,19 +6,21 @@ import { addConversation, removeBoxMessage } from '@/redux/features/messages/mes
 import { usePathname } from 'next/navigation';
 import useSocket from '@/socket/socket';
 import { setUserOnline } from '@/redux/features/socket/socketSlice';
+import { IoNotifications } from "react-icons/io5";
+import { toast } from 'react-toastify';
+import { Socket } from 'socket.io-client';
 interface LayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode,
+  socket?: Socket
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, socket }) => {
 
   const dispatch = useAppDispatch();
 
   const conversations = useAppSelector(state => state.message.boxConversation);
   const pathName = usePathname();
   const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
-
-  const socket = useSocket('users')
 
   useEffect(() => {
     if (socket) {
@@ -28,6 +30,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       socket.on('conversationUpdate', conversation => {
         console.log('conversationUpdate', conversation);
         dispatch(addConversation(conversation));
+      })
+
+      socket.on('messageCreated', (notify)=> {
+        toast(notify.content, {
+          icon: <IoNotifications style={{color: 'var(--primary-color)'}} />,
+          style: {color: 'var(--primary-color)', backgroundColor: 'var(--navbar)'},
+        })
       })
 
       return () => {

@@ -20,6 +20,7 @@ import useCreateConversation from '@/api/messages/createConversation'
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from 'react-hook-form'
 import useChangePassword from '@/api/user/changePassword'
+import useSocket from '@/socket/socket'
 
 interface FormValues {
   currentPassword: string;
@@ -44,6 +45,7 @@ const Profile = () => {
   const [loadingImage, setLoadingImage] = useState(false)
   const dispatch = useAppDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
+  const socket = useSocket('users')
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -61,9 +63,10 @@ const Profile = () => {
 
   const {getAllPost} = useGetAllPost()
 
-  const {loading: loadingFollow, createFollow, isFollow} = useCreateFollow()
+  const {loading: loadingFollow, createFollow, isFollow} = useCreateFollow(socket)
 
   const {loading: loadingPassword, changePassword} = useChangePassword()
+
 
   const {createConversation} = useCreateConversation()
 
@@ -399,7 +402,7 @@ const Profile = () => {
                     scrollableTarget='scrollableDivProfile'
                   >
                     {posts.map((post) => (
-                      <Post key={post.id} post={post} width={900} />
+                      <Post key={post.id} post={post} width={900} socket={socket} />
                     ))}
                   </InfiniteScroll> }
                   {!loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let&apos;s create your first post</div>}

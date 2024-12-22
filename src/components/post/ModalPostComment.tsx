@@ -8,6 +8,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import useGetAllComment from '@/api/comment/getAllComment'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { clearComments, setCurrentPage } from '@/redux/features/comment/commentSlice'
+import { Socket } from 'socket.io-client'
 
 interface PostProps {
   post: PostState,
@@ -15,10 +16,11 @@ interface PostProps {
   idComment?: string,
   replyId?: string,
   setIdComment?: (id: string) => void,
-  setReplyId?: (id: string) => void
+  setReplyId?: (id: string) => void,
+  socket?: Socket
 }
 
-const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, setReplyId}: PostProps) => {
+const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, setReplyId, socket}: PostProps) => {
 
   const [text, setText] = useState<string>('')
   const [warningModal, setWarningModal] = useState<boolean>(false)
@@ -27,7 +29,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, set
 
   const commentRefs = useRef<{[key: string]: HTMLDivElement | null}>({})
 
-  const {loading, createComment} = useCreateComment(post.id ?? 0)
+  const {loading, createComment} = useCreateComment(post.id ?? 0, socket)
 
   const {loading: loadingGetComment, getAllComment} = useGetAllComment()
 
@@ -130,6 +132,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, set
                 <Post 
                   post={post}
                   disableButton
+                  socket={socket}
                 />
                 <div className='divider m-0 px-5' />
 
@@ -156,6 +159,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, set
                             postId={post.id ?? 0}
                             idComment={idComment}
                             replyId={replyId}
+                            socket={socket}
                           />
                         </div>
                       ))}

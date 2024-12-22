@@ -9,6 +9,9 @@ import Layout from '@/components/DefaultLayout'
 import { selectUser } from '@/redux/features/user/userSlice'
 import { setPosts } from '@/redux/features/post/postSlice'
 import useCheckUser from '@/api/user/checkUser'
+import useSocket from '@/socket/socket'
+import { Socket } from 'socket.io-client'
+
 
 const Home = () => {
 
@@ -35,6 +38,10 @@ const Home = () => {
     }
   })
 
+  const socket = useSocket('users')
+  // console.log('socket', socket);
+  
+
   useEffect(() => {
     dispatch(setPosts([]));
     getAllPost();
@@ -52,7 +59,7 @@ const Home = () => {
   }, [loading, hasMore, getAllPost]);
 
   return (
-    <Layout>
+    <Layout socket={socket}>
        <div className='h-screen p-[90px] tablet:px-5 phone:px-5 w-screen flex justify-between bg-backGround overflow-y-auto overflow-x-hidden relative' id="scrollableDiv" >
           <div className='w-1/4 bg-navbar laptop:block tablet:hidden phone:hidden h-fit p-4 rounded-xl'>
               <MiniProfile 
@@ -71,7 +78,7 @@ const Home = () => {
                 scrollableTarget='scrollableDiv'
               >
                 {posts.map((post) => (
-                  <Post key={post.id} post={post} width={900} />
+                  <Post key={post.id} post={post} width={900} socket={socket}/>
                 ))}
               </InfiniteScroll>
               :loading && posts.length === 0 ? <SkeletonPost /> : !loading && posts.length === 0 && <div className='w-full text-center font-bold text-xl mt-3'>Let&apos;s create your first post</div>}

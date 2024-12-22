@@ -5,6 +5,7 @@ import React from 'react'
 import Avatar from '../Avatar'
 import { reactions } from '@/utils/reactions'
 import commentIcon from '@/assets/icons/comment.svg'
+import followIcon from '@/assets/icons/follow.svg'
 import { Notification } from '@/types'
 import SkeletonReaction from '../SkeletonReaction'
 
@@ -28,6 +29,11 @@ const NotiBox = ({handleOpenPostNotify, loading}: NotiBoxProps) => {
             color: 'text-purple-500',
             name: 'reply comment',
             icon: commentIcon
+        },
+        {
+            color: 'text-purple-500',
+            name: 'follow',
+            icon: followIcon
         }
     ]
 
@@ -39,10 +45,18 @@ const NotiBox = ({handleOpenPostNotify, loading}: NotiBoxProps) => {
         else if (notify === 'react post'){
             return reactionTypes.find(react => react.name === reactionType)?.icon.src
         }
+        else if (notify === 'follow'){
+            return reactionTypes.find(react => react.name === notify)?.icon.src
+        }
     }
 
     const handleSelectNotify = (notify: Notification) =>{ 
-        handleOpenPostNotify(notify.post, notify.comment ?? '', notify.parentId)
+        if(notify.type === 'follow'){
+            window.location.href = `/${notify.sender.username}`
+        }
+        else {
+            handleOpenPostNotify(notify.post, notify.comment ?? '', notify.parent?.id)
+        }
     }
 
     
@@ -54,6 +68,10 @@ const NotiBox = ({handleOpenPostNotify, loading}: NotiBoxProps) => {
 
         if(noti.comment_content){
             content = noti.content + ": " + noti.comment_content
+        }
+
+        else {
+            content = noti.content
         }
     
         return content?.split('\n').map((line, index) => (
@@ -71,18 +89,15 @@ const NotiBox = ({handleOpenPostNotify, loading}: NotiBoxProps) => {
         ));
     };
     
-    
-
-
     return (
         <div className='flex flex-col z-50'>
             <span className='text-textColor py-3 font-bold text-2xl px-4'>Notify</span>
             <div className='divider m-0 bg-background h-[1px]' />
-            <div className='flex flex-col gap-2 mt-3 px-4'>
+            <div className='flex flex-col max-h-[90%] overflow-y-auto gap-2 mt-3 px-4'>
                {notifications.length > 0 ? notifications.map((noti)=> (
                 <div key={noti.id} className='flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-search' onClick={()=>handleSelectNotify(noti)}>
                     <Avatar width={1} height={1} src={noti.sender.avatar ?? undefined} alt={noti.sender.avatar ?? ''} className='w-12 h-12' />
-                    <div className='flex'>
+                    <div className='flex justify-between w-full'>
                         <span className='text-md text-textColor'>
                         {handleNotiContent(noti)}
                         </span>
