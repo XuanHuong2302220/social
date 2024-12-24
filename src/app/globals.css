@@ -59,6 +59,15 @@ body {
   top: 30%;
 }
 
+.my-infinite-scroll-comment {
+  overflow-y: scroll; /* Nội dung vẫn có thể cuộn */
+  scrollbar-width: none; /* Firefox */
+}
+
+.my-infinite-scroll-comment::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 .DraftEditor-editorContainer{
   padding: 10px 0;
   min-height: 50px;

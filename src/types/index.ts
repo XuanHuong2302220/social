@@ -16,6 +16,7 @@ export interface InputProps {
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void,
     tabIndex?: number,
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
+    onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void,
 }
 
 export interface ButtonProps {
@@ -156,6 +157,7 @@ export interface Comment {
     reactionCount: number,
     reactionType: string,
     parent?: Comment,
+    reply?: Comment,
     commentCount: number,
     notify1?: Notification,
     notify2?: Notification

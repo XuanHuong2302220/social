@@ -14,6 +14,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   value,
   onClick,
   onKeyDown,
+  onFocus,
   ...rest
 } : InputProps, ref) => {
 
@@ -27,6 +28,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           placeholder={placeholder}
           value={value}
           onKeyDown={onKeyDown}
+          onFocus={onFocus}
           {...rest}
         />
         {iconComponent && <div className='text-textColor' onClick={onClick}>{React.createElement(iconComponent)}</div>}

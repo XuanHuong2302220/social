@@ -38,11 +38,11 @@ const NotiBox = ({handleOpenPostNotify, loading}: NotiBoxProps) => {
     ]
 
     const handleGetType = (notify: string, reactionType?: string) => {
-        if(notify === 'comment' || notify === 'reply comment') {
+        if(notify === 'comment' || notify === 'reply comment' ){ 
             return reactionTypes.find(react => react.name === notify)?.icon.src
         }
 
-        else if (notify === 'react post'){
+        else if (notify === 'react post'|| notify === 'react comment'){
             return reactionTypes.find(react => react.name === reactionType)?.icon.src
         }
         else if (notify === 'follow'){
@@ -97,7 +97,7 @@ const NotiBox = ({handleOpenPostNotify, loading}: NotiBoxProps) => {
                {notifications.length > 0 ? notifications.map((noti)=> (
                 <div key={noti.id} className='flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-search' onClick={()=>handleSelectNotify(noti)}>
                     <Avatar width={1} height={1} src={noti.sender.avatar ?? undefined} alt={noti.sender.avatar ?? ''} className='w-12 h-12' />
-                    <div className='flex justify-between w-full'>
+                    <div className='flex justify-between w-full gap-1'>
                         <span className='text-md text-textColor'>
                         {handleNotiContent(noti)}
                         </span>

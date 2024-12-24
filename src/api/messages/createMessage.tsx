@@ -19,17 +19,17 @@ const useCreateMessage = (idConversation : string, userSocket?: Socket)=> {
     const socket = useSocket('messages')
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
+    const sound = new Audio('https://firebasestorage.googleapis.com/v0/b/talktown-a55fe.appspot.com/o/sound%2Fnotification.wav?alt=media&token=b47082f5-825e-464e-af26-401515d26532')
 
     useEffect(()=> {
         if(socket){
             socket.emit('joinConversation', { conversationId: idConversation });
             socket.on('messageCreated', (message)=> {
                 if(message.receiver.id === user.id) {
-                    const sound = new Audio('/assets/sound/notification.wav')
                     sound.play()
                 }
-                if(userSocket){
-                    userSocket.emit('getConversation', {conversationId: message.idConversation, senderId: user.id})
+                if(userSocket && message.sender.id === user.id){
+                    userSocket.emit('getConversation', {conversationId: message.idConversation, senderId: message.sender.id})
                 }
                 dispatch(addMessage({id: message.idConversation, message}))
             })

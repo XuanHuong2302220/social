@@ -2,12 +2,13 @@ import React, { useEffect} from 'react';
 import Navbar from '@/components/Navbar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import Conversations from './messages/Conversations';
-import { addConversation, removeBoxMessage } from '@/redux/features/messages/messageSlice';
+import { addConversation, removeBoxMessage, setCountMessage, setCountNotify } from '@/redux/features/messages/messageSlice';
 import { usePathname } from 'next/navigation';
 import { setUserOnline } from '@/redux/features/socket/socketSlice';
 import { IoNotifications } from "react-icons/io5";
 import { toast } from 'react-toastify';
 import { Socket } from 'socket.io-client';
+import { Conversation } from '@/types';
 interface LayoutProps {
   children: React.ReactNode,
   socket?: Socket
@@ -20,15 +21,28 @@ const Layout: React.FC<LayoutProps> = ({ children, socket }) => {
   const conversations = useAppSelector(state => state.message.boxConversation);
   const pathName = usePathname();
   const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
+  const sound = new Audio('https://firebasestorage.googleapis.com/v0/b/talktown-a55fe.appspot.com/o/sound%2Fnotification.wav?alt=media&token=b47082f5-825e-464e-af26-401515d26532')
+  const notifySound = new Audio('https://firebasestorage.googleapis.com/v0/b/talktown-a55fe.appspot.com/o/sound%2FpreviewSound.mp3?alt=media&token=89794b19-570b-4264-a885-f88e30f5af74')
+
+  const handleGetConversation = async(conversationId: Conversation) => {
+    const exsistConversation = conversations.find(conversation => conversation.id === conversationId.id);
+    
+    if (!exsistConversation) {
+      sound.play();
+      dispatch(addConversation(conversationId));
+    }
+    dispatch(setCountMessage(conversationId.id));
+    
+  }
 
   useEffect(() => {
     if (socket) {
       socket.on('updateUserOnline', (users) => {
         dispatch(setUserOnline(users));
       });
+
       socket.on('conversationUpdate', conversation => {
-        console.log('conversationUpdate', conversation);
-        dispatch(addConversation(conversation));
+        handleGetConversation(conversation);
       })
 
       socket.on('messageCreated', (notify)=> {
@@ -36,11 +50,14 @@ const Layout: React.FC<LayoutProps> = ({ children, socket }) => {
           icon: <IoNotifications style={{color: 'var(--primary-color)'}} />,
           style: {color: 'var(--primary-color)', backgroundColor: 'var(--navbar)'},
         })
+        dispatch(setCountNotify())
+        notifySound.play()
       })
 
       return () => {
         socket.off('updateUserOnline');
         socket.off('conversationUpdate');
+        socket.off('messageCreated');
         dispatch(setUserOnline([]));
       };
     }

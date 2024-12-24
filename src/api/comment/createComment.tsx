@@ -67,7 +67,7 @@ const useCreateComment = (postId?: number, userSocket?: Socket) => {
                     postId: postId,
                     content: content,
                     parentId: parentId,
-                    commentId: commentId,
+                    replyId: commentId,
                     userId: user.id
                 })
             }
@@ -75,6 +75,7 @@ const useCreateComment = (postId?: number, userSocket?: Socket) => {
                 const {data} = await axs.post(`/comment/create-comment`, {
                     content: content,
                     parentId: parentId,
+                    replyId: commentId,
                     postId: postId
                 }, {
                     headers: {
@@ -82,17 +83,11 @@ const useCreateComment = (postId?: number, userSocket?: Socket) => {
                     }
                 })
 
-                console.log({
-                    content: content,
-                    parentId: parentId,
-                    postId: postId
-                })
-
                 if(data){
                     console.log('data', data, onlineSocket)
                     dispatch(addReplyComment({
                         parentId: parentId || '',
-                        commentId: data.commentId,
+                        commentId: data.id,
                         replyComment: data
                     }))
                     if(onlineSocket){

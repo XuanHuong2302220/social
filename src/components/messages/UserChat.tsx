@@ -16,6 +16,7 @@ interface UserChatProps {
 const UserChat = ({className, isBox, selectedConversation, handleSelectCon, backgroundColor, setShowDropdown}: UserChatProps) => {
 
   const conversations = useAppSelector(state => state.message.conversations)
+  console.log(conversations, 'conversations')
   const user = useAppSelector(selectUser)
   const {getConversation} = useGetConversation()
   const {getAllMessage} = useGetAllMessage()
@@ -30,8 +31,6 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
       await getAllMessage(conversationId)
     }
   }
-
-
 
   return (
     <div className={`${className} flex flex-col z-50`}>

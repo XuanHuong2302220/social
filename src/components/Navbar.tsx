@@ -18,7 +18,7 @@ import { clearToken } from '@/redux/features/auth/authSlice';
 import { usePathname, useRouter } from 'next/navigation';
 import useSearch from '@/api/user/searchUser';
 import { debounce } from '@/utils/debound';
-import { clearConversation } from '@/redux/features/messages/messageSlice';
+import { clearConversation, clearCountMessage, clearCountNotify } from '@/redux/features/messages/messageSlice';
 import useGetAllConversation from '@/api/messages/getAllConversation';
 import { setCurrentPage, setHasMore, setPosts } from '@/redux/features/post/postSlice';
 import useGetAllPost from '@/api/post/getAllPost';
@@ -45,12 +45,12 @@ const Navbar = () => {
   const [postNoti, setPostNoti] = useState<PostState | null>(null)
   const [commentId, setCommentId] = useState<string>('')
   const [replyId, setReplyId] = useState<string>('')
-  
+
   const { getAllPost } = useGetAllPost()
 
   const { loadingSearch, result, searchUser } = useSearch()
 
-  const {loading: loadingNotify ,getAllNotify} = useGetAllNoti()
+  const { loading: loadingNotify, getAllNotify } = useGetAllNoti()
 
   const { getAllConversation } = useGetAllConversation();
 
@@ -67,13 +67,16 @@ const Navbar = () => {
     }
   }
 
-  const handleOpenNoti = async(post: number, comment: string, parentId?: string)=> {
-    
+  const notifyCount = useAppSelector((state) => state.message.countNotify) || 0
+  const messageCount = useAppSelector((state) => state.message.countMessage) || []
+
+  const handleOpenNoti = async (post: number, comment: string, parentId?: string) => {
+
     try {
       const response = await axs.get(`/post/get-post/${post}`, {
-          headers: {
-              Authorization: `Bearer ${token}`
-          }
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       })
       const data = await response.data
       setPostNoti(data)
@@ -81,7 +84,7 @@ const Navbar = () => {
         comment: comment,
         parentId: parentId,
       })
-      if(parentId){
+      if (parentId) {
         setCommentId(parentId)
         setReplyId(comment)
       }
@@ -90,17 +93,17 @@ const Navbar = () => {
       }
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
-          toast.error(error.response.data.message);
+        toast.error(error.response.data.message);
       } else {
-          toast.error("An unexpected error occurred");
+        toast.error("An unexpected error occurred");
       }
     }
-    finally{
-        setShowDropDownNotification(false)
+    finally {
+      setShowDropDownNotification(false)
     }
   }
 
-  const handleClosePostNoti = ()=> {
+  const handleClosePostNoti = () => {
     setPostNoti(null)
   }
 
@@ -153,6 +156,7 @@ const Navbar = () => {
 
   const handleOpenMessage = async () => {
     setShowDropDownChat(!showDropDownChat);
+    dispatch(clearCountMessage())
     setShowDropDownNotification(false)
     setShowDropdownLogout(false)
     await getAllConversation()
@@ -160,6 +164,7 @@ const Navbar = () => {
 
   const handleOpenNotification = async () => {
     setShowDropDownNotification(!showDropDownNotification);
+    dispatch(clearCountNotify())
     setShowDropDownChat(false)
     setShowDropdownLogout(false)
     await getAllNotify()
@@ -210,9 +215,9 @@ const Navbar = () => {
           <IoSunny className='text-xl cursor-pointer text-textColor' onClick={() => { handleClickTheme('dark'); setShowDropDownChat(false); setShowDropdownLogout(false); setShowDropDownNotification(false) }} />
         }
 
-        {!isMessagesPath && <div className='flex items-cente' ref={dropdownChatRef} >
+        {!isMessagesPath && <div className='flex items-center relative' ref={dropdownChatRef} >
           <DropDown
-            parents={<FaMessage onClick={handleOpenMessage} className='text-xl cursor-pointer text-textColor' />}
+            parents={<FaMessage onClick={handleOpenMessage} className={`text-xl cursor-pointer ${showDropDownChat ? 'text-primaryColor' : 'text-textColor'} `} />}
             tabIndex={0}
             className='text-whiteText'
             classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-315px]'
@@ -221,19 +226,21 @@ const Navbar = () => {
               showDropDownChat && <UserChat isBox backgroundColor='bg-navbar' setShowDropdown={() => setShowDropDownChat(false)} />
             }
           </DropDown>
+          {messageCount.length > 0 ? <div className='w-5 h-5 absolute bg-search rounded-full text-center text-sm text-primaryColor right-[-10px] top-[-10px]'>{messageCount.length}</div> : null}
         </div>}
 
-        <div className='flex items-cente' ref={dropdownNotificationRef} >
+        <div className='flex items-center  relative' ref={dropdownNotificationRef} >
           <DropDown
-            parents={<IoNotifications onClick={handleOpenNotification} className='text-xl cursor-pointer text-textColor' />}
+            parents={<IoNotifications onClick={handleOpenNotification} className={`text-xl cursor-pointer ${showDropDownNotification ? 'text-primaryColor' : 'text-textColor'} `} />}
             tabIndex={0}
             className='text-whiteText'
             classNameContent='bg-navbar w-[400px] max-h-[90vh] overflow-y-auto rounded-b-lg menu z-50 top-10 right-[-260px]'
           >
             {
-              showDropDownNotification && <NotiBox loading={loadingNotify} handleOpenPostNotify={(post, comment, parentId)=> handleOpenNoti(post, comment, parentId)} />
+              showDropDownNotification && <NotiBox loading={loadingNotify} handleOpenPostNotify={(post, comment, parentId) => handleOpenNoti(post, comment, parentId)} />
             }
           </DropDown>
+          {notifyCount > 0 ? <div className='w-5 h-5 absolute bg-search rounded-full text-center text-sm text-primaryColor right-[-10px] top-[-10px]'>{notifyCount}</div> : null}
         </div>
         <div ref={dropdownRef}>
           <DropDown
@@ -275,22 +282,22 @@ const Navbar = () => {
         </div>
       </div>
 
-      {postNoti && 
-      <ModalPostComment
-        post={postNoti}
-        closeFunc={handleClosePostNoti}
-        idComment={commentId}
-        setIdComment={setCommentId}
-        replyId={replyId}
-        setReplyId={setReplyId}
-      />}
+      {postNoti &&
+        <ModalPostComment
+          post={postNoti}
+          closeFunc={handleClosePostNoti}
+          idComment={commentId}
+          setIdComment={setCommentId}
+          replyId={replyId}
+          setReplyId={setReplyId}
+        />}
 
       {loading && <Modal
         className='w-[200px] h-fit flex justify-center items-center bg-navbar'
       >
-         <span className='font-bold text-textColor text-lg'>Logging out...</span>
-       </Modal> 
-        }
+        <span className='font-bold text-textColor text-lg'>Logging out...</span>
+      </Modal>
+      }
     </div>
   )
 }

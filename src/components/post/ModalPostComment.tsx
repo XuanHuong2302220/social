@@ -86,9 +86,11 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, set
   const scroll = document.querySelector('.my-infinite-scroll-comment') as HTMLElement;
   useEffect(()=> {
     if(scroll){
-      scroll.style.overflowY = 'hidden'
+      scroll.style.scrollbarWidth = 'none'; // Firefox
+      // Chrome, Safari, Edge
+      scroll.style.setProperty('::-webkit-scrollbar', 'none');
     }
-  })
+  }, [])
 
   const handleShowDropdownEdit = (id: string) => {
     setActiveDropdownIndex(id);

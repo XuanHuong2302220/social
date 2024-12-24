@@ -21,6 +21,8 @@ const useGetAllComment = ()=> {
             })
 
             const {data, meta} = response.data
+            console.log(data);
+            
             if(commentId){
                 dispatch(addReplyComments({commentId: commentId, replyComments: data}))
             }

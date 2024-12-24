@@ -7,7 +7,7 @@ import EmojiPicker, { Theme } from 'emoji-picker-react';
 import useClickOutside from '@/hooks/useClickOutside';
 import Message from './Message';
 import { Conversation, EmojiObject} from '@/types';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import useGetAllMessage from '@/api/messages/getAllMessage';
 import DropDown from '../DropDown';
 import Button from '../Button';
@@ -15,6 +15,7 @@ import useCreateMessage from '@/api/messages/createMessage';
 import { selectUser } from '@/redux/features/user/userSlice';
 import {  usePathname } from 'next/navigation';
 import { Socket } from 'socket.io-client';
+import { decreaCountMessage } from '@/redux/features/messages/messageSlice';
 interface ConversationsProps {
   conversation: Conversation,
   closeConversation?: ()=> void,
@@ -30,6 +31,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
   const [openEmoji, setOpenEmoji] = useState(false)
   const emojiRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const countMessage = useAppSelector(state => state.message.countMessage)
 
   const user = useAppSelector(selectUser)
 
@@ -47,6 +49,8 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
 
   const pathName = usePathname();
   const isMessagesPath = /^\/messages\/[a-zA-Z0-9-]+$/.test(pathName);
+
+  const dispatch = useAppDispatch()
 
   useEffect(()=> {
     if(messageRef.current){
@@ -76,6 +80,13 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
   const handleEmojiClick = (emojiObject: EmojiObject) => {
     if(textRef.current){
       textRef.current.value += emojiObject.emoji
+    }
+  }
+
+  const handleForcus = () => {
+    const index = countMessage.findIndex(id => id === conversation.id)
+    if(index !== -1){
+      dispatch(decreaCountMessage(conversation.id))
     }
   }
 
@@ -149,6 +160,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
         <Input type='text' onChange={handleOnchange} ref={textRef} placeholder='Aa' classInput='bg-navbar text-textColor' 
           className='w-[95%] bg-navbar'
           onKeyDown={handleKeyDown}
+          onFocus={handleForcus}
         />
         {loadingMessage ? <span className="loading loading-spinner text-center loading-sm"></span> :<IoMdSend className='text-2xl cursor-pointer text-textColor' onClick={handleSendMessage} />}
         <BsEmojiSmile onClick={()=>setOpenEmoji(!openEmoji)} className={`cursor-pointer absolute right-[${isBox ? '20%' : '7%'}]`} style={{ right: isBox ? '20%' : '7%' }} />

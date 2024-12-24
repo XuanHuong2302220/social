@@ -88,13 +88,6 @@ const commentSlice = createSlice({
                     if (!Array.isArray(comment.children)) {
                         comment.children = [];
                     }
-                    if (action.payload.commentId) {
-                        const id = comment.children.findIndex(comment => comment.id === action.payload.commentId)
-                        const indexReply = comment.children.findIndex(comment => comment.id === action.payload.replyComment.id)
-                        if (indexReply === -1) {
-                            comment.children.splice(id + 1, 0, action.payload.replyComment)
-                        }
-                    }
                     else {
                         comment.children.push(action.payload.replyComment)
                     }

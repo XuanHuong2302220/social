@@ -3,7 +3,9 @@ import { Conversation, Message } from "@/types";
 
 const initialState = {
     conversations: [] as Conversation[],
-    boxConversation: [] as Conversation[]
+    boxConversation: [] as Conversation[],
+    countNotify: 0 as number,
+    countMessage: [] as string[]
 }
 
 const messageSlice = createSlice({
@@ -31,7 +33,8 @@ const messageSlice = createSlice({
             const index = state.boxConversation.findIndex(conversation => conversation.id === action.payload);
             if (index !== -1) {
               state.boxConversation.splice(index, 1);
-            }        },
+            }        
+        },
         clearConversation: (state) => {
             state.conversations = [];
             state.boxConversation = [];
@@ -60,10 +63,36 @@ const messageSlice = createSlice({
         clearMessages: (state) => {
             state.conversations = [];
             state.boxConversation = [];
+        },
+        setCountNotify: (state) => {
+            state.countNotify = state.countNotify ? state.countNotify + 1: 1;
+        },
+        clearCountNotify: (state) => {
+            state.countNotify = 0;
+        },
+        setCountMessage: (state, action: PayloadAction<string>) => {
+            if(!state.countMessage){
+                state.countMessage = [];
+            }
+            const index = state.countMessage.findIndex(id => id === action.payload);
+            console.log(index)
+            if (index === -1) {
+              state.countMessage.push(action.payload);
+            }
+        },
+        clearCountMessage: (state) => {
+            state.countMessage = []
+        },
+        decreaCountMessage: (state, action: PayloadAction<string>) => {
+            
+            const index = state.countMessage.findIndex(id => id === action.payload);
+            if (index !== -1) {
+              state.countMessage.splice(index, 1);
+            }
         }
         
     }
 })
 
-export const { setConversations, setBoxConversations,addConversation, removeBoxMessage, clearConversation, addMessages, addMessage, clearMessages} = messageSlice.actions;
+export const { setConversations, setBoxConversations,addConversation, removeBoxMessage, clearConversation, addMessages, addMessage, clearMessages, setCountNotify, clearCountNotify, setCountMessage, clearCountMessage, decreaCountMessage} = messageSlice.actions;
 export default messageSlice.reducer;

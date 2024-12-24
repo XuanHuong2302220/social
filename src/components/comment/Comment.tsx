@@ -187,6 +187,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
     setShowDropdownEdit(false)
     setShowEdit(false)
     dispatch(decreaCountComment({postId}))
+    handleShowDropDownEdit && handleShowDropDownEdit()
   }
 
   const handleOpenReply = ()=> {
@@ -331,10 +332,10 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
             ref={commentRef}
             className='w-full flex gap-2 items-start relative pb-1'
             onMouseEnter={user.id === comment.created_by.id ? ()=> setShowEdit(true) : undefined}
-            onMouseLeave={()=>{
-            setShowEdit(false)
-            setShowDropdownEdit(false)
-          }}
+          //   onMouseLeave={()=>{
+          //   setShowEdit(false)
+          //   setShowDropdownEdit(false)
+          // }}
         >
             <a href={`/${comment.created_by.username}`}>
               <Avatar
@@ -350,7 +351,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
             <div className='flex flex-col gap-2 text-wrap break-words max-w-[80%]'>
                 <div className='flex flex-col text-textColor bg-search px-3 py-1 rounded-2xl w-auto items-start max-w-full'>
                     <span className='text-xs font-bold cursor-pointer hover:underline w-auto' onClick={()=> window.location.href = `/${comment.created_by.username}`} >{comment.created_by.fullName}</span>
-                    <span className='w-full'>{highlightText(comment.content, [comment.parent?.created_by.fullName ?? 'none'], comment.parent?.created_by.username ?? '')}</span>
+                    <span className='w-full'>{highlightText(comment.content, [comment.reply?.created_by.fullName ?? comment.parent?.created_by.fullName ?? 'none'], comment.reply?.created_by.username ?? comment.parent?.created_by.username ?? 'none')}</span>
                 </div>
                 <div className='flex px-3 gap-2 max-w-full'>
                     <span className='text-sm text-textColor'>{comment.created_ago}</span>
@@ -369,7 +370,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                         />
                         }
                     </div>
-                    {!comment.parent?.id && <span className='text-sm text-textColor cursor-pointer hover:underline' id='replyId' onClick={handleOpenReply}>reply</span>}
+                   <span className='text-sm text-textColor cursor-pointer hover:underline' id='replyId' onClick={handleOpenReply}>reply</span>
 
                     {comment.reactionCount > 0 && showReaction.icon && <div onClick={handleOpenReactions} className='ml-auto flex gap-1 items-center cursor-pointer hover:underline'>
                       <span className='text-textColor text-sm'>{comment.reactionCount}</span>
@@ -382,17 +383,17 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                     </div>}
                 </div>
             </div>
-            {showEdit  && <div className='z-50 absolute top-0 right-0' ref={dropdownRefEdit}>
+            {showEdit  && <div className='absolute top-0 right-0' ref={dropdownRefEdit}>
               <DropDown
                 parents={<Button
                   left icon={<BsThreeDots className='text-2xl' />}
                   className='bg-transparent w-[50px] h-[50px] border-transparent hover:bg-search rounded-full'
                   onClick={handleShowDropDownEdit}
                 />}
-                classNameContent='bg-search right-2 w-[200px] rounded-lg menu'
+                classNameContent='bg-search right-2 w-[200px] rounded-lg menu z-[1000]'
               >
                 {
-                  showDropdownEdit && <div className='w-full flex flex-col'>
+                  showDropdownEdit && <div className='w-full flex flex-col' style={{zIndex: 100}}>
                   <Button left icon={<MdEdit className='text-2xl' />}  onClick={handleOpenEdit} text='Edit' className='flex items-center bg-transparent border-transparent justify-start' />
                   <div className='divider m-0 bg-search'/>
                     <Button left icon={!loadingDelete && <FaTrash className='text-lg' />} onClick={handleDeleteComment} text={loadingDelete ? '' : 'Delete'} className={`flex items-center bg-transparent border-transparent ${loadingDelete ? 'justify-center' : 'justify-start '}`} iconLoading={loadingDelete} />
@@ -412,7 +413,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
           />
         }
 
-          {isReply &&  <div className='ml-[54px] z-50'>
+          {isReply && !comment.parent ?  <div className='ml-[54px] z-50'>
             <ChatComment
                 text={replyComment}
                 handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
@@ -425,7 +426,19 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                 hightLight={hightLight}
               />
             </div>
-          }
+              : isReply && comment.parent && 
+              <ChatComment
+                text={replyComment}
+                handleEmojiClick={(emojiObject) => handleEmojiClick(emojiObject, 'replyComment')}
+                onChange={(value) => handleOnchange(value.target.value, 'replyComment')}
+                handleComment={handleReplyComment}
+                className='0'
+                edit
+                loading={loadingReplyComment}
+                handleExit={handleCancelRepy}
+                hightLight={hightLight}
+              />
+            }
 
           <div className={`ml-[54px] z-50 items-center gap-1 ${replyComments.length > 0 && 'pt-3 '} ${loadingComment && 'flex gap-1'}`}>
             {comment.commentCount > 0 && 
