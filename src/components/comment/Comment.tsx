@@ -264,7 +264,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
       if(comment.commentCount < 2){
         setIsCommentCount(false)
       }
-      await createComment(postId, replyComment, comment.id,'no', socket)
+      await createComment(postId, replyComment, comment.id, undefined, socket)
     }
     setReplyComment('')
     setIsReply(false)
