@@ -29,6 +29,7 @@ const useGetReactions = ()=> {
             })
 
             const {reactions, typeUserReacted} = await response.data
+            console.log(reactions)
             setTypeReaction(typeUserReacted)
             setListReaction(reactions)
         } catch (error) {

@@ -85,7 +85,7 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width, socket }) => {
     }
     hoverTimeoutRef.current = setTimeout(() => {
       setShowDropdown(true);
-    }, 500); // 1s delay
+    }, 1500); // 1s delay
   };
 
   const handleClickDefault = () => {

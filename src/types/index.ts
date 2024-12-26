@@ -131,7 +131,7 @@ export interface Reaction {
         avatar: string | null,
         fullName: string,
         id: string,
-        username: string
+        userName: string
     }
 }
 

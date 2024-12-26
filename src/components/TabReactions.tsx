@@ -116,7 +116,7 @@ const TabReactions = ({typeReaction, listReaction, loading, onClose}: TabsProps)
               <div className='flex gap-2 items-center'>
                 <Avatar id={reaction.user.id} width={1} src={reaction.user.avatar ?? undefined} height={1} alt='avatar' className='w-[42px] h-[42px]'/>
                 <div className='flex flex-col'>
-                  <Link href={'/'} className='font-bold hover:underline text-textColor'>{reaction.user.fullName}</Link>
+                  <a href={`/${reaction.user.userName}`} className='font-bold hover:underline text-textColor'>{reaction.user.fullName}</a>
                 </div>
               </div>
               <div className='flex gap-2 items-center'>

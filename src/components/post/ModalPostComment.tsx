@@ -169,7 +169,13 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, set
                     </InfiniteScroll>}
                 </div>
                 }
-                { loadingGetComment && comments.length === 0 ? <SkeletonReaction /> : !loadingGetComment && comments.length === 0 && <h2 className='w-full py-5 text-center text-lg text-textColor font-bold'>No Comment Yet</h2>}
+                { loadingGetComment && comments.length === 0 ? <div>
+                  <SkeletonReaction />
+                  <SkeletonReaction />
+                  <SkeletonReaction />
+                  <SkeletonReaction />
+                  <SkeletonReaction />
+                </div> : !loadingGetComment && comments.length === 0 && <h2 className='w-full py-5 text-center text-lg text-textColor font-bold'>No Comment Yet</h2>}
 
               </div>
 

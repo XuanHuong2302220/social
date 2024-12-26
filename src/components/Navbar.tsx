@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback, useRef, useState } from 'react'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import Logo from './Logo'
 import { MdOutlineSearch } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";
@@ -66,6 +66,40 @@ const Navbar = () => {
       debouncedSearch(e.target.value)
     }
   }
+
+  const isLaptop = () => {
+    return window.matchMedia('(min-width: 1025px)').matches;
+  };
+
+  const isTablet = () => {
+    return window.matchMedia('(min-width: 768px) and (max-width: 1024px)').matches;
+  };
+
+  const isMobile = () => {
+    return window.matchMedia('(max-width: 767px)').matches;
+  };
+
+  const [screenType, setScreenType] = useState<'laptop' | 'tablet' | 'mobile' | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (isLaptop()) {
+        setScreenType('laptop');
+      } else if (isTablet()) {
+        setScreenType('tablet');
+      } else if (isMobile()) {
+        setScreenType('mobile');
+      } else {
+        setScreenType(null);
+      }
+    };
+
+    handleResize(); // Kiểm tra kích thước màn hình khi component được mount
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const notifyCount = useAppSelector((state) => state.message.countNotify) || 0
   const messageCount = useAppSelector((state) => state.message.countMessage) || []
@@ -171,53 +205,53 @@ const Navbar = () => {
   }
 
   return (
-    <div className={`w-full z-50 h-[65px] flex flex-wrap items-center bg-navbar px-7 justify-between fixed border-b border-b-background`}>
-      <div className='flex w-1/3 gap-4 items-center h-full'>
+    <div className={`w-full z-50 h-[65px] flex flex-wrap items-center bg-navbar ${screenType === 'laptop' ? 'px-7' : 'px-3'} justify-between fixed border-b border-b-background`}>
+      <div className={`flex w-1/3 items-center h-full ${screenType === 'mobile' ? 'gap-3' : 'gap-4'}`}>
 
-        <Logo size='text-3xl' width={30} onClick={handleClickLogo} />
+        <Logo size='text-3xl' width={30} onClick={handleClickLogo} isLogo={screenType === 'tablet' || screenType === 'mobile'} />
 
-        <DropDown
+        {screenType === 'mobile' ?<div className='w-10 h-10 flex justify-center items-center bg-search rounded-full'><MdOutlineSearch /></div> : <DropDown
           className='text-textColor'
           classNameContent='bg-search w-[250px] p-2 rounded-b-lg'
           tabIndex={0}
           parents={
-            <Input
-              placeholder='Search...'
-              className='h-8 bg-search w-[250px] text-textColor'
-              type='text'
-              classInput='text-textColor'
-              iconComponent={MdOutlineSearch}
-              ref={search}
-              onChange={handleSearch}
-              onKeyDown={handleRedirectSearch}
-            />
-          }
-        >
-          {
-            result.length > 0 &&
-            <div className='flex flex-col gap-2'>
-              {result.map((user) => (
-                <a key={user.id} href={`/${user.username}`} className='flex items-center p-2 cursor-pointer gap-2 rounded-lg hover:bg-navbar'>
-                  <Avatar src={user.avatar ?? undefined} id={user.id} alt={user.avatar ?? 'search'} width={1} height={1} className='w-8 h-8' />
-                  <span className='text-textColor'>{user.fullName}</span>
-                </a>
-              ))}
-              {loadingSearch && <span className="loading loading-spinner mx-auto text-success"></span>}
-            </div>
-          }
-        </DropDown>
+              <Input
+                placeholder='Search...'
+                className='h-8 bg-search w-[250px] text-textColor'
+                type='text'
+                classInput='text-textColor'
+                iconComponent={MdOutlineSearch}
+                ref={search}
+                onChange={handleSearch}
+                onKeyDown={handleRedirectSearch}
+              />
+            }
+          >
+            {
+              result.length > 0 &&
+              <div className='flex flex-col gap-2'>
+                {result.map((user) => (
+                  <a key={user.id} href={`/${user.username}`} className='flex items-center p-2 cursor-pointer gap-2 rounded-lg hover:bg-navbar'>
+                    <Avatar src={user.avatar ?? undefined} id={user.id} alt={user.avatar ?? 'search'} width={1} height={1} className='w-8 h-8' />
+                    <span className='text-textColor'>{user.fullName}</span>
+                  </a>
+                ))}
+                {loadingSearch && <span className="loading loading-spinner mx-auto text-success"></span>}
+              </div>
+            }
+        </DropDown>}
 
       </div>
-      <div className='flex gap-8 items-center text-whiteText h-full'>
+      <div className='flex gap-3 items-center text-whiteText h-full'>
 
         {theme === 'dark' ?
-          <FaMoon className='text-xl cursor-pointer text-textColor' onClick={() => { handleClickTheme('light'); setShowDropDownChat(false); setShowDropdownLogout(false); setShowDropDownNotification(false) }} /> :
-          <IoSunny className='text-xl cursor-pointer text-textColor' onClick={() => { handleClickTheme('dark'); setShowDropDownChat(false); setShowDropdownLogout(false); setShowDropDownNotification(false) }} />
+          <div className='w-10 h-10 flex justify-center items-center bg-search rounded-full'><FaMoon className='text-xl cursor-pointer text-textColor' onClick={() => { handleClickTheme('light'); setShowDropDownChat(false); setShowDropdownLogout(false); setShowDropDownNotification(false) }} /></div> :
+          <div className='w-10 h-10 flex justify-center items-center bg-search rounded-full'><IoSunny className='text-xl cursor-pointer text-textColor' onClick={() => { handleClickTheme('dark'); setShowDropDownChat(false); setShowDropdownLogout(false); setShowDropDownNotification(false) }} /></div>
         }
 
         {!isMessagesPath && <div className='flex items-center relative' ref={dropdownChatRef} >
           <DropDown
-            parents={<FaMessage onClick={handleOpenMessage} className={`text-xl cursor-pointer ${showDropDownChat ? 'text-primaryColor' : 'text-textColor'} `} />}
+            parents={<div className='w-10 h-10 flex justify-center items-center bg-search rounded-full'><FaMessage onClick={handleOpenMessage} className={`text-md cursor-pointer ${showDropDownChat ? 'text-primaryColor' : 'text-textColor'} `} /></div>}
             tabIndex={0}
             className='text-whiteText'
             classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-315px]'
@@ -226,12 +260,12 @@ const Navbar = () => {
               showDropDownChat && <UserChat isBox backgroundColor='bg-navbar' setShowDropdown={() => setShowDropDownChat(false)} />
             }
           </DropDown>
-          {messageCount.length > 0 ? <div className='w-5 h-5 absolute bg-search rounded-full text-center text-sm text-primaryColor right-[-10px] top-[-10px]'>{messageCount.length}</div> : null}
+          {messageCount.length > 0 ? <div className='w-5 h-5 absolute bg-search rounded-full text-center text-sm text-primaryColor right-[-5px] top-[-5px]'>{messageCount.length}</div> : null}
         </div>}
 
         <div className='flex items-center  relative' ref={dropdownNotificationRef} >
           <DropDown
-            parents={<IoNotifications onClick={handleOpenNotification} className={`text-xl cursor-pointer ${showDropDownNotification ? 'text-primaryColor' : 'text-textColor'} `} />}
+            parents={<div className='w-10 h-10 flex justify-center items-center bg-search rounded-full'><IoNotifications onClick={handleOpenNotification} className={`text-xl cursor-pointer ${showDropDownNotification ? 'text-primaryColor' : 'text-textColor'} `} /></div>}
             tabIndex={0}
             className='text-whiteText'
             classNameContent='bg-navbar w-[400px] max-h-[90vh] overflow-y-auto rounded-b-lg menu z-50 top-10 right-[-260px]'
@@ -240,23 +274,27 @@ const Navbar = () => {
               showDropDownNotification && <NotiBox loading={loadingNotify} handleOpenPostNotify={(post, comment, parentId) => handleOpenNoti(post, comment, parentId)} />
             }
           </DropDown>
-          {notifyCount > 0 ? <div className='w-5 h-5 absolute bg-search rounded-full text-center text-sm text-primaryColor right-[-10px] top-[-10px]'>{notifyCount}</div> : null}
+          {notifyCount > 0 ? <div className='w-5 h-5 absolute bg-search rounded-full text-center text-sm text-primaryColor right-[-5px] top-[-5px]'>{notifyCount}</div> : null}
         </div>
         <div ref={dropdownRef}>
           <DropDown
-            className='text-whiteText w-[200px]'
-            classNameContent='bg-search w-[200px] rounded-b-lg menu'
+            className={`text-whiteText ${screenType === 'laptop' ? 'w-[200px]' : 'w-10 h-10'}`}
+            classNameContent={`bg-search w-[200px] rounded-b-lg menu ${screenType === 'laptop' ? '' : 'top-[45px] right-0'}`}
             tabIndex={0}
             parents={
+              screenType === 'laptop' ?
               <Button
-                text={fullName}
-                className={`text-whiteText bg-search hover:bg-search w-full ${showDropdownLogout && 'rounded-t-lg rounded-b-none'}`}
-                icon={<GoTriangleDown />}
-                right={true}
-                onClick={() => { setShowDropdownLogout(!showDropdownLogout); setShowDropDownChat(false) }}
-              />
-            }
-          >
+                  text={fullName}
+                  className={`text-whiteText bg-search hover:bg-search w-full ${showDropdownLogout && 'rounded-t-lg rounded-b-none'}`}
+                  icon={<GoTriangleDown />}
+                  right={true}
+                  onClick={() => { setShowDropdownLogout(!showDropdownLogout); setShowDropDownChat(false) }}
+                />
+              :
+              <div className='w-10 h-10 flex justify-center items-center' onClick={() => { setShowDropdownLogout(!showDropdownLogout); setShowDropDownChat(false) }}>
+                <Avatar className='h-10 w-10' width={1} height={1} src={user.avatar ?? ''} alt='avatar' />
+              </div>}
+            >
             {showDropdownLogout &&
               <div className='flex flex-col gap-2'>
                 <div onClick={handleRedirect} className='flex items-center gap-2 hover:bg-slate-500 cursor-pointer bg-navbar p-2 rounded-lg'>

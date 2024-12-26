@@ -6,8 +6,10 @@ const useSocket = (type: string) => {
     const [socket, setSocket] = useState<Socket>();
     const token = useAppSelector(state => state.auth.token);
 
+    const api_url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
     useEffect(() => {
-        const newSocket = io(`http://localhost:3000/${type}`, {
+        const newSocket = io(`${api_url}/${type}`, {
             transports: ['websocket'],
             query: {
                 token: token,

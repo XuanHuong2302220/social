@@ -125,11 +125,11 @@ const MiniProfile = ({hide, user}: MiniProfileProps) => {
             title={<div className='w-full text-textColor text-center font-bold text-xl py-2'>{openFollow}</div>}
             onClose={handleCloseModal}
             closeIcon
-            className='bg-navbar'
+            className='bg-navbar flex flex-col gap-2'
         >
             {
                 follows && follows.map((follow)=> (
-                    <div className='flex gap-2 items-start' key={follow.id}>
+                <div className='flex gap-2 items-start' key={follow.id}>
                     <a href={`/${follow.userName}`}> <Avatar width={1} id={follow.id} height={1} src={follow.avatar ?? undefined} alt='avatar' className='w-[42px] h-[42px]'/></a>
                     <div className='flex flex-col cursor-pointer'>
                         <a href={`/${follow.userName}`} className='font-bold hover:underline text-textColor'>{follow.fullName}</a>
