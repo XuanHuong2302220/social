@@ -67,12 +67,6 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const replyComments = comment.children ?? []
   const [onlineSocket, setOnlineSocket] = useState<Socket | undefined>(undefined)
 
-  useEffect(()=> {
-    if(socket){
-      setOnlineSocket(socket)
-    }
-  }, [socket])
-   
   const dispatch = useAppDispatch()
 
   useClickOutside(dropdownRefEdit, ()=> setShowDropdownEdit(false))
@@ -145,6 +139,10 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
 
   const handleOpenReplycomment = async() => {
     await getAllComment(postId, comment.id)
+    if(socket){
+      console.log('socket:', socket)
+      setOnlineSocket(socket)
+    }
     setIsCommentCount(false)
   }
 
