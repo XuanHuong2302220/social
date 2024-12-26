@@ -5,13 +5,12 @@ import { selectUser } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axs from "@/utils/axios";
 import { AxiosError } from "axios";
-import { useParams, useRouter } from "next/navigation"
+import { useParams} from "next/navigation"
 import { useState } from "react"
 import { toast } from "react-toastify";
 
 const useVerifyEmail = () => {
     const dispatch = useAppDispatch();
-    const router = useRouter();
     const [loading, setLoading] = useState(false)
     const {id} = useParams();
     const user = useAppSelector(selectUser);
@@ -25,7 +24,8 @@ const useVerifyEmail = () => {
             if (data.token) {
                 localStorage.setItem('token', JSON.stringify(data.token));
                 dispatch(setToken(data.token));
-                router.push(`/information/${user.username}`);
+                // router.push(`/information/${user.username}`);
+                window.location.href = `/information/${user.username}`;
             }
         } catch (error) {
             if (error instanceof AxiosError && error.response) {
