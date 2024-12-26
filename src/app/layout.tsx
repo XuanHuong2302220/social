@@ -33,7 +33,7 @@ export const AppContent = ({ children }: { children: React.ReactNode }) => {
     }
 
     if(!token && pathName !== '/login' && pathName !== '/signup' && pathName !== '/forgotpassword'){
-      window.location.href = '/login'
+      // window.location.href = '/login'
     }
 
   }, [token, user, pathName])

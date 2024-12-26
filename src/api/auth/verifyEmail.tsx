@@ -21,6 +21,7 @@ const useVerifyEmail = () => {
             setLoading(true);
             const response = await axs.get(`/auth/confirm-email/${id}`);
             const data = await response.data
+            console.log(data)
             if (data.token) {
                 localStorage.setItem('token', JSON.stringify(data.token));
                 dispatch(setToken(data.token));
@@ -35,7 +36,7 @@ const useVerifyEmail = () => {
             }
         }
         finally {
-            setLoading(false);
+            // setLoading(false);
         }
     }
 
