@@ -88,9 +88,7 @@ const commentSlice = createSlice({
                     if (!Array.isArray(comment.children)) {
                         comment.children = [];
                     }
-                    else {
-                        comment.children.push(action.payload.replyComment)
-                    }
+                    comment.children.push(action.payload.replyComment)
                 }
             }
         },

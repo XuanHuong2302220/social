@@ -59,7 +59,7 @@ const useCreateComment = (postId?: number, userSocket?: Socket) => {
 
     }, [socket, dispatch])
 
-    const createComment = async (postId: number, content: string, parentId?: string, commentId?: string, onlineSocket?: Socket) => {
+    const createComment = async (postId: number, content: string, parentId?: string, commentId?: string | undefined, onlineSocket?: Socket) => {
         setLoading(true)
         try {
             if(socket && !parentId && !commentId){
