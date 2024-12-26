@@ -88,6 +88,10 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
     if(idComment === comment.id){
       handleOpenReplycomment()
     }
+
+    if(socket){
+      setOnlineSocket(socket)
+    }
   }, [])
 
   useEffect(()=> {
@@ -138,10 +142,6 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   }
 
   const handleOpenReplycomment = async() => {
-    if(socket){
-      console.log('socket:', socket)
-      setOnlineSocket(socket)
-    }
     await getAllComment(postId, comment.id)
     setIsCommentCount(false)
   }
