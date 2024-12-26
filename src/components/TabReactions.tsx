@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react'
 import {Avatar, Button, Modal, SkeletonReaction} from '@/components'
 import Image from 'next/image'
-import Link from 'next/link'
 import { InteractProps, Reaction } from '@/types'
 import { reactions } from '@/utils/reactions'
 
