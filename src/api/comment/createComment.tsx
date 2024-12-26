@@ -83,6 +83,14 @@ const useCreateComment = (postId?: number, userSocket?: Socket) => {
                     }
                 })
 
+                console.log({
+                    content: content,
+                    parentId: parentId,
+                    replyId: commentId,
+                    postId: postId,
+                    socket: onlineSocket
+                })
+
                 if(data){
                     console.log('data', data, onlineSocket)
                     dispatch(addReplyComment({
