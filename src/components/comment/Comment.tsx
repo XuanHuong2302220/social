@@ -65,6 +65,13 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const {loading: loadingComment, getAllComment} = useGetAllComment()
   const [isCommentCount, setIsCommentCount] = useState(true)
   const replyComments = comment.children ?? []
+  const [onlineSocket, setOnlineSocket] = useState<Socket | undefined>(undefined)
+
+  useEffect(()=> {
+    if(socket){
+      setOnlineSocket(socket)
+    }
+  }, [socket])
    
   const dispatch = useAppDispatch()
 
@@ -258,7 +265,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
       if(comment.commentCount < 2){
         setIsCommentCount(false)
       }
-      await createComment(postId, replyComment, comment.parent?.id, comment.id, socket)
+      await createComment(postId, replyComment, comment.parent?.id, comment.id, onlineSocket ?? undefined)
     }
     else {
       if(comment.commentCount < 2){
