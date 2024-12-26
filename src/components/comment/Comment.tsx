@@ -65,7 +65,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const {loading: loadingComment, getAllComment} = useGetAllComment()
   const [isCommentCount, setIsCommentCount] = useState(true)
   const replyComments = comment.children ?? []
-  const [onlineSocket, setOnlineSocket] = useState<Socket | undefined>(undefined)
+  const [onlineSocket, setOnlineSocket] = useState<Socket>()
 
   const dispatch = useAppDispatch()
 
@@ -138,11 +138,11 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   }
 
   const handleOpenReplycomment = async() => {
-    await getAllComment(postId, comment.id)
     if(socket){
       console.log('socket:', socket)
       setOnlineSocket(socket)
     }
+    await getAllComment(postId, comment.id)
     setIsCommentCount(false)
   }
 
@@ -460,7 +460,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                     postId={postId}
                     activeDropdownIndex={activeDropdownIndex}
                     handleShowDropdownEdit={(id)=>handleShowDropdownEdit && handleShowDropdownEdit(id ?? '')}
-                    socket={socket}
+                    socket={onlineSocket}
                   />
                 </div>
               ))
