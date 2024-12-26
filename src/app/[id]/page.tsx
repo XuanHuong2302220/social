@@ -256,7 +256,7 @@ const Profile = () => {
   }
 
   return (
-    <Layout>
+    <Layout socket={socket}>
       {userProfile && <div className='h-screen pt-[90px] px-52 w-screen flex flex-col gap-6 bg-backGround overflow-y-scroll overflow-x-hidden' id="scrollableDivProfile" >
           <div className='w-full flex flex-col h-[400px] rounded-3xl'>
               <div className='w-full h-2/3 bg-search relative' />
