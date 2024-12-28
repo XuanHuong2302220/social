@@ -52,6 +52,7 @@ const useLoginApi = () => {
                 toast.warning(error.response.data.message);
             } else {
                 toast.error("An unexpected error occurred");
+                console.log("error", error);
             }
         }
     };
