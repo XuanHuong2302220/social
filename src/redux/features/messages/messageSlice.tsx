@@ -24,8 +24,9 @@ const messageSlice = createSlice({
                 if(state.boxConversation.length < 3){
                     state.boxConversation = [...state.boxConversation, action.payload];
                 }
-                if(state.boxConversation.length > 3){
+                if(state.boxConversation.length === 3){
                     state.boxConversation.pop();
+                    state.boxConversation = [action.payload,...state.boxConversation];
                 }
             }
         },

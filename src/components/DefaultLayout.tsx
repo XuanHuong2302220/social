@@ -75,7 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ children, socket }) => {
         !isMessagesPath && conversations.length > 0 &&
         <div className='flex gap-3 absolute z-40 right-[5%] bottom-0'>
           {conversations.map((conversation) => (
-            <div key={conversation.receiver.id} className={`w-[300px] h-[400px] rounded-t-lg rounded-b-none card shadow-2xl bg-search`} >
+            <div key={conversation.id} className={`w-[300px] h-[400px] rounded-t-lg rounded-b-none card shadow-2xl bg-search`} >
               <Conversations isBox closeConversation={() => closeBoxMessage(conversation.id)} conversation={conversation} userSocket={socket} />
             </div>
           ))}
