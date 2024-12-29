@@ -6,7 +6,7 @@ import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import useClickOutside from '@/hooks/useClickOutside';
 import Message from './Message';
-import { Conversation, EmojiObject} from '@/types';
+import { Conversation, EmojiObject, UserProps} from '@/types';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import useGetAllMessage from '@/api/messages/getAllMessage';
 import DropDown from '../DropDown';
@@ -32,6 +32,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
   const emojiRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null)
   const countMessage = useAppSelector(state => state.message.countMessage)
+  const [iconversation, setIconversation] = useState<UserProps | null>(null)
 
   const user = useAppSelector(selectUser)
 
@@ -44,6 +45,18 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
       return state.message.conversations.find(con => con.id === conversation?.id)?.messages ?? [];
     }
   });
+
+  useEffect(()=> {
+    if(isBox){
+      console.log(conversation)
+      if(conversation.receiver.id === user.id){
+        setIconversation(conversation.sender)
+      }
+      else {
+        setIconversation(conversation.receiver)
+      }
+    }
+  }, [])
 
   const messageRef = useRef<HTMLDivElement>(null)
 
@@ -116,8 +129,8 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
           <DropDown
             parents={
               <div className='w-full flex items-center hover:cursor-pointer gap-1' onClick={()=> setDropdown(!dropdown)}>
-                <Avatar width={1} id={conversation?.sender.id === user.id ? conversation?.receiver.id : conversation?.sender.id} height={1} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
-                <span className='text-textColor font-bold'>{conversation?.sender.id === user.id ? conversation?.receiver.fullName : conversation?.sender.fullName}</span>
+                <Avatar width={1} id={iconversation?.id} height={1} src={iconversation?.avatar ?? undefined} alt='search' className='w-8 h-8' />
+                <span className='text-textColor font-bold'>{iconversation?.fullName}</span>
               </div>
             }
             tabIndex={0}
@@ -129,7 +142,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
                   <Button
                     text='View Profile'
                     className='bg-navbar text-textColor'
-                    onClick={()=> window.location.href = `/${conversation?.receiver.username}`}
+                    onClick={()=>{window.location.href = `/${iconversation?.username}`}}
                   />
                   <Button
                     text='View in chat'
@@ -141,8 +154,8 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
             </DropDown>
         </div> : 
         <div className='w-full flex items-center hover:cursor-pointer gap-1' onClick={()=> setDropdown(!dropdown)}>
-          <Avatar width={1} height={1} id={conversation?.sender.id === user.id ? conversation?.receiver.id : conversation?.sender.id} src={conversation?.sender.id === user.id ? conversation?.receiver.avatar ?? undefined : conversation?.sender.avatar ?? undefined} alt='search' className='w-8 h-8' />
-          <span className='text-textColor font-bold'>{conversation?.sender.id === user.id ? conversation?.receiver.fullName : conversation?.sender.fullName}</span>
+          <Avatar width={1} height={1} id={iconversation?.id} src={iconversation?.avatar ?? undefined} alt='search' className='w-8 h-8' />
+          <span className='text-textColor font-bold'>{iconversation?.fullName}</span>
         </div>}
        {!isMessagesPath && <button className="btn btn-sm ml-auto mt-2 btn-circle text-textColor btn-ghost absolute right-2 top-2" onClick={closeConversation}>✕</button>}
       </div>

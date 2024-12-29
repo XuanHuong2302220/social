@@ -173,6 +173,13 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
       newImages.splice(index, 1);
       return newImages;
     });
+    if(post){
+      setUpdateImages((prevImages) => {
+        const newImages = [...prevImages];
+        newImages.splice(index, 1);
+        return newImages;
+      });
+    }
     setFiles((preFile)=> {
       const newFile = [...preFile];
       newFile.splice(index, 1);
@@ -223,7 +230,7 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
           await update({
             postId: Number(post.id),
             description: text,
-            images: [...uploadedFiles, ...updateImages],
+            images: [...updateImages,...uploadedFiles],
           });
         }
 

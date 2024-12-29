@@ -105,7 +105,7 @@ const NotiBox = ({handleOpenPostNotify, loading}: NotiBoxProps) => {
                     </div>
                     
                  </div>
-               )) : loading ? <SkeletonReaction /> : <span className='text-textColor text-lg text-center p-5'>No notification</span>}
+               )) : loading ? <SkeletonReaction /> : notifications.length === 0 && <span className='text-textColor text-lg text-center p-5'>No notification</span>}
             </div>
         </div>
     )

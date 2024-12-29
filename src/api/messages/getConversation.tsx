@@ -22,20 +22,8 @@ const useGetConversation = ()=> {
             })
 
             const data = response.data
-            setConversation({
-                ...data,
-                receiver: {
-                    ...data.receiver,
-                    username: data.receiver.userName,
-                }
-            })
-            dispatch(addConversation({
-                ...data,
-                receiver: {
-                    ...data.receiver,
-                    username: data.receiver.userName,
-                }
-            }))
+            setConversation(data)
+            dispatch(addConversation(data))
         } catch (error) {
             console.log(error)
             return <NotFound />

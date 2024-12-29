@@ -21,12 +21,9 @@ const useGetAllConversation = () => {
                     Authorization: `Bearer ${token}`
                 }
             })
-
             const {data} = await response.data
             const dataFilter = data.filter((conversation: Conversation) => conversation.lastMessage)
-            console.log(dataFilter)
-            dispatch(setConversations(dataFilter))
-            
+            dispatch(setConversations(dataFilter))    
         } catch (error) {
             console.log(error)
         }finally{
