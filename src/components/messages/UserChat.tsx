@@ -24,13 +24,13 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
   const {getConversation} = useGetConversation()
   const {getAllMessage} = useGetAllMessage()
 
-  // useEffect(()=> {
-  //   if(socket){
-  //     socket.on('conversationUpdate', conversation => {
-  //       getConversation(conversation.id)
-  //     })
-  //   }
-  // }, [socket])
+  useEffect(()=> {
+    if(socket){
+      socket.on('conversationUpdate', conversation => {
+        getConversation(conversation.id)
+      })
+    }
+  }, [socket])
   
   const handleCreateConversation = async(conversationId: string) => {
     if(isBox){
