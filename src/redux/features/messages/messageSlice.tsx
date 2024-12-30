@@ -30,6 +30,12 @@ const messageSlice = createSlice({
                 }
             }
         },
+        addMessConversation: (state, action: PayloadAction<Conversation>) => {
+            const newConversation = state.conversations.find(conversation => conversation.id === action.payload.id);
+            if(!newConversation){
+                state.conversations = [action.payload,...state.conversations];
+            }
+        },
         removeBoxMessage : (state, action: PayloadAction<string>) => {
             const index = state.boxConversation.findIndex(conversation => conversation.id === action.payload);
             if (index !== -1) {
@@ -58,6 +64,7 @@ const messageSlice = createSlice({
             }
             const indexMessage = state.conversations.findIndex(conversation => conversation.id === action.payload.id);
             if (indexMessage !== -1) {
+                console.log(state.conversations[indexMessage].messages)
                 state.conversations[indexMessage].messages = [ ...state.conversations[indexMessage]?.messages, action.payload.message];
             }
         },
@@ -95,5 +102,5 @@ const messageSlice = createSlice({
     }
 })
 
-export const { setConversations, setBoxConversations,addConversation, removeBoxMessage, clearConversation, addMessages, addMessage, clearMessages, setCountNotify, clearCountNotify, setCountMessage, clearCountMessage, decreaCountMessage} = messageSlice.actions;
+export const { setConversations, setBoxConversations,addConversation, removeBoxMessage, clearConversation, addMessages, addMessage, clearMessages, setCountNotify, clearCountNotify, setCountMessage, clearCountMessage, decreaCountMessage, addMessConversation} = messageSlice.actions;
 export default messageSlice.reducer;

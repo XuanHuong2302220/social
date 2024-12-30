@@ -156,6 +156,7 @@ export interface Comment {
     image?: string | null,
     reactionCount: number,
     reactionType: string,
+    isReacted: boolean,
     parent?: Comment,
     reply?: Comment,
     commentCount: number,

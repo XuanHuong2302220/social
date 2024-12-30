@@ -52,7 +52,7 @@ const Navbar = () => {
 
   const { loading: loadingNotify, getAllNotify } = useGetAllNoti()
 
-  const { getAllConversation } = useGetAllConversation();
+  const {loading: loadingConversation, getAllConversation } = useGetAllConversation();
 
   const debouncedSearch = useRef(
     debounce((query: string) => {
@@ -257,7 +257,7 @@ const Navbar = () => {
             classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-315px]'
           >
             {
-              showDropDownChat && <UserChat isBox backgroundColor='bg-navbar' setShowDropdown={() => setShowDropDownChat(false)} />
+              showDropDownChat && <UserChat isBox backgroundColor='bg-navbar' loading={loadingConversation} setShowDropdown={() => setShowDropDownChat(false)} />
             }
           </DropDown>
           {messageCount.length > 0 ? <div className='w-5 h-5 absolute bg-search rounded-full text-center text-sm text-primaryColor right-[-5px] top-[-5px]'>{messageCount.length}</div> : null}

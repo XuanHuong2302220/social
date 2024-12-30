@@ -47,16 +47,13 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
   });
 
   useEffect(()=> {
-    if(isBox){
-      console.log(conversation)
-      if(conversation.receiver.id === user.id){
-        setIconversation(conversation.sender)
-      }
-      else {
-        setIconversation(conversation.receiver)
-      }
+    if(conversation.receiver.id === user.id){
+      setIconversation(conversation.sender)
     }
-  }, [])
+    else {
+      setIconversation(conversation.receiver)
+    }
+  }, [conversation])
 
   const messageRef = useRef<HTMLDivElement>(null)
 

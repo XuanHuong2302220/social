@@ -42,9 +42,9 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
   const user = useAppSelector(selectUser)
   const [showDropdown, setShowDropdown] = useState(false)
   const [showReaction, setShowReaction] = useState({
-    color: comment.reactionType ? reactions.find(reaction=> reaction.name === comment.reactionType)?.color : 'text-textColor',
-    icon: comment.reactionType ? reactions.find(reaction=> reaction.name === comment.reactionType)?.icon : null,
-    name: comment.reactionType ? reactions.find(reaction=> reaction.name === comment.reactionType)?.name : 'Like',
+    color: comment.isReacted ? reactions.find(reaction=> reaction.name === comment.reactionType)?.color : 'text-textColor',
+    icon: comment.isReacted ? reactions.find(reaction=> reaction.name === comment.reactionType)?.icon : null,
+    name: comment.isReacted ? reactions.find(reaction=> reaction.name === comment.reactionType)?.name : 'Like',
   })
   const [showEdit, setShowEdit] = useState(false)
   const [showDropdownEdit, setShowDropdownEdit] = useState(false)
@@ -377,14 +377,14 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                     </div>
                    <span className='text-sm text-textColor cursor-pointer hover:underline' id='replyId' onClick={handleOpenReply}>reply</span>
 
-                    {comment.reactionCount > 0 && showReaction.icon && <div onClick={handleOpenReactions} className='ml-auto flex gap-1 items-center cursor-pointer hover:underline'>
-                      <span className='text-textColor text-sm'>{comment.reactionCount}</span>
-                      <Image 
+                    {comment.reactionCount > 0 && <div onClick={handleOpenReactions} className='ml-auto flex gap-1 items-center cursor-pointer hover:underline'>
+                      <span className='text-primaryColor font-bold text-sm'>{comment.reactionCount + " react"}</span>
+                      {/* <Image 
                         src={showReaction.icon} 
                         alt={showReaction.name ?? ''} 
                         width={15} 
                         height={15} 
-                      />
+                      /> */}
                     </div>}
                 </div>
             </div>

@@ -20,7 +20,7 @@ const MessagePage = () => {
 
   useEffect(()=> {
     getAllConversation()
-    getConversation(selectedConversation)
+    getConversation(selectedConversation, true)
     getAllMessage(selectedConversation)
   }, [selectedConversation])
 
@@ -31,10 +31,10 @@ const MessagePage = () => {
 
   return (
     <Layout socket={userSocket}>
-        <div className='pt-[65px] h-screen flex rounded-md bg-background'>
-          <UserChat handleSelectCon={handleSelectConversation} selectedConversation={selectedConversation} className='bg-navbar w-1/3 h-full' />
-          <div className='divider divider-horizontal m-0 bg-background w-[1px]' />
-            {conversation && <Conversations background='search' conversation={conversation} userSocket={userSocket} loadingMess={loading} />}
+      <div className='pt-[65px] h-screen flex rounded-md bg-background'>
+        <UserChat handleSelectCon={handleSelectConversation} selectedConversation={selectedConversation} className='bg-navbar w-1/3 h-full' />
+        <div className='divider divider-horizontal m-0 bg-background w-[1px]' />
+          {conversation && <Conversations background='search' conversation={conversation} userSocket={userSocket} loadingMess={loading} />}
         </div> 
     </Layout>
   )

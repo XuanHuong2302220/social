@@ -1,25 +1,36 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Avatar from '../Avatar'
 import { useAppSelector } from '@/redux/hooks'
 import useGetConversation from '@/api/messages/getConversation'
 import { selectUser } from '@/redux/features/user/userSlice'
 import useGetAllMessage from '@/api/messages/getAllMessage'
+import SkeletonReaction from '../SkeletonReaction'
+import { Socket } from 'socket.io-client'
 interface UserChatProps {
   className?: string,
   isBox?: boolean,
   handleSelectCon?: (conversationId: string) => void
   selectedConversation?: string,
   backgroundColor?: string,
-  setShowDropdown?: (value: boolean)=> void
+  setShowDropdown?: (value: boolean)=> void,
+  loading?: boolean,
+  socket?: Socket
 }
 
-const UserChat = ({className, isBox, selectedConversation, handleSelectCon, backgroundColor, setShowDropdown}: UserChatProps) => {
+const UserChat = ({className, isBox, selectedConversation, handleSelectCon, backgroundColor, setShowDropdown, loading, socket}: UserChatProps) => {
 
   const conversations = useAppSelector(state => state.message.conversations)
-  console.log(conversations, 'conversations')
   const user = useAppSelector(selectUser)
   const {getConversation} = useGetConversation()
   const {getAllMessage} = useGetAllMessage()
+
+  // useEffect(()=> {
+  //   if(socket){
+  //     socket.on('conversationUpdate', conversation => {
+  //       getConversation(conversation.id)
+  //     })
+  //   }
+  // }, [socket])
   
   const handleCreateConversation = async(conversationId: string) => {
     if(isBox){
@@ -45,7 +56,7 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
                   {conversation.lastMessage && <span className='text-sm text-textColor'>{conversation.lastMessage.content}</span>}
               </div>
             </div>
-          )) : <span className='text-textColor text-center'>No messages</span>}
+          )) : conversations.length === 0 && loading ? <SkeletonReaction /> : <span className='text-textColor text-center'>No messages</span>}
 
         </div>
     </div>
