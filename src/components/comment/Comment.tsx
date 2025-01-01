@@ -460,6 +460,7 @@ const Comment= ({comment, activeDropdownIndex, handleShowDropdownEdit, setCheckR
                     activeDropdownIndex={activeDropdownIndex}
                     handleShowDropdownEdit={(id)=>handleShowDropdownEdit && handleShowDropdownEdit(id ?? '')}
                     socket={onlineSocket}
+                    setCheckReply={setCheckReply}
                   />
                 </div>
               ))

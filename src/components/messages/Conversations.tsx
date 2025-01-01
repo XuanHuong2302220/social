@@ -163,7 +163,7 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
             !loading && !loadingMess && messages.length > 0 ? messages.map(message => (
               <Message key={message.id} message={message} />
             ))      
-            : !loading && messages.length === 0 && <div className='text-center text-textColor'>Let send a first message</div>    
+            : !loading && !loadingMess && messages.length === 0 && <div className='text-center text-textColor'>Let send a first message</div>    
          }
       </div>
       <div className='mb-2 h-[50px] w-full px-2 flex gap-3 items-center' >

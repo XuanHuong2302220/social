@@ -108,7 +108,7 @@ const TabReactions = ({typeReaction, listReaction, loading, onClose}: TabsProps)
               />
             ))}
           </div>
-          { activeTab && 
+          { activeTab !== -1 && 
             loading ? <SkeletonReaction /> :
             getListReaction.map((reaction, index) => (
               <div key={index} className='flex gap-2 items-center justify-between py-2'>

@@ -27,8 +27,13 @@ import { PostState } from '@/types';
 import axs from '@/utils/axios';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
+import { Socket } from 'socket.io-client';
 
-const Navbar = () => {
+interface NavbarProps {
+  socket?: Socket
+}
+
+const Navbar = ({socket}: NavbarProps) => {
 
   const search = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -114,10 +119,6 @@ const Navbar = () => {
       })
       const data = await response.data
       setPostNoti(data)
-      console.log({
-        comment: comment,
-        parentId: parentId,
-      })
       if (parentId) {
         setCommentId(parentId)
         setReplyId(comment)
@@ -139,6 +140,7 @@ const Navbar = () => {
 
   const handleClosePostNoti = () => {
     setPostNoti(null)
+    setReplyId('')
   }
 
   const handleClickTheme = (theme: string) => {
@@ -254,7 +256,7 @@ const Navbar = () => {
             parents={<div className='w-10 h-10 flex justify-center items-center bg-search rounded-full'><FaMessage onClick={handleOpenMessage} className={`text-md cursor-pointer ${showDropDownChat ? 'text-primaryColor' : 'text-textColor'} `} /></div>}
             tabIndex={0}
             className='text-whiteText'
-            classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-315px]'
+            classNameContent='bg-navbar w-[400px] rounded-b-lg menu z-50 top-10 right-[-310px]'
           >
             {
               showDropDownChat && <UserChat isBox backgroundColor='bg-navbar' loading={loadingConversation} setShowDropdown={() => setShowDropDownChat(false)} />
@@ -328,6 +330,7 @@ const Navbar = () => {
           setIdComment={setCommentId}
           replyId={replyId}
           setReplyId={setReplyId}
+          socket={socket}
         />}
 
       {loading && <Modal

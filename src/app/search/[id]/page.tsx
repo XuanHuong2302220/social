@@ -1,8 +1,10 @@
 'use client'
 
+import useCreateConversation from '@/api/messages/createConversation'
 import useSearch from '@/api/user/searchUser'
 import { Avatar, Button, Post } from '@/components'
 import Layout from '@/components/DefaultLayout'
+import useSocket from '@/socket/socket'
 import { useParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 
@@ -10,14 +12,22 @@ const Search = () => {
 
     const {result, searchUser, postResult} = useSearch()
 
+    const socket = useSocket('users')
+
     const {id} = useParams() as { id: string }
+
+    const {createConversation} = useCreateConversation()
+
+    const handleCreateConversation = async (receiverId: string) => {
+        await createConversation(receiverId)
+    }
 
     useEffect(()=> {
         searchUser(id)
     }, [id])
 
   return (
-    <Layout>
+    <Layout socket={socket}>
         <div className="bg-background flex flex-col items-center gap-5 pt-[90px] h-screen overflow-y-auto">
             {result.length > 0 && 
             <div className='flex flex-col bg-navbar rounded-lg w-1/2 p-3'>
@@ -30,9 +40,9 @@ const Search = () => {
                             </a>
                             <div className='flex flex-col'>
                                 <a href={`/${user.username}`} className='text-textColor text-lg font-bold'>{user.fullName}</a>
-                                <span className='text-sm text-textColor'>{user.isFollowing !== 'follow' ? user.isFollowing : user.isFollowing+'+' }</span>
+                               <span className='text-sm text-primaryColor'>{user.isFollowing}</span>
                             </div>
-                            <Button  text='Message' className='text-textColor bg-primaryColor ml-auto' />
+                            <Button onClick={()=>handleCreateConversation(user.id)} text='Message' className='text-textColor bg-primaryColor ml-auto' />
                         </div>
                     ))}
                 </div>

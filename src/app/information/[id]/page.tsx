@@ -134,7 +134,14 @@ const Information = () => {
                 {...field}
                 className="w-full h-10"
                 placeholder="Select Date"
-                onChange={(value) => field.onChange(value ? value.toISOString().split('T')[0] : '')}
+                onChange={(value) => {
+                  if (value) {
+                    const offsetDate = new Date(value.getTime() - value.getTimezoneOffset() * 60000);
+                    field.onChange(offsetDate.toISOString().split('T')[0]);
+                  } else {
+                    field.onChange('');
+                  }
+                }}
                 value={field.value ? new Date(field.value) : null}
                 format="yyyy-MM-dd"
                 appearance="default"

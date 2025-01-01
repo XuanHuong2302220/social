@@ -69,7 +69,7 @@ const Layout: React.FC<LayoutProps> = ({ children, socket }) => {
 
   return (
     <div className="layout relative">
-      <Navbar />
+      <Navbar socket={socket}/>
       <main>{children}</main>
       {
         !isMessagesPath && conversations.length > 0 &&

@@ -29,6 +29,18 @@ const MessagePage = () => {
     setSelectedConversation(conversationId)
   }
 
+  useEffect(()=> {
+    if(userSocket){
+      userSocket.on('conversationUpdate', conversation => {
+        console.log(conversation)
+      })
+
+      return () => {
+        userSocket.off('conversationUpdate')
+      }
+    }
+  }, [userSocket])
+
   return (
     <Layout socket={userSocket}>
       <div className='pt-[65px] h-screen flex rounded-md bg-background'>

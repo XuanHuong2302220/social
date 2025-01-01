@@ -130,7 +130,7 @@ const MiniProfile = ({hide, user}: MiniProfileProps) => {
             
         >
             {
-                follows ? follows.map((follow)=> (
+                follows && !loading ? follows.map((follow)=> (
                 <div className='flex gap-2 items-start' key={follow.id}>
                     <a href={`/${follow.userName}`}> <Avatar width={1} id={follow.id} height={1} src={follow.avatar ?? undefined} alt='avatar' className='w-[42px] h-[42px]'/></a>
                     <div className='flex flex-col cursor-pointer'>

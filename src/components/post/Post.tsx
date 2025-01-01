@@ -77,7 +77,6 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width, socket }) => {
 
   useClickOutside(optionRef, ()=> setShowOptionPost(false))
 
-
   const handleOpenReaction = () => {
     if (leaveTimeoutRef.current) {
       clearTimeout(leaveTimeoutRef.current);
@@ -133,6 +132,10 @@ const Post: React.FC<PostProps> = ({ post, disableButton, width, socket }) => {
 
  const handleSlideChange = () => {
     if (swiperRef.current) {
+      console.log({
+        begin: swiperRef.current.isBeginning,
+        end: swiperRef.current.isEnd,
+      })
       setIsBeginning(swiperRef.current.isBeginning)
       setIsEnd(swiperRef.current.isEnd)
     }
@@ -221,16 +224,16 @@ const handleDeletePost = (post: PostState) => {
             
         </div>
         <div className='text-textColor px-5'>{post.description && highlightText(post.description)}</div>
-        <div className='h-full relative w-full'>
+        <div className='h-fit relative w-full'>
             <Swiper
               onSlideChange={handleSlideChange}
-              // ref={swiperRef}
+              onSwiper={(swiper) => swiperRef.current = swiper}
               navigation={{
                 prevEl: '.custom-prev',
                 nextEl: '.custom-next',
               }}
               modules={[Navigation]}
-              className='h-full swiper_post'
+              className='h-fit swiper_post'
             >
               {post.images && post.images.map((image, index) => (
                   <SwiperSlide key={index}>
@@ -239,21 +242,19 @@ const handleDeletePost = (post: PostState) => {
                       src={image} 
                       width={width ?? 590}
                       className='w-full h-full object-cover'
-                      // layout="intrinsic"
-                      height={0}
+                      height={'auto'}
                       style={{ objectFit: 'cover' }} 
-                      // quality={100}
                     />
                 </SwiperSlide>
                 ) )}
             </Swiper>
             {post.images?.length > 1 ?  
               <div className={`custom-prev absolute left-2 top-1/2 transform -translate-y-1/2 z-10 `}>
-                <Button left icon={<IoChevronBackOutline />} className={`bg-backgroundIcon border-backgroundIcon rounded-full p-0 w-[30px] h-[30px] min-h-[30px] ${isBeginning ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`} />
+                <Button left icon={<IoChevronBackOutline />} className={`bg-backgroundIcon border-backgroundIcon rounded-full p-0 w-[30px] h-[30px] min-h-[30px] ${isBeginning ? 'hidden' : 'opacity-100'}`} />
               </div> : null}
             {post.images?.length > 1 ? 
               <div className={`custom-next absolute right-2 top-1/2 transform -translate-y-1/2 z-10 `}>
-              <Button left icon={<IoChevronForwardSharp />} className={`bg-backgroundIcon border-backgroundIcon opacity-100 rounded-full p-0 w-[30px] h-[30px] min-h-[30px]  ${isEnd ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`} />
+              <Button left icon={<IoChevronForwardSharp />} className={`bg-backgroundIcon border-backgroundIcon opacity-100 rounded-full p-0 w-[30px] h-[30px] min-h-[30px]  ${isEnd ? 'hidden' : 'opacity-100'}`} />
             </div> : null}
         </div>
         <div className='px-5'>

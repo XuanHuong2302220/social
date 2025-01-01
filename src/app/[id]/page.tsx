@@ -67,7 +67,6 @@ const Profile = () => {
 
   const {loading: loadingPassword, changePassword} = useChangePassword()
 
-
   const {createConversation} = useCreateConversation()
 
   const scroll = document.querySelector('.my-infinite-scroll') as HTMLElement;
@@ -169,6 +168,7 @@ const Profile = () => {
         isFollow: userProfile?.isFollow ?? ''
       })
       await updateAvatar('')
+      setOpenChangeAvatar(false)
     } catch (error) {
       console.error('Lỗi khi xóa ảnh đại diện:', error);
     }
