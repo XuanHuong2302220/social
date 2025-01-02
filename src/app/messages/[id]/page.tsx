@@ -7,7 +7,6 @@ import Layout from '@/components/DefaultLayout'
 import useSocket from '@/socket/socket'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { Socket } from 'socket.io-client'
 
 const MessagePage = () => {
 

@@ -1,7 +1,7 @@
 'use client'
 
 import NotFound from "@/app/not-found"
-import { addConversation, addMessConversation } from "@/redux/features/messages/messageSlice"
+import { addConversation } from "@/redux/features/messages/messageSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { Conversation } from "@/types"
 import axs from "@/utils/axios"
@@ -13,7 +13,7 @@ const useGetConversation = ()=> {
     const dispatch = useAppDispatch()
     const [conversation, setConversation] = useState<Conversation>()
 
-    const getConversation = async (id: string, isMess?: boolean) => {
+    const getConversation = async (id: string) => {
         try {
             const response = await axs.get(`/message/get-conversation/${id}`, {
                 headers: {
