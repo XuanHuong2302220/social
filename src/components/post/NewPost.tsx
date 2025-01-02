@@ -25,10 +25,10 @@ const NewPost = () => {
         </div>
         <div className='divider mx-0 my-1'></div>
         <div className='h-1/3 w-full justify-between flex items-center'>
-            <Button left icon={<FaImages />} className='bg-transparent border-transparent' text='Image'  />
-            <Button left icon={<BsPaperclip />} className='bg-transparent border-transparent' text='Attchmemt'  />
-            <Button left icon={<AiTwotoneAudio />} className='bg-transparent border-transparent' text='audio'  />
-            <Button text='Post' className='bg-primaryColor w-[80px] h-[40pxco] rounded-full text-white hover:bg-primaryColor hover:opacity-60 hover:text-white'  />
+            <Button left icon={<FaImages />} className='bg-transparent cursor-default border-transparent hover:bg-transparent hover:border-transparent' text='Image'  />
+            <Button left icon={<BsPaperclip />} className='bg-transparent cursor-default border-transparent hover:bg-transparent hover:border-transparent' text='Attchmemt'  />
+            <Button left icon={<AiTwotoneAudio />} className='bg-transparent cursor-default border-transparent hover:bg-transparent hover:border-transparent' text='audio'  />
+            <Button onClick={()=>setIsModalOpen(true)} text='Post' className='bg-primaryColor w-[80px] h-[40pxco] rounded-full text-white hover:bg-primaryColor hover:opacity-60 hover:text-white'  />
         </div>
         {isModalOpen && <ModalPost 
           onClose={() => setIsModalOpen(false)}

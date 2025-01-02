@@ -60,11 +60,25 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
 
   // show modal post
   useEffect(() => {
-    const modal = modalRef.current;
-    if (modal) {
-      modal.showModal();
-    }
-  }, []);
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          event.preventDefault(); // Ngăn chặn hành vi mặc định của phím Esc
+        }
+      };
+
+      const modal = modalRef.current;
+      if (modal) {
+        modal.showModal();
+        window.addEventListener('keydown', handleKeyDown);
+      }
+
+      return () => {
+        if (modal) {
+          modal.close();
+        }
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }, []);
   
   const onChange = (text: React.SetStateAction<string>) => setText(text);
 
@@ -87,10 +101,6 @@ const ModalPost = ({ post, onClose }: ModalPostProps) => {
       placeholderElement.style.position = 'absolute';
       placeholderElement.style.top = '25%';
     }
-    // else if (placeholderElement && placeholderElement instanceof HTMLElement && images.length === 0) {
-    //   placeholderElement.style.position = 'absolute';
-    //   placeholderElement.style.top = '30%';
-    // }
   }, [ images.length > 0]);
 
   // open file

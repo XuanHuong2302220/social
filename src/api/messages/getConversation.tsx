@@ -23,11 +23,6 @@ const useGetConversation = ()=> {
 
             const data = response.data
             setConversation(data)
-            if(isMess){
-                addMessConversation(data)
-                console.log(data)
-            }
-            else
             dispatch(addConversation(data))
         } catch (error) {
             console.log(error)

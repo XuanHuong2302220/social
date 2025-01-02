@@ -29,6 +29,11 @@ const messageSlice = createSlice({
                     state.boxConversation = [action.payload,...state.boxConversation];
                 }
             }
+            const newConversationMess = state.conversations.find(conversation => conversation.id === action.payload.id);
+            if(!newConversationMess){
+                console.log(newConversationMess, 'newConversationMess')
+                state.conversations = [action.payload,...state.conversations];
+            }
         },
         addMessConversation: (state, action: PayloadAction<Conversation>) => {
             const newConversation = state.conversations.find(conversation => conversation.id === action.payload.id);
@@ -64,7 +69,6 @@ const messageSlice = createSlice({
             }
             const indexMessage = state.conversations.findIndex(conversation => conversation.id === action.payload.id);
             if (indexMessage !== -1) {
-                console.log(state.conversations[indexMessage].messages)
                 state.conversations[indexMessage].messages = [ ...state.conversations[indexMessage]?.messages, action.payload.message];
             }
         },
@@ -83,7 +87,6 @@ const messageSlice = createSlice({
                 state.countMessage = [];
             }
             const index = state.countMessage.findIndex(id => id === action.payload);
-            console.log(index)
             if (index === -1) {
               state.countMessage.push(action.payload);
             }

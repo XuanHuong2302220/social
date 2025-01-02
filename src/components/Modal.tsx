@@ -14,10 +14,24 @@ const Modal = ({title, children, onClose, closeIcon, className}:ModalProps) => {
   }
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của phím Esc
+      }
+    };
+
     const modal = modalRef.current;
     if (modal) {
       modal.showModal();
+      window.addEventListener('keydown', handleKeyDown);
     }
+
+    return () => {
+      if (modal) {
+        modal.close();
+      }
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   return (

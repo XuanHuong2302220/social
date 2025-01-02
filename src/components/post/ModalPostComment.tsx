@@ -127,7 +127,7 @@ const ModalPostComment= ({post, closeFunc, idComment, setIdComment, replyId, set
               <div className='divider m-0' />
             </div>
           }
-          className='overflow-hidden max-w-[600px] h-full p-0 bg-navbar'
+          className={`overflow-hidden max-w-[600px] p-0 bg-navbar h-[80%]`}
         >
           <div className='flex flex-col max-h-full pt-[80px]'>
               <div className='flex flex-col overflow-auto max-h-[85%]' id='commentScroll'>

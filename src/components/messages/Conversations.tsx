@@ -100,11 +100,11 @@ const Conversations = ({conversation, closeConversation, background, isBox, load
     }
   }
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async() => {
     if(textRef.current){
       const message = textRef.current.value.trim()
       if(message && user.id){
-        createMessage({content: message, idConversation: conversation.id, senderId:user.id})
+       await createMessage({content: message, idConversation: conversation.id, senderId:user.id})
         textRef.current.value = ''
       }
     }

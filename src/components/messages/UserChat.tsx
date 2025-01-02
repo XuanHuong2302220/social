@@ -3,7 +3,6 @@ import Avatar from '../Avatar'
 import { useAppSelector } from '@/redux/hooks'
 import useGetConversation from '@/api/messages/getConversation'
 import { selectUser } from '@/redux/features/user/userSlice'
-import useGetAllMessage from '@/api/messages/getAllMessage'
 import SkeletonReaction from '../SkeletonReaction'
 import { Socket } from 'socket.io-client'
 interface UserChatProps {
@@ -22,16 +21,7 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
   const conversations = useAppSelector(state => state.message.conversations)
   const user = useAppSelector(selectUser)
   const {getConversation} = useGetConversation()
-  const {getAllMessage} = useGetAllMessage()
 
-  useEffect(()=> {
-    if(socket){
-      socket.on('conversationUpdate', conversation => {
-        getConversation(conversation.id)
-      })
-    }
-  }, [socket])
-  
   const handleCreateConversation = async(conversationId: string) => {
     if(isBox){
       getConversation(conversationId)
@@ -39,9 +29,17 @@ const UserChat = ({className, isBox, selectedConversation, handleSelectCon, back
     }
     else {
       if(handleSelectCon) handleSelectCon(conversationId)
-      await getAllMessage(conversationId)
     }
   }
+
+  useEffect(()=> {
+    if(socket && selectedConversation){
+      socket.on('conversationUpdate', conversation => {
+        console.log(conversation)
+      })
+    }
+      return ()=> {socket?.off('conversationUpdate');}
+  }, [socket, selectedConversation])
 
   return (
     <div className={`${className} flex flex-col z-50`}>

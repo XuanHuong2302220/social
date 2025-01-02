@@ -37,11 +37,10 @@ const useCreateMessage = (idConversation : string, userSocket?: Socket)=> {
 
         return ()=> {socket?.off('messageCreated')}
 
-    }, [socket, dispatch])
+    }, [socket, dispatch, idConversation])
 
     const createMessage = async ( data: CreateMessage) => {
         setLoading(true)
-
         try {
             if(socket){
                 socket.emit('sendMessage', {
