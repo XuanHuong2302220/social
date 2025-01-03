@@ -15,7 +15,7 @@ const useGetAllMessage = () => {
 
         setLoading(true)
         try {
-            const response = await axs.get(`/message/get-messages/${conversationId}?page=1&pageSize=20`, {
+            const response = await axs.get(`/message/get-messages/${conversationId}?page=1&pageSize=50`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
