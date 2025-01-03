@@ -24,7 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         <input
           ref={ref}
           type={type}
-          className={`${styles.input} ${styles.plaintext} bg-search w-full h-full text-textColor ${classInput}`}
+          className={`${styles.input} ${styles.plaintext} bg-search w-full h-full ${classInput}`}
           placeholder={placeholder}
           value={value}
           onKeyDown={onKeyDown}

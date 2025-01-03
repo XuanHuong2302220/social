@@ -62,8 +62,9 @@ const Login = () => {
               </span>
             </div>
             <Input
-              className='h-12 cursor-pointer phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4'
+              className='h-12 cursor-pointer phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 bg-[#3f3e3e]'
               placeholder='username or email'
+              classInput='text-white'
               type='text'
               icon={UserIcon}
               width={20}
@@ -76,9 +77,10 @@ const Login = () => {
                   </p>
                 )}
             <Input
-              className='h-12 cursor-pointer phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4'
+              className='h-12 cursor-pointer phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 bg-[#3f3e3e]'
               icon={PasswordIcon}
               width={20}
+              classInput='text-white'
               height={20}
               placeholder='password'
               type={showPassword ? 'text' : 'password'}

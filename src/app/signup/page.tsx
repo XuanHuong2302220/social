@@ -58,10 +58,11 @@ const SignUp = () => {
               </span>
             </div>
             <Input
-              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 bg-[#3f3e3e]'
               placeholder='username'
               type='text'
               width={20}
+              classInput='text-white'
               height={20}
               {...register('username', { required: 'Username is required' })}
             />
@@ -72,10 +73,11 @@ const SignUp = () => {
             )}
 
             <Input
-              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 bg-[#3f3e3e]'
               placeholder='email'
               type='email'
               width={20}
+              classInput='text-white'
               height={20}
               {...register('email', { required: 'email is required' })}
             />
@@ -86,8 +88,9 @@ const SignUp = () => {
             )}
 
             <Input
-              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 cursor-pointer'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 bg-[#3f3e3e] cursor-pointer'
               width={20}
+              classInput='text-white'
               height={20}
               placeholder='password'
               type={showPassword ? 'text' : 'password'}
@@ -102,8 +105,9 @@ const SignUp = () => {
             )}
 
             <Input
-              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 cursor-pointer'
+              className='phone:w-full desktop:w-3/4 laptop:w-3/4 tablet:w-3/4 h-12 bg-[#3f3e3e] cursor-pointer'
               width={20}
+              classInput='text-white'
               height={20}
               placeholder='confirm password'
               type={confirmPassword ? 'text' : 'password'}
