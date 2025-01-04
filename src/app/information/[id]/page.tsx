@@ -91,8 +91,9 @@ const Information = () => {
           <div className='flex flex-col w-1/2'>
             <label className='block text-gray-700 text-sm font-bold mb-2 w-1/2'>First Name</label>
             <Input
-              className='w-full h-10'
-              placeholder='First Name'
+              className='w-full h-10 bg-[#3f3e3e]'
+              placeholder='First Name'  
+              classInput='text-white'
               type='First Name'
               width={20}
               height={20}
@@ -108,8 +109,9 @@ const Information = () => {
           <div className='flex flex-col w-1/2'>
             <label className='block text-gray-700 text-sm font-bold mb-2'>Last Name</label>
             <Input
-              className='w-full h-10'
+              className='w-full h-10 bg-[#3f3e3e]'
               placeholder='Last Name'
+              classInput='text-white'
               type='Last Name'
               width={20}
               height={20}
