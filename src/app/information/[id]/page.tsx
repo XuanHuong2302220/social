@@ -201,7 +201,7 @@ const Information = () => {
         {loadingLogout && <Modal
           className='w-[200px] h-[200px] flex justify-center items-center'
         >
-          <span className='text-white'>Logging out...</span>
+          <span className='text-textColor'>Logging out...</span>
         </Modal>
         }
       </form>
